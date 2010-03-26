@@ -19,13 +19,13 @@ module Grammar
 			@required_props ||= []
 		end
 
-		def matches?(word,*noun_props)
-			return false if noun_props.nil?
-			if !noun_props.empty? && !noun_props[0].kind_of?(String):
-				raise "noun properties don't contain strings: #{noun_props.inspect}"
+		def matches?(word,*word_props)
+			return false if word_props.nil?
+			if word_props.empty? && word_props[0].kind_of?(String):
+				raise "word properties don't contain strings: #{word_props.inspect}"
 			end
 
-			not_included = @required_props - noun_props
+			not_included = @required_props - word_props
 			if !not_included.empty?:
 # 				puts "#{word} does not have #{not_included.inspect} #{@required_props[0].class}"
 				return false
@@ -33,8 +33,8 @@ module Grammar
 			word =~ /#{@find}$/
 		end
 
-		def inflect(word,*noun_props)
-			return word unless(matches?(word,*noun_props))
+		def inflect(word,*word_props)
+			return word unless(matches?(word,*word_props))
 			result = word.gsub(/#{@remove}$/, '')
 			result + @add
 		end
