@@ -13,14 +13,21 @@ module Grammar
 	class Rule
 		def initialize(remove,add,find,*required_props)
 			@remove,@add,@find,@required_props=remove,add,find,required_props
+			if !@required_props.empty? && !@required_props[0].kind_of?(String):
+				raise "required properties don't contain strings: #{@required_props.inspect}"
+			end
 			@required_props ||= []
 		end
 
 		def matches?(word,*noun_props)
 			return false if noun_props.nil?
+			if !noun_props.empty? && !noun_props[0].kind_of?(String):
+				raise "noun properties don't contain strings: #{noun_props.inspect}"
+			end
+
 			not_included = @required_props - noun_props
 			if !not_included.empty?:
-# 				puts "does not have #{not_included.inspect}"
+# 				puts "#{word} does not have #{not_included.inspect} #{@required_props[0].class}"
 				return false
 			end
 			word =~ /#{@find}$/
@@ -28,8 +35,8 @@ module Grammar
 
 		def inflect(word,*noun_props)
 			return word unless(matches?(word,*noun_props))
-			word.gsub!(/#{@remove}$/, '')
-			word + @add
+			result = word.gsub(/#{@remove}$/, '')
+			result + @add
 		end
 	end
 
@@ -60,8 +67,8 @@ module Grammar
 					next
 				end
 				@rules[speech_part][form] ||= []
-				@rules[speech_part][form] << Rule.new(remove,add,condition,required_props)
-				puts "#{speech_part} #{form} #{@rules[speech_part][form].inspect}"
+				@rules[speech_part][form] << Rule.new(remove,add,find,*required_props)
+# 				puts "#{speech_part} #{form} #{@rules[speech_part][form].inspect}"
 			end
 		end
 
@@ -82,7 +89,7 @@ module Grammar
 					end
 				end
 			else
-				puts "does not have noun case #{noun_case} #{@rules[NOUN].inspect}"
+# 				puts "does not have noun case #{noun_case} #{@rules[NOUN].inspect}"
 			end
 			puts "warn: '#{noun}' not inflected for #{form.inspect} #{noun_props}"
 			noun
