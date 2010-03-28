@@ -15,6 +15,7 @@ module ByFrequencyChoser
 			end
 			index += 1
 		end
+		puts "point: #{point} index #{index} sum #{sum_freqs} of #{freqs_array.size}"
 		found
 	end
 

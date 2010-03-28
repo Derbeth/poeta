@@ -106,7 +106,7 @@ module Grammar
 
 					@words[speech_part] ||= []
 					@words[speech_part] << word
-					puts "#{word.inspect}"
+# 					puts "#{word.inspect}"
 				rescue DictParseError => e
 					puts "error: #{e.message}"
 				end
@@ -121,7 +121,9 @@ module Grammar
 		# returns index of random word or -1 if none can be selected
 		def get_random_index(speech_part)
 			return -1 unless(@words.has_key?(speech_part))
-			ByFrequencyChoser.choose_random_index(@words[speech_part])
+			index = ByFrequencyChoser.choose_random_index(@words[speech_part])
+# 			puts "random #{speech_part}: #{index}"
+			index
 		end
 
 		private

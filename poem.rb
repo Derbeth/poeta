@@ -34,9 +34,9 @@ class Poem
 
 		title_sentence_mgr = SentenceManager.new(dictionary)
 		title_sentences_defs = <<-END
-60 ${NOUN}
-40 ${ADJ} ${NOUN}
- 2 ${NOUN} ${ADJ}
+60 ${SUBJ}
+40 ${ADJ} ${SUBJ}
+ 2 ${SUBJ} ${ADJ}
 10 ***
  		END
 		title_sentence_mgr.read(title_sentences_defs)

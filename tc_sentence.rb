@@ -5,6 +5,19 @@ require 'sentence'
 
 include Grammar
 
+class SentenceTest < Test::Unit::TestCase
+	def test_handle_subject
+		dictionary_text = 'N 100 foo'
+		dictionary = Dictionary.new
+		dictionary.read(dictionary_text)
+
+		sentence = Sentence.new(dictionary,'a ${SUBJ} b')
+		text = sentence.write
+		assert_equal('a foo b', text)
+		assert_equal('foo', sentence.subject.text)
+	end
+end
+
 class SentenceManagerTest < Test::Unit::TestCase
 	def test_read
 		input = <<-END
@@ -39,5 +52,11 @@ class SentenceManagerTest < Test::Unit::TestCase
 			sentence = mgr.random_sentence.write
 			assert(%w{sometimes is}.include?(sentence))
 		end
+	end
+
+	def test_double_subject
+		input = '10 ${SUBJ} ${VERB} ${SUBJ}'
+		mgr = SentenceManager.new("dictionary")
+		assert_raise(RuntimeError) { mgr.read(input) }
 	end
 end
