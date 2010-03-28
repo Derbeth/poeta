@@ -5,11 +5,24 @@ module Grammar
 	NOUN = 'N'
 	VERB = 'V'
 	ADJECTIVE = 'A'
-	SPEECH_PARTS = [NOUN,VERB,ADJECTIVE]
+	ADVERB = 'D'
+	SPEECH_PARTS = [NOUN,VERB,ADJECTIVE,ADVERB]
 
 	NOMINATIVE,GENITIVE,DATIVE,ACCUSATIVE,INSTRUMENTAL,LOCATIVE,VOCATIVE = *(1..7)
 	CASES = [NOMINATIVE,GENITIVE,DATIVE,ACCUSATIVE,INSTRUMENTAL,LOCATIVE,VOCATIVE]
-		
+
+	class Grammar
+		private_class_method :new
+		def Grammar.describe_speech_part(s)
+			case s
+				when NOUN: 'noun'
+				when VERB: 'verb'
+				when ADJECTIVE: 'adjective'
+				else raise "unknown speech part #{s}"
+			end
+		end
+	end
+
 	class Rule
 		def initialize(remove,add,find,*required_props)
 			@remove,@add,@find,@required_props=remove,add,find,required_props
