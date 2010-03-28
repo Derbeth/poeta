@@ -1,0 +1,3 @@
+#!/bin/sh
+rdoc -x 'tc_*'
+find doc -name *.html -exec sed -e /^$/d -i {} \;

@@ -118,6 +118,7 @@ module Grammar
 		class DictParseError < RuntimeError
 		end
 
+		# returns index of random word or -1 if none can be selected
 		def get_random_index(speech_part)
 			return -1 unless(@words.has_key?(speech_part))
 			sum_freqs = @words[speech_part].inject(0) {|sum,word| sum + word.frequency}
