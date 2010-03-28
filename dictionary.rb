@@ -94,7 +94,6 @@ module Grammar
 		end
 
 		def read(source)
-
 			source.each_line do |line|
 				begin
 					next if line =~ /^#/ || line !~ /\w/
