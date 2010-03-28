@@ -17,7 +17,7 @@ class SentenceManager
 				next if line =~ /^#/ || line !~ /\w/
 				line.chomp!
 				frequency, rest = read_frequency(line)
-				sentence_builder = FrequencySentenceBuilder.new(@dictionary,rest,frequency)
+				sentence_builder = SentenceBuilder.new(@dictionary,rest,frequency)
 				@sentence_builders << sentence_builder
 			rescue ParseError => e
 				puts "error: #{e.message}"
@@ -25,9 +25,9 @@ class SentenceManager
 		end
 	end
 
-	# gets a random SentenceBuilder or nil if no choice
+	# gets a random sentence or nil if no choice
 	def random_sentence
-		ByFrequencyChoser.choose_random(@sentence_builders)
+		ByFrequencyChoser.choose_random(@sentence_builders).create_sentence
 	end
 
 	# returns the number of sentence builders
@@ -41,7 +41,7 @@ class SentenceManager
 	end
 
 	def read_frequency(line)
-		unless line =~ /^(\d+)\s+/:
+		unless line =~ /^\s*(\d+)\s+/:
 			raise ParseError, "cannot read frequency from '#{line}'"
 		end
 		frequency,rest = $1.to_i,$'
@@ -51,8 +51,23 @@ class SentenceManager
 end
 
 class SentenceBuilder
+	attr :frequency
+	def initialize(dictionary,pattern,frequency)
+		@dictionary,@pattern,@frequency = dictionary,pattern,frequency
+		raise "invalid frequency: #{frequency}" if frequency < 0
+	end
+
+	def create_sentence
+		Sentence.new(@dictionary,@pattern)
+	end
+end
+
+class Sentence
+	attr_reader :subject
+	attr_writer :subject
 	def initialize(dictionary,pattern)
 		@dictionary,@pattern = dictionary,pattern
+		@subject = nil
 	end
 
 	# creates and returns a new sentence
@@ -61,11 +76,3 @@ class SentenceBuilder
 	end
 end
 
-class FrequencySentenceBuilder < SentenceBuilder
-	attr :frequency
-	def initialize(dictionary,pattern,frequency)
-		super(dictionary,pattern)
-		@frequency = frequency
-		raise "invalid frequency: #{frequency}" if frequency < 0
-	end
-end

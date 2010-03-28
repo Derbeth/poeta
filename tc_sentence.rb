@@ -12,16 +12,16 @@ class SentenceManagerTest < Test::Unit::TestCase
 #foo
 
 100 okeee
- 100 bad cause indented
+ 10 also okee
 -1 also bad negative
 
 1 owaśtam
 		END
 		mgr = SentenceManager.new("dictionary")
 		mgr.read(input)
-		assert_equal(2, mgr.size)
+		assert_equal(3, mgr.size)
 		mgr.read(input)
-		assert_equal(2, mgr.size)
+		assert_equal(3, mgr.size)
 	end
 
 	def test_get_random
