@@ -23,4 +23,21 @@ class SentenceManagerTest < Test::Unit::TestCase
 		mgr.read(input)
 		assert_equal(2, mgr.size)
 	end
+
+	def test_get_random
+		input = <<-END
+0 never
+1 sometimes
+0 nevernever
+2 is
+0 neverever
+		END
+		mgr = SentenceManager.new("dictionary")
+		mgr.read(input)
+		assert_equal(5,mgr.size)
+		100.times() do
+			sentence = mgr.random_sentence.write
+			assert(%w{sometimes is}.include?(sentence))
+		end
+	end
 end

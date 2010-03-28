@@ -2,6 +2,7 @@
 
 require 'grammar'
 require 'dictionary'
+require 'randomized_choice'
 
 class SentenceManager
 	def initialize(dictionary)
@@ -22,6 +23,11 @@ class SentenceManager
 				puts "error: #{e.message}"
 			end
 		end
+	end
+
+	# gets a random SentenceBuilder or nil if no choice
+	def random_sentence
+		ByFrequencyChoser.choose_random(@sentence_builders)
 	end
 
 	# returns the number of sentence builders
@@ -51,6 +57,7 @@ class SentenceBuilder
 
 	# creates and returns a new sentence
 	def write
+		@pattern
 	end
 end
 

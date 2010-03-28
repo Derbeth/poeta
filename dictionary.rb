@@ -1,6 +1,7 @@
 #!/usr/bin/ruby -w
 
 require 'grammar'
+require 'randomized_choice'
 
 module Grammar
 	MASCULINE,FEMININE,NEUTER = *(1..3)
@@ -120,20 +121,7 @@ module Grammar
 		# returns index of random word or -1 if none can be selected
 		def get_random_index(speech_part)
 			return -1 unless(@words.has_key?(speech_part))
-			sum_freqs = @words[speech_part].inject(0) {|sum,word| sum + word.frequency}
-			point = rand sum_freqs
-			cur_freq, index, found = 0, 0, -1
-			@words[speech_part].each do |word|
-				if word.frequency != 0:
-					cur_freq += word.frequency
-					if cur_freq > point:
-						found = index
-						break
-					end
-				end
-				index += 1
-			end
-			found
+			ByFrequencyChoser.choose_random_index(@words[speech_part])
 		end
 
 		private
