@@ -18,6 +18,25 @@ class SentenceTest < Test::Unit::TestCase
 	end
 end
 
+class SentenceBuilderTest < Test::Unit::TestCase
+	def test_create_sentence
+		srand 1
+		dictionary_text = "N 100 foo\nN 100 bar"
+		dictionary = Dictionary.new
+		dictionary.read(dictionary_text)
+
+		builder = SentenceBuilder.new(dictionary,'a ${NOUN} b',100)
+		sentence1 = builder.create_sentence
+		sentence2 = builder.create_sentence
+		text1 = sentence1.write
+		text2 = sentence2.write
+		assert_equal('a foo b', text1)
+		assert_equal('a bar b', text2)
+		assert_nil(sentence1.subject)
+		assert_nil(sentence2.subject)
+	end
+end
+
 class SentenceManagerTest < Test::Unit::TestCase
 	def test_read
 		input = <<-END

@@ -59,7 +59,7 @@ end
 
 class SentenceBuilder
 	include Sentences
-	attr :frequency
+	attr_accessor :frequency
 	def initialize(dictionary,pattern,frequency)
 		@dictionary,@pattern,@frequency = dictionary,pattern,frequency
 		raise "invalid frequency: #{frequency}" if frequency < 0
@@ -73,13 +73,12 @@ class SentenceBuilder
 	end
 
 	def create_sentence
-		Sentence.new(@dictionary,@pattern)
+		Sentence.new(@dictionary,@pattern.dup)
 	end
 end
 
 class Sentence
-	attr_reader :subject
-	attr_writer :subject
+	attr_accessor :subject
 	def initialize(dictionary,pattern)
 		@dictionary,@pattern = dictionary,pattern
 		@subject = nil

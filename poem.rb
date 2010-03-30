@@ -3,13 +3,14 @@
 require 'sentence'
 
 class Verse
-	def initialize(dictionary,grammar,sentence_mgr,optimal_length=nil,rhyme=false)
+	def initialize(sentence_mgr,optimal_length=nil,rhyme=false)
 		lines = 4
 		sentences = []
 		lines.times() { sentences << sentence_mgr.random_sentence }
 		sentences_text = []
 		sentences.each { |s| sentences_text << s.write }
-		@subject = sentences[0].subject
+		@subject = sentences.inject(nil) { |found, cur| found ||= cur.subject }
+		@subject ||= '***'
 		@text = sentences_text.join("\n")
 	end
 
@@ -30,7 +31,7 @@ class Poem
 			return
 		end
 		verses = Array.new(verses_number)
-		(0..verses_number-1).each { |i| verses[i] = Verse.new(dictionary,grammar,sentence_mgr) }
+		(0..verses_number-1).each { |i| verses[i] = Verse.new(sentence_mgr) }
 
 		title_sentence_mgr = SentenceManager.new(dictionary)
 		title_sentences_defs = <<-END
