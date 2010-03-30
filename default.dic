@@ -8,6 +8,9 @@ N 100 ból
 N 100 upadek
 N 100 pustka
 
+V 100 widzieć
+V 100 dotykać
+
 A 100 czarny
 A 100 obcy
 A 100 martwy

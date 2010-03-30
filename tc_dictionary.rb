@@ -46,6 +46,7 @@ A 50 "strasznie mocny"
 	end
 
 	def test_get_random
+		srand
 		input = <<-END
 N 0 nigdy
 N 1 jeden

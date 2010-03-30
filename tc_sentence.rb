@@ -6,6 +6,19 @@ require 'sentence'
 include Grammar
 
 class SentenceTest < Test::Unit::TestCase
+	def test_trim
+		dictionary_text = 'N 100 foo'
+		dictionary = Dictionary.new
+		dictionary.read(dictionary_text)
+
+		sentence = Sentence.new(dictionary,'')
+		assert_equal('', sentence.write)
+		sentence = Sentence.new(dictionary,'  ')
+		assert_equal('', sentence.write)
+		sentence = Sentence.new(dictionary,' ${VERB} ${SUBJ}   ${SUBJ} ')
+		assert_equal('foo foo', sentence.write)
+	end
+
 	def test_handle_subject
 		dictionary_text = 'N 100 foo'
 		dictionary = Dictionary.new
@@ -15,6 +28,50 @@ class SentenceTest < Test::Unit::TestCase
 		text = sentence.write
 		assert_equal('a foo b', text)
 		assert_equal('foo', sentence.subject.text)
+
+		srand 1
+		dictionary2_text = "N 100 foo\nN 100 bar"
+		dictionary2 = Dictionary.new
+		dictionary2.read(dictionary2_text)
+		sentence = Sentence.new(dictionary2,'a ${SUBJ} ${SUBJ2} b')
+		text = sentence.write
+		assert_equal('a foo bar b', text)
+		assert_equal('foo', sentence.subject.text)
+	end
+
+	def test_handle_adjective
+		dictionary_text = "N 100 stuff\nA 100 cool"
+		dictionary = Dictionary.new
+		dictionary.read(dictionary_text)
+
+		sentence = Sentence.new(dictionary,'?${ADJ} ${NOUN}?')
+		assert_equal('?cool stuff?', sentence.write)
+
+		srand 1
+		dictionary2_text = "N 100 stuff\nN 100 things\nA 100 cool\nA 100 bad"
+		dictionary2 = Dictionary.new
+		dictionary2.read(dictionary2_text)
+
+		sentence = Sentence.new(dictionary2,'${ADJ1} ${NOUN} ${ADJ2} ${NOUN2}')
+		assert_equal('cool stuff bad things', sentence.write)
+		sentence = Sentence.new(dictionary2,'${NOUN1} ${ADJ1} ${NOUN2} ${ADJ1}')
+		assert_equal('things bad stuff bad', sentence.write)
+	end
+
+	def test_handle_verb
+		srand 1
+		dictionary_text = "N 100 stuff\nN 100 things\nV 100 goes\nV 100 suck"
+		dictionary = Dictionary.new
+		dictionary.read(dictionary_text)
+
+		sentence = Sentence.new(dictionary,'${NOUN} ${VERB} ${NOUN2} ${VERB2}')
+		assert_equal('stuff goes things suck', sentence.write)
+	end
+
+	def test_handle_empty_dictionary
+		dictionary = Dictionary.new
+		sentence = Sentence.new(dictionary,'${NOUN} ${ADJ} ${VERB}')
+		assert_equal('', sentence.write.strip)
 	end
 end
 
@@ -57,6 +114,7 @@ class SentenceManagerTest < Test::Unit::TestCase
 	end
 
 	def test_get_random
+		srand
 		input = <<-END
 0 never
 1 sometimes
@@ -73,9 +131,33 @@ class SentenceManagerTest < Test::Unit::TestCase
 		end
 	end
 
-	def test_double_subject
-		input = '10 ${SUBJ} ${VERB} ${SUBJ}'
+	def test_validation
 		mgr = SentenceManager.new("dictionary")
+		input = '10 ${SUBJ} ${VERB} ${SUBJ}' # double subject
 		assert_raise(RuntimeError) { mgr.read(input) }
+
+		input = '10 ${SUBJ} ${VERB} ${NOUN}' # double noun/subject
+		assert_raise(RuntimeError) { mgr.read(input) }
+
+		input = '10 ${SUBJ} ${VERB} ${SUBJ2}' # ok
+		mgr.read(input)
+
+		input = '10 ${ADJ}' # no such noun
+		assert_raise(RuntimeError) { mgr.read(input) }
+
+		input = '10 ${NOUN2} ${ADJ}' # no such noun
+		assert_raise(RuntimeError) { mgr.read(input) }
+
+		input = '10 ${NOUN} ${ADJ} ${NOUN2} {$ADJ2}' # ok
+		mgr.read(input)
+
+		input = '10 ${VERB}' # no such noun
+		assert_raise(RuntimeError) { mgr.read(input) }
+
+		input = '10 ${NOUN2} ${VERB}' # no such noun
+		assert_raise(RuntimeError) { mgr.read(input) }
+
+		input = '10 ${NOUN} ${VERB} ${NOUN2} {$VERB2}' # ok
+		mgr.read(input)
 	end
 end

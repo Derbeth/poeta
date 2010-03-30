@@ -60,16 +60,11 @@ end
 class SentenceBuilder
 	include Sentences
 	attr_accessor :frequency
+
 	def initialize(dictionary,pattern,frequency)
 		@dictionary,@pattern,@frequency = dictionary,pattern,frequency
 		raise "invalid frequency: #{frequency}" if frequency < 0
-		validate_pattern
-	end
-
-	def validate_pattern
-		subjects_count = 0
-		@pattern.scan(SUBJECT) { subjects_count += 1 }
-		raise "more than one subject in '#@pattern'" if subjects_count > 1
+		Sentence.validate_pattern(pattern)
 	end
 
 	def create_sentence
@@ -80,47 +75,93 @@ end
 class Sentence
 	attr_accessor :subject
 	def initialize(dictionary,pattern)
-		@dictionary,@pattern = dictionary,pattern
+		@dictionary,@pattern = dictionary,pattern.strip
+		@pattern.gsub!(/ {2,}/, ' ')
 		@subject = nil
 		@nouns = {}
+	end
+
+	def Sentence.validate_pattern(pattern)
+		noun_occurs = {}
+		[Sentences::SUBJECT, Sentences::NOUN].each do |part|
+			pattern.scan(match_token(part)) do |full_match,options|
+				noun_index = read_index(full_match,options)
+				noun_occurs[noun_index] ||= 0
+				noun_occurs[noun_index] += 1
+				raise "too many occurances of noun #{noun_index}" if noun_occurs[noun_index] > 1
+			end
+		end
+		[Sentences::ADJECTIVE, Sentences::VERB].each do |part|
+			pattern.scan(match_token(part)) do |full_match,options|
+				noun_index = read_index(full_match,options)
+				raise "undefined noun referenced from #{full_match}" unless noun_occurs.include? noun_index
+			end
+		end
 	end
 
 	# creates and returns a new sentence
 	def write
 		text = @pattern
-		text.gsub!(match_token(Sentences::SUBJECT)) { handle_subject($1,$2) }
-		text.gsub!(match_token(Sentences::NOUN))    { handle_noun($1,$2) }
-		text
+		text.gsub!(match_token(Sentences::SUBJECT))   { handle_subject($1,$2) }
+		text.gsub!(match_token(Sentences::NOUN))      { handle_noun($1,$2) }
+		text.gsub!(match_token(Sentences::ADJECTIVE)) { handle_adjective($1,$2) }
+		text.gsub!(match_token(Sentences::VERB)) { handle_verb($1,$2) }
+		text.strip
 	end
 
 	private
 
 	def handle_subject(full_match,options)
-		unless @subject:
-			@subject = handle_noun_common(full_match,options)
-		end
-		@subject.text
+		noun = handle_noun_common(full_match,options)
+		@subject ||= noun
+		noun ? noun.text : ''
 	end
 
 	def handle_noun(full_match,options)
-		handle_noun_common(full_match,options).text # TODO TEMP
+		noun = handle_noun_common(full_match,options)
+		noun ? noun.text : '' # TODO TEMP
 	end
 
 	def handle_noun_common(full_match,options)
-		noun_index = 1
-		options.strip! if options
-		if options && !options.empty?:
-			raise "invalid index in #{full_match}, should be number" if options !~ /^\d+$/
-			noun_index = options.to_i
-		end
+		noun_index = self.class.read_index(full_match,options)
 		noun = @dictionary.get_random(Grammar::NOUN)
-# 		puts "chose noun #{noun.object_id} in sentence #{self.object_id}"
 		@nouns[noun_index] = noun
 		noun
 	end
 
-	def match_token(part)
+	def handle_adjective(full_match,options)
+		noun_index = self.class.read_index(full_match,options)
+		raise "no noun for #{full_match}" unless @nouns.include? noun_index
+		adjective = @dictionary.get_random(Grammar::ADJECTIVE)
+		return '' unless adjective
+		noun = @nouns[noun_index]
+		adjective.text
+	end
+
+	def handle_verb(full_match,options)
+		noun_index = self.class.read_index(full_match,options)
+		raise "no noun for #{full_match}" unless @nouns.include? noun_index
+		verb = @dictionary.get_random(Grammar::VERB)
+		return '' unless verb
+		noun = @nouns[noun_index]
+		verb.text
+	end
+
+	def Sentence.read_index(full_match,options)
+		options.strip! if options
+		if options && !options.empty?:
+			raise "invalid index in #{full_match}, should be number" if options !~ /^\d+$/
+			return options.to_i
+		end
+		return 1
+	end
+
+	def Sentence.match_token(part)
 		/(\$\{#{part}([^}]*)\})/
+	end
+
+	def match_token(part)
+		Sentence.match_token(part)
 	end
 end
 
