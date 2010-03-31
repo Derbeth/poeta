@@ -11,6 +11,9 @@ module Grammar
 	NOMINATIVE,GENITIVE,DATIVE,ACCUSATIVE,INSTRUMENTAL,LOCATIVE,VOCATIVE = *(1..7)
 	CASES = [NOMINATIVE,GENITIVE,DATIVE,ACCUSATIVE,INSTRUMENTAL,LOCATIVE,VOCATIVE]
 
+	MASCULINE,FEMININE,NEUTER = *(1..3)
+	GENDERS = [MASCULINE,FEMININE,NEUTER]
+
 	class Grammar
 		private_class_method :new
 		def Grammar.describe_speech_part(s)
@@ -85,10 +88,8 @@ module Grammar
 			end
 		end
 
-		def inflect_noun(noun,form,*noun_props)
-			unless form[:case]:
-				raise ":case has to be passed '#{form[:case]}'"
-			end
+		def inflect_noun(noun,form,*gram_props)
+			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
 			noun_case = form[:case]
 			noun_number = form[:number] || 1
 			noun_case += 10 if noun_number == 2
@@ -97,15 +98,37 @@ module Grammar
 			
 			if (@rules[NOUN].has_key?(noun_case)):
 				@rules[NOUN][noun_case].each() do |rule|
-					if rule.matches?(noun,*noun_props):
-						return rule.inflect(noun,*noun_props)
+					if rule.matches?(noun,*gram_props):
+						return rule.inflect(noun,*gram_props)
 					end
 				end
 			else
 # 				puts "does not have noun case #{noun_case} #{@rules[NOUN].inspect}"
 			end
-			puts "warn: '#{noun}' not inflected for #{form.inspect} #{noun_props}"
+			puts "warn: '#{noun}' not inflected for #{form.inspect} #{gram_props}"
 			noun
+		end
+
+		def inflect_adjective(adjective,form,*gram_props)
+			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
+			raise ":gender has to be passed '#{form[:gender]}'" unless form[:gender]
+			raise "wrong gender: #{form[:gender]}" unless GENDERS.include? form[:gender]
+			form_id = form[:case]
+			form_id += (form[:number]-1) * 10
+			form_id += form[:gender] * 100
+			puts "form id: #{form_id} #{@rules[ADJECTIVE].keys.inspect}"
+
+			return adjective if form[:case] == NOMINATIVE
+
+			if (@rules[ADJECTIVE].has_key?(form_id)):
+				@rules[ADJECTIVE][form_id].each() do |rule|
+					if rule.matches?(adjective,*gram_props):
+						return rule.inflect(adjective,*gram_props)
+					end
+				end
+			end
+			puts "warn: '#{adjective}' not inflected for #{form.inspect} #{gram_props}"
+			adjective
 		end
 	end
 

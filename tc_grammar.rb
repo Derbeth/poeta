@@ -64,4 +64,27 @@ class PolishGrammarTest < Test::Unit::TestCase
 		assert_equal('waltie', grammar.inflect_noun('walt', {:case=>LOCATIVE}, 'X', 'A'))
 		assert_equal('waltie', grammar.inflect_noun('walt', {:case=>LOCATIVE}, 'A', 'X'))
 	end
+
+	def test_adjective
+		grammar_text = <<-END
+A K 102 y ego y
+A K 112 0 ch  y
+A K 206 y ej  y
+		END
+		grammar = PolishGrammar.new
+		grammar.read_rules(grammar_text)
+
+		assert_raise(RuntimeError) { grammar.inflect_adjective('dobry', {:case=>GENITIVE}) }
+
+		assert_equal('dobry', grammar.inflect_adjective('dobry',
+			{:gender=>MASCULINE, :number=>1, :case=>NOMINATIVE}, 'K'))
+			assert_equal('dobry', grammar.inflect_adjective('dobry',
+			{:gender=>MASCULINE, :number=>1, :case=>INSTRUMENTAL}, 'K'))
+		assert_equal('dobrego', grammar.inflect_adjective('dobry',
+			{:gender=>MASCULINE, :number=>1, :case=>GENITIVE}, 'K'))
+		assert_equal('dobrych', grammar.inflect_adjective('dobry',
+			{:gender=>MASCULINE, :number=>2, :case=>GENITIVE}, 'K'))
+		assert_equal('dobrej', grammar.inflect_adjective('dobry',
+			{:gender=>FEMININE, :number=>1, :case=>LOCATIVE}, 'K'))
+	end
 end

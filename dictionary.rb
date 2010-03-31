@@ -4,9 +4,6 @@ require 'grammar'
 require 'randomized_choice'
 
 module Grammar
-	MASCULINE,FEMININE,NEUTER = *(1..3)
-	GENDERS = [MASCULINE,FEMININE,NEUTER]
-
 	OBJECT_ONLY = 'OO'
 	NO_NOUN_NOUN = 'NO_NOUN_NOUN'
 
@@ -28,6 +25,10 @@ module Grammar
 			if text == '':
 				raise "word text is empty"
 			end
+		end
+
+		def <=>(other)
+			@text <=> other.text
 		end
 	end
 
@@ -76,6 +77,8 @@ module Grammar
 	end
 
 	class Dictionary
+		include Enumerable
+
 		def initialize
 			@words = {}
 		end
@@ -110,6 +113,12 @@ module Grammar
 				rescue DictParseError => e
 					puts "error: #{e.message}"
 				end
+			end
+		end
+
+		def each
+			@words.values.each do |word_list|
+				word_list.each { |e| yield e }
 			end
 		end
 
