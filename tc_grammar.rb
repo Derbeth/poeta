@@ -88,3 +88,42 @@ A K 206 y ej  y
 			{:gender=>FEMININE, :number=>1, :case=>LOCATIVE}, 'K'))
 	end
 end
+
+class GrammarFormTest < Test::Unit::TestCase
+	def test_pretty_print
+		form = {}
+		assert_equal('', GrammarForm.pretty_print(form))
+
+		form = {:gender=>666}
+		assert_raise(RuntimeError) { GrammarForm.pretty_print(form) }
+
+		form = {:case=>GENITIVE}
+		assert_equal(' D', GrammarForm.pretty_print(form)) # left-padded
+
+		form = {:case=>LOCATIVE, :gender=>NEUTER, :number=>1, :foo=>'bar'}
+		assert_equal('n Sg Ms foo=bar', GrammarForm.pretty_print(form))
+	end
+
+	# makes sure that no exceptions are thrown for any legal combination of forms
+	def test_all_combinations_legal
+		GENDERS.each do |gender|
+			gender_form = {:gender=>gender}
+			assert_not_nil GrammarForm.pretty_print(gender_form)
+			CASES.each do |gram_case|
+				case_form = {:case=>gram_case}
+				case_gender_form = case_form.merge(gender_form)
+				assert_not_nil GrammarForm.pretty_print(case_form)
+				assert_not_nil GrammarForm.pretty_print(case_gender_form)
+				NUMBERS.each do |number|
+					number_form = {:number=>number}
+					case_number_form = case_form.merge(number_form)
+					full_form = case_number_form.merge(gender_form)
+					assert_equal(3, full_form.keys.size)
+					assert_not_nil GrammarForm.pretty_print(number_form)
+					assert_not_nil GrammarForm.pretty_print(case_number_form)
+					assert_not_nil GrammarForm.pretty_print(full_form)
+				end
+			end
+		end
+	end
+end

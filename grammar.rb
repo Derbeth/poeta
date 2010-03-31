@@ -10,9 +10,20 @@ module Grammar
 
 	NOMINATIVE,GENITIVE,DATIVE,ACCUSATIVE,INSTRUMENTAL,LOCATIVE,VOCATIVE = *(1..7)
 	CASES = [NOMINATIVE,GENITIVE,DATIVE,ACCUSATIVE,INSTRUMENTAL,LOCATIVE,VOCATIVE]
+	CASE_NAMES = %w{M D C B N Ms W}
+	CASE2STRING = Hash[CASES.zip CASE_NAMES]
+	CASE_NAME_LEN = 2
 
 	MASCULINE,FEMININE,NEUTER = *(1..3)
 	GENDERS = [MASCULINE,FEMININE,NEUTER]
+	GENDER_NAMES = %w{m f n}
+	GENDER2STRING = Hash[GENDERS.zip GENDER_NAMES]
+
+	SINGULAR,PLURAL = *(1..2)
+	# all supported grammatical numbers (like singular or plural)
+	NUMBERS = [SINGULAR,PLURAL]
+	NUMBER_NAMES = %w{Sg Pl}
+	NUMBER2STRING = Hash[NUMBERS.zip NUMBER_NAMES]
 
 	class Grammar
 		private_class_method :new
@@ -129,6 +140,39 @@ module Grammar
 			end
 			puts "warn: '#{adjective}' not inflected for #{form.inspect} #{gram_props}"
 			adjective
+		end
+	end
+
+	class GrammarForm
+		def self.pretty_print(form)
+			parts = []
+			parts << format_gender(form[:gender]) if (form[:gender])
+			parts << format_number(form[:number]) if (form[:number])
+			parts << format_case(form[:case]) if (form[:case])
+			form.keys.sort_by{|s| s.to_s}.each do |key|
+				if ![:gender,:number,:case].include?(key)
+					parts << "#{key}=#{form[key]}"
+				end
+			end
+			parts.join(' ')
+		end
+
+		def self.format_gender(gender)
+			name = GENDER2STRING[gender]
+			raise "unknown gender #{gender}" unless name
+			name
+		end
+
+		def self.format_number(number)
+			name = NUMBER2STRING[number]
+			raise "unknown number #{number}" unless name
+			name
+		end
+
+		def self.format_case(gram_case)
+			name = CASE2STRING[gram_case]
+			raise "unknown case #{gram_case}" unless name
+			name.rjust(CASE_NAME_LEN)
 		end
 	end
 

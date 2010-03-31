@@ -30,6 +30,10 @@ module Grammar
 		def <=>(other)
 			@text <=> other.text
 		end
+
+		def all_forms
+			return [{}]
+		end
 	end
 
 	class Noun < Word
@@ -41,6 +45,16 @@ module Grammar
 
 		def Noun.parse(text,gram_props,frequency,line)
 			Noun.new(text,gram_props,frequency,MASCULINE) # TODO TEMP
+		end
+
+		def all_forms
+			retval = []
+			[1,2].each do |number|
+				CASES.each do |gram_case|
+					retval << {:case => gram_case, :number => number}
+				end
+			end
+			retval
 		end
 	end
 
@@ -61,6 +75,18 @@ module Grammar
 
 		def Adjective.parse(text,gram_props,frequency,line)
 			Adjective.new(text,gram_props,frequency) # TODO TEMP
+		end
+
+		def all_forms
+			retval = []
+			[1,2].each do |number|
+				CASES.each do |gram_case|
+					GENDERS.each do |gender|
+						retval << {:case => gram_case, :number => number, :gender=> gender}
+					end
+				end
+			end
+			retval
 		end
 	end
 
