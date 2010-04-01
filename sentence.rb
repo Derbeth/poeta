@@ -12,8 +12,10 @@ module Sentences
 end
 
 class SentenceManager
-	def initialize(dictionary,grammar)
-		@dictionary,@grammar=dictionary,grammar
+	attr_reader :debug
+
+	def initialize(dictionary,grammar,debug=false)
+		@dictionary,@grammar,@debug=dictionary,grammar,debug
 		@sentence_builders=[]
 	end
 
@@ -24,7 +26,7 @@ class SentenceManager
 				next if line =~ /^#/ || line !~ /\w/
 				line.chomp!
 				frequency, rest = read_frequency(line)
-				sentence_builder = SentenceBuilder.new(@dictionary,@grammar,rest,frequency)
+				sentence_builder = SentenceBuilder.new(@dictionary,@grammar,rest,frequency,debug)
 				@sentence_builders << sentence_builder
 			rescue ParseError => e
 				puts "error: #{e.message}"
@@ -40,6 +42,11 @@ class SentenceManager
 	# returns the number of sentence builders
 	def size
 		@sentence_builders.size
+	end
+
+	def debug=(d)
+		@debug=d
+		@sentence_builders.each { |b| b.debug=d }
 	end
 
 	private
@@ -59,16 +66,16 @@ end
 
 class SentenceBuilder
 	include Sentences
-	attr_accessor :frequency
+	attr_accessor :frequency, :debug
 
-	def initialize(dictionary,grammar,pattern,frequency)
-		@dictionary,@grammar,@pattern,@frequency = dictionary,grammar,pattern,frequency
+	def initialize(dictionary,grammar,pattern,frequency,debug=false)
+		@dictionary,@grammar,@pattern,@frequency,@debug = dictionary,grammar,pattern,frequency,debug
 		raise "invalid frequency: #{frequency}" if frequency < 0
 		Sentence.validate_pattern(pattern)
 	end
 
 	def create_sentence
-		Sentence.new(@dictionary,@grammar,@pattern.dup)
+		Sentence.new(@dictionary,@grammar,@pattern.dup,@debug)
 	end
 end
 
@@ -138,7 +145,8 @@ class Sentence
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE)
 		return '' unless adjective
 		noun = @nouns[noun_index]
-		adjective.text
+		form = {:case=>NOMINATIVE, :gender=>noun.gender}
+		adjective.inflect(@grammar,form)
 	end
 
 	def handle_verb(full_match,options)

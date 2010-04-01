@@ -65,6 +65,34 @@ class PolishGrammarTest < Test::Unit::TestCase
 		assert_equal('waltie', grammar.inflect_noun('walt', {:case=>LOCATIVE}, 'A', 'X'))
 	end
 
+	def test_read_rules
+		grammar = PolishGrammar.new
+
+		grammar_text = "N a 1 a b c"
+		grammar.read_rules(grammar_text)
+		assert_equal(1,grammar.size)
+
+		grammar_text = "N b 2 a b c" # make sure that reading clears rules
+		grammar.read_rules(grammar_text)
+		assert_equal(1,grammar.size)
+
+		grammar_text = "" # test on empty
+		grammar.read_rules(grammar_text)
+		assert_equal(0,grammar.size)
+
+		grammar_text = <<-END
+# starts with a comment
+N c 1 a b c
+wrong line
+A d 1 d d d
+
+N e 1 e e e
+N f 1 f f f
+		END
+		grammar.read_rules(grammar_text)
+		assert_equal(4,grammar.size)
+	end
+
 	def test_adjective
 		grammar_text = <<-END
 A K 102 y ego y

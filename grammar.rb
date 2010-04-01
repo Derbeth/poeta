@@ -72,7 +72,7 @@ module Grammar
 
 	class PolishGrammar < AbstractGrammar
 
-		def initialize()
+		def initialize
 			@rules={}
 			SPEECH_PARTS.each do |part|
 				@rules[part] = {}
@@ -80,8 +80,15 @@ module Grammar
 		end
 
 		def read_rules(source)
+			initialize
 			source.each_line do |line|
+				next if line =~ /^#/ || line !~ /\w/
+				line.chomp!
 				speech_part,pattern,form,remove,add,condition = line.split(/\s+/)
+				unless speech_part && pattern && form && remove && add && condition
+					print "wrong line: '#{line}'"
+					next
+				end
 				form = form.to_i
 				find,required = condition.split(/\//)
 				remove = '' if (remove == '0')
@@ -97,6 +104,17 @@ module Grammar
 				@rules[speech_part][form] << Rule.new(remove,add,find,*required_props)
 # 				puts "#{speech_part} #{form} #{@rules[speech_part][form].inspect}"
 			end
+		end
+
+		# returns complete number of rules for all parts of speech
+		def size
+			retval = 0
+			@rules.values.each do |part_forms|
+				part_forms.values.each do |form_rules|
+					retval += form_rules.size
+				end
+			end
+			retval
 		end
 
 		def inflect_noun(noun,form,*gram_props)

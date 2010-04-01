@@ -43,8 +43,9 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary_text = "N 100 stuff\nA 100 cool"
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
+		grammar = PolishGrammar.new
 
-		sentence = Sentence.new(dictionary,'grammar','?${ADJ} ${NOUN}?')
+		sentence = Sentence.new(dictionary,grammar,'?${ADJ} ${NOUN}?')
 		assert_equal('?cool stuff?', sentence.write)
 
 		srand 1
@@ -52,9 +53,9 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary2 = Dictionary.new
 		dictionary2.read(dictionary2_text)
 
-		sentence = Sentence.new(dictionary2,'grammar','${ADJ1} ${NOUN} ${ADJ2} ${NOUN2}')
+		sentence = Sentence.new(dictionary2,grammar,'${ADJ1} ${NOUN} ${ADJ2} ${NOUN2}')
 		assert_equal('cool stuff bad things', sentence.write)
-		sentence = Sentence.new(dictionary2,'grammar','${NOUN1} ${ADJ1} ${NOUN2} ${ADJ1}')
+		sentence = Sentence.new(dictionary2,grammar,'${NOUN1} ${ADJ1} ${NOUN2} ${ADJ1}')
 		assert_equal('things bad stuff bad', sentence.write)
 	end
 
@@ -78,10 +79,11 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary_text = "N 100 foo\nA 100 bar"
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
+		grammar = PolishGrammar.new
 
-		sentence = Sentence.new(dictionary,'grammar','${NOUN1} ${ADJ}')
+		sentence = Sentence.new(dictionary,grammar,'${NOUN1} ${ADJ}')
 		sentence.debug = true
-		assert_equal('foo(${NOUN1}) bar(${ADJ}) END', sentence.write)
+		assert_equal('foo bar END', sentence.write)
 	end
 end
 
@@ -91,8 +93,9 @@ class SentenceBuilderTest < Test::Unit::TestCase
 		dictionary_text = "N 100 foo\nN 100 bar"
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
+		grammar = PolishGrammar.new
 
-		builder = SentenceBuilder.new(dictionary,'grammar','a ${NOUN} b',100)
+		builder = SentenceBuilder.new(dictionary,grammar,'a ${NOUN} b',100)
 		sentence1 = builder.create_sentence
 		sentence2 = builder.create_sentence
 		text1 = sentence1.write
