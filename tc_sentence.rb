@@ -11,11 +11,11 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
 
-		sentence = Sentence.new(dictionary,'')
+		sentence = Sentence.new(dictionary,'grammar','')
 		assert_equal('', sentence.write)
-		sentence = Sentence.new(dictionary,'  ')
+		sentence = Sentence.new(dictionary,'grammar','  ')
 		assert_equal('', sentence.write)
-		sentence = Sentence.new(dictionary,' ${VERB} ${SUBJ}   ${SUBJ} ')
+		sentence = Sentence.new(dictionary,'grammar',' ${VERB} ${SUBJ}   ${SUBJ} ')
 		assert_equal('foo foo', sentence.write)
 	end
 
@@ -24,7 +24,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
 
-		sentence = Sentence.new(dictionary,'a ${SUBJ} b')
+		sentence = Sentence.new(dictionary,'grammar','a ${SUBJ} b')
 		text = sentence.write
 		assert_equal('a foo b', text)
 		assert_equal('foo', sentence.subject.text)
@@ -33,7 +33,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary2_text = "N 100 foo\nN 100 bar"
 		dictionary2 = Dictionary.new
 		dictionary2.read(dictionary2_text)
-		sentence = Sentence.new(dictionary2,'a ${SUBJ} ${SUBJ2} b')
+		sentence = Sentence.new(dictionary2,'grammar','a ${SUBJ} ${SUBJ2} b')
 		text = sentence.write
 		assert_equal('a foo bar b', text)
 		assert_equal('foo', sentence.subject.text)
@@ -44,7 +44,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
 
-		sentence = Sentence.new(dictionary,'?${ADJ} ${NOUN}?')
+		sentence = Sentence.new(dictionary,'grammar','?${ADJ} ${NOUN}?')
 		assert_equal('?cool stuff?', sentence.write)
 
 		srand 1
@@ -52,9 +52,9 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary2 = Dictionary.new
 		dictionary2.read(dictionary2_text)
 
-		sentence = Sentence.new(dictionary2,'${ADJ1} ${NOUN} ${ADJ2} ${NOUN2}')
+		sentence = Sentence.new(dictionary2,'grammar','${ADJ1} ${NOUN} ${ADJ2} ${NOUN2}')
 		assert_equal('cool stuff bad things', sentence.write)
-		sentence = Sentence.new(dictionary2,'${NOUN1} ${ADJ1} ${NOUN2} ${ADJ1}')
+		sentence = Sentence.new(dictionary2,'grammar','${NOUN1} ${ADJ1} ${NOUN2} ${ADJ1}')
 		assert_equal('things bad stuff bad', sentence.write)
 	end
 
@@ -64,13 +64,13 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
 
-		sentence = Sentence.new(dictionary,'${NOUN} ${VERB} ${NOUN2} ${VERB2}')
+		sentence = Sentence.new(dictionary,'grammar','${NOUN} ${VERB} ${NOUN2} ${VERB2}')
 		assert_equal('stuff goes things suck', sentence.write)
 	end
 
 	def test_handle_empty_dictionary
 		dictionary = Dictionary.new
-		sentence = Sentence.new(dictionary,'${NOUN} ${ADJ} ${VERB}')
+		sentence = Sentence.new(dictionary,'grammar','${NOUN} ${ADJ} ${VERB}')
 		assert_equal('', sentence.write.strip)
 	end
 end
@@ -82,7 +82,7 @@ class SentenceBuilderTest < Test::Unit::TestCase
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
 
-		builder = SentenceBuilder.new(dictionary,'a ${NOUN} b',100)
+		builder = SentenceBuilder.new(dictionary,'grammar','a ${NOUN} b',100)
 		sentence1 = builder.create_sentence
 		sentence2 = builder.create_sentence
 		text1 = sentence1.write
@@ -106,7 +106,7 @@ class SentenceManagerTest < Test::Unit::TestCase
 
 1 owaśtam
 		END
-		mgr = SentenceManager.new("dictionary")
+		mgr = SentenceManager.new("dictionary",'grammar')
 		mgr.read(input)
 		assert_equal(3, mgr.size)
 		mgr.read(input)
@@ -122,7 +122,7 @@ class SentenceManagerTest < Test::Unit::TestCase
 2 is
 0 neverever
 		END
-		mgr = SentenceManager.new("dictionary")
+		mgr = SentenceManager.new("dictionary",'grammar')
 		mgr.read(input)
 		assert_equal(5,mgr.size)
 		100.times() do
@@ -132,7 +132,7 @@ class SentenceManagerTest < Test::Unit::TestCase
 	end
 
 	def test_validation
-		mgr = SentenceManager.new("dictionary")
+		mgr = SentenceManager.new("dictionary",'grammar')
 		input = '10 ${SUBJ} ${VERB} ${SUBJ}' # double subject
 		assert_raise(RuntimeError) { mgr.read(input) }
 

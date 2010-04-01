@@ -72,3 +72,21 @@ V 0 nic
 		end
 	end
 end
+
+class WordTest < Test::Unit::TestCase
+	def test_inflect
+		grammar_text = <<-END
+N A 2   0 Foo .
+N B 2   0 Wrong .
+A C 102 0 Bar .
+A D 102 0 TooWrong .
+		END
+		grammar = PolishGrammar.new
+		grammar.read_rules(grammar_text)
+		noun = Noun.new('foo',%w{A},100,1)
+		assert_equal('fooFoo', noun.inflect(grammar, {:case=>GENITIVE}))
+		adjective = Adjective.new('bar',%w{C},100)
+		assert_equal('barBar', adjective.inflect(grammar,
+			{:case=>GENITIVE,:gender=>MASCULINE}))
+	end
+end

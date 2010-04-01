@@ -6,9 +6,11 @@ require 'sentence'
 
 include Grammar
 
+grammar = PolishGrammar.new
+File.open('pl.aff') { |f| grammar.read_rules(f) }
 dictionary = Dictionary.new
-dictionary.read(File.open('default.dic'))
-sentence_mgr = SentenceManager.new(dictionary)
-sentence_mgr.read(File.open('default.cfg'))
+File.open('default.dic') { |f| dictionary.read(f) }
+sentence_mgr = SentenceManager.new(dictionary,grammar)
+File.open('default.cfg') { |f| sentence_mgr.read(f) }
 poem = Poem.new(dictionary,"grammar",sentence_mgr)
 puts poem.text

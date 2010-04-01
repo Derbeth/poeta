@@ -34,9 +34,15 @@ module Grammar
 		def all_forms
 			return [{}]
 		end
+
+		def inflect(grammar,form)
+			return @text
+		end
 	end
 
 	class Noun < Word
+		attr_reader :gender
+
 		def initialize(text,gram_props,frequency,gender)
 			super(text,gram_props,frequency)
 			@gender = gender
@@ -55,6 +61,10 @@ module Grammar
 				end
 			end
 			retval
+		end
+
+		def inflect(grammar,form)
+			return grammar.inflect_noun(text,form,*gram_props)
 		end
 	end
 
@@ -88,15 +98,19 @@ module Grammar
 			end
 			retval
 		end
+
+		def inflect(grammar,form)
+			return grammar.inflect_adjective(text,form,*gram_props)
+		end
 	end
 
 	class Words
 		private_class_method :new
 		def Words.get_class(speech_part)
 			case speech_part
-				when NOUN: Noun
-				when VERB: Verb
-				when ADJECTIVE: Adjective
+				when NOUN then Noun
+				when VERB then Verb
+				when ADJECTIVE then Adjective
 				else raise "unknown speech part: #{speech_part}"
 			end
 		end

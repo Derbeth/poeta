@@ -46,7 +46,7 @@ ARGV.each do |to_find|
 		end
 
 		word.all_forms.each do |form|
-			puts "#{GrammarForm.pretty_print(form)}  #{word.text}"
+			puts "#{GrammarForm.pretty_print(form)}  #{word.inflect(grammar,form)}"
 		end
 	end
 	puts "'#{to_find}' not found" unless any_found

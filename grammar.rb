@@ -11,27 +11,27 @@ module Grammar
 	NOMINATIVE,GENITIVE,DATIVE,ACCUSATIVE,INSTRUMENTAL,LOCATIVE,VOCATIVE = *(1..7)
 	CASES = [NOMINATIVE,GENITIVE,DATIVE,ACCUSATIVE,INSTRUMENTAL,LOCATIVE,VOCATIVE]
 	CASE_NAMES = %w{M D C B N Ms W}
-	CASE2STRING = Hash[CASES.zip CASE_NAMES]
+	CASE2STRING = Hash[*CASES.zip(CASE_NAMES).flatten]
 	CASE_NAME_LEN = 2
 
 	MASCULINE,FEMININE,NEUTER = *(1..3)
 	GENDERS = [MASCULINE,FEMININE,NEUTER]
 	GENDER_NAMES = %w{m f n}
-	GENDER2STRING = Hash[GENDERS.zip GENDER_NAMES]
+	GENDER2STRING = Hash[*GENDERS.zip(GENDER_NAMES).flatten]
 
 	SINGULAR,PLURAL = *(1..2)
 	# all supported grammatical numbers (like singular or plural)
 	NUMBERS = [SINGULAR,PLURAL]
 	NUMBER_NAMES = %w{Sg Pl}
-	NUMBER2STRING = Hash[NUMBERS.zip NUMBER_NAMES]
+	NUMBER2STRING = Hash[*NUMBERS.zip(NUMBER_NAMES).flatten]
 
 	class Grammar
 		private_class_method :new
 		def Grammar.describe_speech_part(s)
 			case s
-				when NOUN: 'noun'
-				when VERB: 'verb'
-				when ADJECTIVE: 'adjective'
+				when NOUN then 'noun'
+				when VERB then 'verb'
+				when ADJECTIVE then 'adjective'
 				else raise "unknown speech part #{s}"
 			end
 		end
@@ -116,7 +116,7 @@ module Grammar
 			else
 # 				puts "does not have noun case #{noun_case} #{@rules[NOUN].inspect}"
 			end
-			puts "warn: '#{noun}' not inflected for #{form.inspect} #{gram_props}"
+# 			puts "warn: '#{noun}' not inflected for #{form.inspect} #{gram_props}"
 			noun
 		end
 
@@ -124,10 +124,11 @@ module Grammar
 			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
 			raise ":gender has to be passed '#{form[:gender]}'" unless form[:gender]
 			raise "wrong gender: #{form[:gender]}" unless GENDERS.include? form[:gender]
+			number = form[:number] || 1
 			form_id = form[:case]
-			form_id += (form[:number]-1) * 10
+			form_id += (number-1) * 10
 			form_id += form[:gender] * 100
-			puts "form id: #{form_id} #{@rules[ADJECTIVE].keys.inspect}"
+# 			puts "form id: #{form_id} #{@rules[ADJECTIVE].keys.inspect}"
 
 			return adjective if form[:case] == NOMINATIVE
 
@@ -138,7 +139,7 @@ module Grammar
 					end
 				end
 			end
-			puts "warn: '#{adjective}' not inflected for #{form.inspect} #{gram_props}"
+# 			puts "warn: '#{adjective}' not inflected for #{form.inspect} #{gram_props}"
 			adjective
 		end
 	end

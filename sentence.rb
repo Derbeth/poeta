@@ -12,8 +12,8 @@ module Sentences
 end
 
 class SentenceManager
-	def initialize(dictionary)
-		@dictionary=dictionary
+	def initialize(dictionary,grammar)
+		@dictionary,@grammar=dictionary,grammar
 		@sentence_builders=[]
 	end
 
@@ -24,7 +24,7 @@ class SentenceManager
 				next if line =~ /^#/ || line !~ /\w/
 				line.chomp!
 				frequency, rest = read_frequency(line)
-				sentence_builder = SentenceBuilder.new(@dictionary,rest,frequency)
+				sentence_builder = SentenceBuilder.new(@dictionary,@grammar,rest,frequency)
 				@sentence_builders << sentence_builder
 			rescue ParseError => e
 				puts "error: #{e.message}"
@@ -61,21 +61,22 @@ class SentenceBuilder
 	include Sentences
 	attr_accessor :frequency
 
-	def initialize(dictionary,pattern,frequency)
-		@dictionary,@pattern,@frequency = dictionary,pattern,frequency
+	def initialize(dictionary,grammar,pattern,frequency)
+		@dictionary,@grammar,@pattern,@frequency = dictionary,grammar,pattern,frequency
 		raise "invalid frequency: #{frequency}" if frequency < 0
 		Sentence.validate_pattern(pattern)
 	end
 
 	def create_sentence
-		Sentence.new(@dictionary,@pattern.dup)
+		Sentence.new(@dictionary,@grammar,@pattern.dup)
 	end
 end
 
 class Sentence
 	attr_accessor :subject
-	def initialize(dictionary,pattern)
-		@dictionary,@pattern = dictionary,pattern.strip
+
+	def initialize(dictionary,grammar,pattern)
+		@dictionary,@grammar,@pattern = dictionary,grammar,pattern.strip
 		@pattern.gsub!(/ {2,}/, ' ')
 		@subject = nil
 		@nouns = {}

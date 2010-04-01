@@ -33,7 +33,7 @@ class Poem
 		verses = Array.new(verses_number)
 		(0..verses_number-1).each { |i| verses[i] = Verse.new(sentence_mgr) }
 
-		title_sentence_mgr = SentenceManager.new(dictionary)
+		title_sentence_mgr = SentenceManager.new(dictionary,grammar)
 		title_sentences_defs = <<-END
 60 ${SUBJ}
 40 ${ADJ} ${SUBJ}
