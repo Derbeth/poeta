@@ -73,10 +73,10 @@ class SentenceBuilder
 end
 
 class Sentence
-	attr_accessor :subject
+	attr_accessor :subject, :debug
 
-	def initialize(dictionary,grammar,pattern)
-		@dictionary,@grammar,@pattern = dictionary,grammar,pattern.strip
+	def initialize(dictionary,grammar,pattern,debug=false)
+		@dictionary,@grammar,@pattern,@debug = dictionary,grammar,pattern.strip,debug
 		@pattern.gsub!(/ {2,}/, ' ')
 		@subject = nil
 		@nouns = {}
@@ -106,8 +106,10 @@ class Sentence
 		text.gsub!(match_token(Sentences::SUBJECT))   { handle_subject($1,$2) }
 		text.gsub!(match_token(Sentences::NOUN))      { handle_noun($1,$2) }
 		text.gsub!(match_token(Sentences::ADJECTIVE)) { handle_adjective($1,$2) }
-		text.gsub!(match_token(Sentences::VERB)) { handle_verb($1,$2) }
-		text.strip
+		text.gsub!(match_token(Sentences::VERB))      { handle_verb($1,$2) }
+		text.strip!
+		text += ' END' if @debug
+		text
 	end
 
 	private

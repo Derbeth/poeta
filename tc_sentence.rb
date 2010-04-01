@@ -73,6 +73,16 @@ class SentenceTest < Test::Unit::TestCase
 		sentence = Sentence.new(dictionary,'grammar','${NOUN} ${ADJ} ${VERB}')
 		assert_equal('', sentence.write.strip)
 	end
+
+	def test_debug
+		dictionary_text = "N 100 foo\nA 100 bar"
+		dictionary = Dictionary.new
+		dictionary.read(dictionary_text)
+
+		sentence = Sentence.new(dictionary,'grammar','${NOUN1} ${ADJ}')
+		sentence.debug = true
+		assert_equal('foo(${NOUN1}) bar(${ADJ}) END', sentence.write)
+	end
 end
 
 class SentenceBuilderTest < Test::Unit::TestCase
