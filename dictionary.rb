@@ -31,6 +31,7 @@ module Grammar
 			@text <=> other.text
 		end
 
+		# returns an Enumerable collection of all applicable grammar forms
 		def all_forms
 			return [{}]
 		end
@@ -65,6 +66,7 @@ module Grammar
 			Noun.new(text,gram_props,frequency,gender,number)
 		end
 
+		# returns an Enumerable collection of all applicable grammar forms
 		def all_forms
 			retval = []
 			[1,2].each do |number|
@@ -124,8 +126,25 @@ module Grammar
 			grammar.inflect_verb(text,form,@reflexive,*gram_props)
 		end
 
+		# returns an Enumerable collection of all applicable grammar forms
+		def all_forms
+			retval = []
+			[1,2].each do |number|
+				[1,2,3].each do |person|
+					retval << {:person => person, :number => number}
+				end
+			end
+			retval
+		end
+
 		private
 		class VerbError < RuntimeError
+		end
+	end
+
+	class Adverb < Word
+		def initialize(text,gram_props,frequency)
+			super(text,gram_props,frequency)
 		end
 	end
 
@@ -138,6 +157,7 @@ module Grammar
 			Adjective.new(text,gram_props,frequency) # TODO TEMP
 		end
 
+		# returns an Enumerable collection of all applicable grammar forms
 		def all_forms
 			retval = []
 			GENDERS.each do |gender|
@@ -162,6 +182,7 @@ module Grammar
 				when NOUN then Noun
 				when VERB then Verb
 				when ADJECTIVE then Adjective
+				when ADVERB then Adverb
 				else raise "unknown speech part: #{speech_part}"
 			end
 		end

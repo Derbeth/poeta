@@ -193,6 +193,9 @@ class GrammarFormTest < Test::Unit::TestCase
 
 		form = {:case=>LOCATIVE, :gender=>NEUTER, :number=>1, :foo=>'bar'}
 		assert_equal('n Sg Ms foo=bar', GrammarForm.pretty_print(form))
+
+		form = {:number=>PLURAL, :person=>2}
+		assert_equal('Pl 2', GrammarForm.pretty_print(form))
 	end
 
 	# makes sure that no exceptions are thrown for any legal combination of forms
@@ -214,6 +217,17 @@ class GrammarFormTest < Test::Unit::TestCase
 					assert_not_nil GrammarForm.pretty_print(case_number_form)
 					assert_not_nil GrammarForm.pretty_print(full_form)
 				end
+			end
+		end
+
+		NUMBERS.each do |number|
+			number_form = {:number=>number}
+			assert_not_nil GrammarForm.pretty_print(number_form)
+			[1,2,3].each do |person|
+				person_form = {:person=>person}
+				number_person_form = number_form.merge(person_form)
+				assert_not_nil GrammarForm.pretty_print(person_form)
+				assert_not_nil GrammarForm.pretty_print(number_person_form)
 			end
 		end
 	end

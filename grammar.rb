@@ -203,8 +203,9 @@ module Grammar
 			parts << format_gender(form[:gender]) if (form[:gender])
 			parts << format_number(form[:number]) if (form[:number])
 			parts << format_case(form[:case]) if (form[:case])
+			parts << format_person(form[:person]) if (form[:person])
 			form.keys.sort_by{|s| s.to_s}.each do |key|
-				if ![:gender,:number,:case].include?(key)
+				if ![:gender,:number,:case,:person].include?(key)
 					parts << "#{key}=#{form[key]}"
 				end
 			end
@@ -227,6 +228,10 @@ module Grammar
 			name = CASE2STRING[gram_case]
 			raise "unknown case #{gram_case}" unless name
 			name.rjust(CASE_NAME_LEN)
+		end
+
+		def self.format_person(person)
+			person
 		end
 	end
 

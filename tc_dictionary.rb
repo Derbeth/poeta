@@ -168,6 +168,14 @@ class VerbTest < Test::Unit::TestCase
 		verb = Verb.parse('foo',[],100,"REFLEXIVE")
 		assert verb.reflexive
 	end
+
+	def test_all_forms
+		grammar = PolishGrammar.new
+		verb = Verb.new('foo',[],100)
+		any = false
+		verb.all_forms.each { |form| verb.inflect(grammar,form) ; any = true }
+		assert any
+	end
 end
 
 class NounTest < Test::Unit::TestCase
@@ -182,8 +190,25 @@ class NounTest < Test::Unit::TestCase
 		assert_equal(NEUTER, noun.gender)
 		assert_equal(2, noun.number)
 	end
+
+	def test_all_forms
+		grammar = PolishGrammar.new
+		noun = Noun.new('foo',[],100,MASCULINE)
+		any = false
+		noun.all_forms.each { |form| noun.inflect(grammar,form) ; any = true }
+		assert any
+	end
 end
 
+class AdjectiveTest < Test::Unit::TestCase
+	def test_all_forms
+		grammar = PolishGrammar.new
+		adj = Adjective.new('foo',[],100)
+		any = false
+		adj.all_forms.each { |form| adj.inflect(grammar,form) ; any = true }
+		assert any
+	end
+end
 class SmartRandomDictionaryTest < Test::Unit::TestCase
 	def test_correct
 		dictionary_text = "N 1 foo\nN 1 bar"
