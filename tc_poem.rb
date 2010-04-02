@@ -47,7 +47,7 @@ class VerseTest < Test::Unit::TestCase
 		other = WithSubjectSentence.new('other')
 
 		verse1 = Verse.new(StubSentenceManager.new(no,no,no,no))
-		assert_equal('***', verse1.subject)
+		assert_equal(nil, verse1.subject)
 		verse2 = Verse.new(StubSentenceManager.new(no,some,no,other))
 		assert_equal('some', verse2.subject)
 		verse3 = Verse.new(StubSentenceManager.new(some,no,no,no))

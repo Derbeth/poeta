@@ -42,6 +42,7 @@ module Grammar
 
 	class Noun < Word
 		attr_reader :gender
+		STRING2GENDER = {'m'=>MASCULINE,'n'=>NEUTER,'f'=>FEMININE}
 
 		def initialize(text,gram_props,frequency,gender)
 			super(text,gram_props,frequency)
@@ -50,7 +51,11 @@ module Grammar
 		end
 
 		def Noun.parse(text,gram_props,frequency,line)
-			Noun.new(text,gram_props,frequency,MASCULINE) # TODO TEMP
+			gender = MASCULINE
+			if line =~ /\b([mfn])\b/
+				gender = STRING2GENDER[$1]
+			end
+			Noun.new(text,gram_props,frequency,gender)
 		end
 
 		def all_forms
@@ -89,9 +94,9 @@ module Grammar
 
 		def all_forms
 			retval = []
-			[1,2].each do |number|
-				CASES.each do |gram_case|
-					GENDERS.each do |gender|
+			GENDERS.each do |gender|
+				[1,2].each do |number|
+					CASES.each do |gram_case|
 						retval << {:case => gram_case, :number => number, :gender=> gender}
 					end
 				end
@@ -214,7 +219,31 @@ module Grammar
 			end
 			[word,gram_props,rest]
 		end
+	end
 
+	class SmartRandomDictionary < Dictionary
+		def initialize(max_size=DEFAULT_MAX_SIZE)
+			super()
+			@max_size=max_size
+		end
+
+		protected
+		DEFAULT_MAX_TRIES = 4
+		DEFAULT_MAX_SIZE = 2
+
+		# returns index of random word or -1 if none can be selected
+		def get_random_index(speech_part)
+			@remembered_indices ||= {}
+			@remembered_indices[speech_part] ||= []
+			index = nil
+			DEFAULT_MAX_TRIES.times do
+				index = super(speech_part)
+				break unless @remembered_indices[speech_part].include?(index)
+			end
+			@remembered_indices[speech_part].push(index)
+			@remembered_indices[speech_part].shift if @remembered_indices[speech_part].size > @max_size
+			index
+		end
 	end
 
 end

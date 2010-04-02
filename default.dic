@@ -1,16 +1,23 @@
-N 100 słońce/E
-N 100 szatan/G NO_NOUN_NOUN
-N 100 grzech
-N 100 wina
-N 100 kara
-N 100 cierpienie
-N 100 ból
-N 100 upadek
-N 100 pustka
+N 100 ból m
+N 100 cierpienie n
+N 100 grzech m
+N 100 kara f
+N 100 pustka f
+N 100 słońce n
+N 100 szatan m
+N 100 upadek m
+N 100 wina f
 
-V 100 widzieć
 V 100 dotykać
+V 100 kłamać
+V 100 płakać
+V 100 płonąć
+V 100 umierać
+V 100 widzieć
 
 A 100 czarny/a
-A 100 obcy/a
 A 100 martwy/a
+A 100 mroczny/a
+A 100 obcy/a
+A 100 zapomniany/a
+A 100 zdradziecki/b

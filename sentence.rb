@@ -14,8 +14,8 @@ end
 class SentenceManager
 	attr_reader :debug
 
-	def initialize(dictionary,grammar,debug=false)
-		@dictionary,@grammar,@debug=dictionary,grammar,debug
+	def initialize(dictionary,grammar,better=false,debug=false)
+		@dictionary,@grammar,@better,@debug=dictionary,grammar,better,debug
 		@sentence_builders=[]
 	end
 
@@ -26,7 +26,7 @@ class SentenceManager
 				next if line =~ /^#/ || line !~ /\w/
 				line.chomp!
 				frequency, rest = read_frequency(line)
-				sentence_builder = SentenceBuilder.new(@dictionary,@grammar,rest,frequency,debug)
+				sentence_builder = SentenceBuilder.new(@dictionary,@grammar,rest,frequency,@better,@debug)
 				@sentence_builders << sentence_builder
 			rescue ParseError => e
 				puts "error: #{e.message}"
@@ -68,22 +68,23 @@ class SentenceBuilder
 	include Sentences
 	attr_accessor :frequency, :debug
 
-	def initialize(dictionary,grammar,pattern,frequency,debug=false)
-		@dictionary,@grammar,@pattern,@frequency,@debug = dictionary,grammar,pattern,frequency,debug
+	def initialize(dictionary,grammar,pattern,frequency,better=false,debug=false)
+		@dictionary,@grammar,@pattern,@frequency,@better,@debug = dictionary,grammar,pattern,frequency,better,debug
 		raise "invalid frequency: #{frequency}" if frequency < 0
 		Sentence.validate_pattern(pattern)
 	end
 
 	def create_sentence
-		Sentence.new(@dictionary,@grammar,@pattern.dup,@debug)
+		Sentence.new(@dictionary,@grammar,@pattern.dup,@better,@debug)
 	end
 end
 
 class Sentence
-	attr_accessor :subject, :debug
+	attr_accessor :debug
+	attr_reader :text, :subject
 
-	def initialize(dictionary,grammar,pattern,debug=false)
-		@dictionary,@grammar,@pattern,@debug = dictionary,grammar,pattern.strip,debug
+	def initialize(dictionary,grammar,pattern,better=false,debug=false)
+		@dictionary,@grammar,@pattern,@better,@debug = dictionary,grammar,pattern.strip,better,debug
 		@pattern.gsub!(/ {2,}/, ' ')
 		@subject = nil
 		@nouns = {}
@@ -109,20 +110,30 @@ class Sentence
 
 	# creates and returns a new sentence
 	def write
-		text = @pattern
-		text.gsub!(match_token(Sentences::SUBJECT))   { handle_subject($1,$2) }
-		text.gsub!(match_token(Sentences::NOUN))      { handle_noun($1,$2) }
-		text.gsub!(match_token(Sentences::ADJECTIVE)) { handle_adjective($1,$2) }
-		text.gsub!(match_token(Sentences::VERB))      { handle_verb($1,$2) }
-		text.strip!
-		text += ' END' if @debug
-		text
+		@text = @pattern
+		@text.gsub!(match_token(Sentences::SUBJECT))   { handle_subject($1,$2) }
+		@text.gsub!(match_token(Sentences::NOUN))      { handle_noun($1,$2) }
+		@text.gsub!(match_token(Sentences::ADJECTIVE)) { handle_adjective($1,$2) }
+		@text.gsub!(match_token(Sentences::VERB))      { handle_verb($1,$2) }
+		@text.strip!
+		@text += ' END' if @debug
+		@text
+	end
+
+	def subject=(s)
+		@subject = s
+		@nouns[1] = @subject
 	end
 
 	private
 
 	def handle_subject(full_match,options)
-		noun = handle_noun_common(full_match,options)
+		subject_index = self.class.read_index(full_match,options)
+		if subject_index == 1 && @subject
+			noun = @subject
+		else
+			noun = handle_noun_common(full_match,options)
+		end
 		@subject ||= noun
 		noun ? noun.text : ''
 	end
@@ -134,7 +145,12 @@ class Sentence
 
 	def handle_noun_common(full_match,options)
 		noun_index = self.class.read_index(full_match,options)
-		noun = @dictionary.get_random(Grammar::NOUN)
+		noun = nil
+		4.times do
+			noun = @dictionary.get_random(Grammar::NOUN)
+			break unless @better && @nouns.values.include?(noun)
+			puts "you shit! #{noun.inspect}"
+		end
 		@nouns[noun_index] = noun
 		noun
 	end

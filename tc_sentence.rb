@@ -85,6 +85,22 @@ class SentenceTest < Test::Unit::TestCase
 		sentence.debug = true
 		assert_equal('foo bar END', sentence.write)
 	end
+
+	def test_set_sentence
+		dictionary_text = "N 100 foo\nA 100 cool"
+		dictionary = Dictionary.new
+		dictionary.read(dictionary_text)
+		subject = Noun.new('bar',[],0,1)
+		grammar = PolishGrammar.new
+
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${SUBJ2} ${SUBJ3}')
+		sentence.subject = subject
+		assert_equal('bar foo foo', sentence.write)
+
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${ADJ}')
+		sentence.subject = subject
+		assert_equal('bar cool', sentence.write)
+	end
 end
 
 class SentenceBuilderTest < Test::Unit::TestCase

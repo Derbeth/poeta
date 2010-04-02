@@ -10,7 +10,6 @@ class Verse
 		sentences_text = []
 		sentences.each { |s| sentences_text << s.write }
 		@subject = sentences.inject(nil) { |found, cur| found ||= cur.subject }
-		@subject ||= '***'
 		@text = sentences_text.join("\n")
 	end
 
@@ -43,7 +42,8 @@ class Poem
 		title_sentence_mgr.read(title_sentences_defs)
 
 		title_sentence = title_sentence_mgr.random_sentence
-		title_sentence.subject = verses[0].subject
+		title_subject = verses[0].subject
+		title_sentence.subject = title_subject if title_subject
 		title = title_sentence.write
 
 		@title = title

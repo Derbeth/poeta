@@ -148,8 +148,6 @@ module Grammar
 			form_id += form[:gender] * 100
 # 			puts "form id: #{form_id} #{@rules[ADJECTIVE].keys.inspect}"
 
-			return adjective if form[:case] == NOMINATIVE
-
 			if (@rules[ADJECTIVE].has_key?(form_id)):
 				@rules[ADJECTIVE][form_id].each() do |rule|
 					if rule.matches?(adjective,*gram_props):
