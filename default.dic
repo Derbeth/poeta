@@ -8,12 +8,12 @@ N 100 szatan m
 N 100 upadek m
 N 100 wina f
 
-V 100 dotykać
-V 100 kłamać
-V 100 płakać
-V 100 płonąć
-V 100 umierać
-V 100 widzieć
+V 100 dotykać/1
+V 100 kłamać/9
+V 100 płakać/9
+V 100 płonąć/5
+V 100 umierać/1
+V 100 widzieć/7
 
 A 100 czarny/a
 A 100 martwy/a

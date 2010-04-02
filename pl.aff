@@ -38,3 +38,48 @@ A b 301         i a   i
 A b 302,303,306 0 ej  i
 A b 304,305     i ą   i
 A b 307         i a   i
+
+# koniugacja I, umierać, czytać
+V 1  1 ć m   ać
+V 1  2 ć sz  ać
+V 1  3 ć 0   ać
+V 1 11 ć my  ać
+V 1 12 ć cie ać
+V 1 13 ć ją  ać
+
+# koniugacja Va, płonąć, ciągnąć
+V 5	 1 ąć ę     nąć
+V 5  2 ąć iesz  nąć
+V 5  3 ąć ie    nąć
+V 5 11 ąć iemy  nąć
+V 5 12 ąć iecie nąć
+V 5 13 ć  0     nąć
+
+# koniugacja VIIa, widzieć
+V 7  1 ieć ę   ieć
+V 7  2 eć  sz  ieć
+V 7  3 eć  0   ieć
+V 7 11 eć  my  ieć
+V 7 12 eć  cie ieć
+V 7 13 ieć ą   ieć
+
+# koniugacja IX, kłamać, mazać; z->ż, s->sz, r->rz
+V 9  1 ać  ię    [m]ać
+V 9  1 zać żę    zać
+V 9  2 ać  iesz  [m]ać
+V 9  2 zać żesz  zać
+V 9  3 ać  ie    [m]ać
+V 9  3 zać że    zać
+V 9 11 ać  iemy  [m]ać
+V 9 11 zać żemy  zać
+V 9 12 ać  iecie [m]ać
+V 9 12 zać żecie zać
+V 9 13 ać  ią    [m]ać
+V 9 13 zać żą    zać
+#może też
+V 9  1 kać czę    kać
+V 9  2 kać czesz  kać
+V 9  3 kać cze    kać
+V 9 11 kać czemy  kać
+V 9 12 kać czecie kać
+V 9 13 kać czą    kać

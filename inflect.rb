@@ -38,7 +38,7 @@ File.open('pl.aff') { |f| grammar.read_rules(f) }
 ARGV.each do |to_find|
 	mask = to_find.gsub(/\*/, '.*')
 	any_found = false
-	dictionary.find_all {|wrd| wrd.text =~ /#{mask}/ }.sort.each do |word|
+	dictionary.find_all {|wrd| wrd.text =~ /^#{mask}$/ }.sort.each do |word|
 		any_found = true
 		if only_list:
 			puts word.text
