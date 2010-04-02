@@ -49,7 +49,7 @@ class PolishGrammarTest < Test::Unit::TestCase
 		assert_equal('bugu', rule5.inflect('bug', 'A'))
 	end
 
-	def test_grammar
+	def test_noun
 		grammar = PolishGrammar.new
 		grammar.read_rules(File.open('test.aff'))
 
@@ -146,6 +146,35 @@ A K 302-303 y ej  y
 			{:gender=>FEMININE, :number=>1, :case=>GENITIVE}, 'K'))
 		assert_equal('dobrej', grammar.inflect_adjective('dobry',
 			{:gender=>FEMININE, :number=>1, :case=>DATIVE}, 'K'))
+	end
+
+	def test_verb
+		grammar_text = <<-END
+V a  1 ć m   ać
+V a 12 ć cie ać
+		END
+		grammar = PolishGrammar.new
+		grammar.read_rules(grammar_text)
+
+		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {}) } # no forms
+		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:person=>'a'}) } # bad person
+		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:person=>0}) }   # bad person
+		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:person=>-1}) }  # bad person
+		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:person=>4}) }   # bad person
+		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:number=>'a'}) } # bad number
+		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:number=>0}) }   # bad number
+		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:number=>3}) }   # bad number
+
+		assert_equal('latać', grammar.inflect_verb('latać', {:person=>1})) # no inflexion
+		assert_equal('latać się', grammar.inflect_verb('latać', {:person=>1}, true))
+		assert_equal('latać', grammar.inflect_verb('latać', {:person=>1}, false, 'A'))
+		assert_equal('latać się', grammar.inflect_verb('latać', {:person=>1}, true, 'A'))
+
+		assert_equal('latam', grammar.inflect_verb('latać', {:person=>1}, false, 'a'))
+		assert_equal('latam', grammar.inflect_verb('latać', {:person=>1, :number=>1}, false, 'a'))
+		assert_equal('latać', grammar.inflect_verb('latać', {:person=>1, :number=>2}, false, 'a'))
+		assert_equal('latacie', grammar.inflect_verb('latać', {:person=>2, :number=>2}, false, 'a'))
+		assert_equal('latam się', grammar.inflect_verb('latać', {:person=>1}, true, 'a'))
 	end
 end
 

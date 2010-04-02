@@ -25,6 +25,9 @@ module Grammar
 	NUMBER_NAMES = %w{Sg Pl}
 	NUMBER2STRING = Hash[*NUMBERS.zip(NUMBER_NAMES).flatten]
 
+	class ParseError < RuntimeError
+	end
+
 	class Grammar
 		private_class_method :new
 		def Grammar.describe_speech_part(s)
@@ -142,23 +145,12 @@ module Grammar
 
 		def inflect_noun(noun,form,*gram_props)
 			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
-			noun_case = form[:case]
+			form_id = form[:case]
 			noun_number = form[:number] || 1
-			noun_case += 10 if noun_number == 2
+			form_id += 10 if noun_number == 2
 
-			return noun if noun_case == NOMINATIVE
-			
-			if (@rules[NOUN].has_key?(noun_case)):
-				@rules[NOUN][noun_case].each() do |rule|
-					if rule.matches?(noun,*gram_props):
-						return rule.inflect(noun,*gram_props)
-					end
-				end
-			else
-# 				puts "does not have noun case #{noun_case} #{@rules[NOUN].inspect}"
-			end
-# 			puts "warn: '#{noun}' not inflected for #{form.inspect} #{gram_props}"
-			noun
+			inflected = get_inflected_form(NOUN,form_id,noun,*gram_props)
+			inflected || noun
 		end
 
 		def inflect_adjective(adjective,form,*gram_props)
@@ -171,15 +163,35 @@ module Grammar
 			form_id += form[:gender] * 100
 # 			puts "form id: #{form_id} #{@rules[ADJECTIVE].keys.sort.inspect}"
 
-			if (@rules[ADJECTIVE].has_key?(form_id)):
-				@rules[ADJECTIVE][form_id].each() do |rule|
-					if rule.matches?(adjective,*gram_props):
-						return rule.inflect(adjective,*gram_props)
+			inflected = get_inflected_form(ADJECTIVE,form_id,adjective,*gram_props)
+			inflected || adjective
+		end
+
+		def inflect_verb(text,form,reflexive=false,*gram_props)
+			raise ":person has to be passed '#{form[:person]}'" unless form[:person]
+			raise "invalid person: #{form[:person]}" unless (1..3) === form[:person]
+			raise "invalid number: #{form[:number]}" if form[:number] && !((1..2) === form[:number])
+			number = form[:number] || 1
+			form_id = form[:person].to_int
+			form_id += (number.to_int-1) * 10
+
+			inflected = get_inflected_form(VERB,form_id,text,*gram_props)
+			inflected ||= text
+			inflected += ' się' if (reflexive)
+			inflected
+		end
+
+		private
+		# returns inflected form or nil if not found
+		def get_inflected_form(speech_part,form_id,word,*gram_props)
+			if (@rules[speech_part].has_key?(form_id)):
+				@rules[speech_part][form_id].each() do |rule|
+					if rule.matches?(word,*gram_props):
+						return rule.inflect(word,*gram_props)
 					end
 				end
 			end
-# 			puts "warn: '#{adjective}' not inflected for #{form.inspect} #{gram_props}"
-			adjective
+			nil
 		end
 	end
 

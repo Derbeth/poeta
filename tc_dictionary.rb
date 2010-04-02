@@ -40,9 +40,11 @@ A 50 "strasznie mocny"
 		END
 		dict = Dictionary.new
 		dict.read(input)
-		str = dict.to_s
-		assert_equal('Dictionary; 2x adjective, 2x noun', str)
-		puts str
+		assert_equal('Dictionary; 2x adjective, 2x noun', dict.to_s)
+
+		input = ""
+		dict.read(input)
+		assert_equal('Dictionary', dict.to_s)
 	end
 
 	def test_get_random
@@ -71,6 +73,56 @@ V 0 nic
 			assert_nil(dict.get_random(ADVERB))
 		end
 	end
+
+	def test_parse_verb
+		dict = Dictionary.new
+
+		dict_text = "V 100 foo/B"
+		dict.read(dict_text)
+		verb = dict.get_random(VERB)
+		assert_equal('foo', verb.text)
+		assert_equal(%w{B}, verb.gram_props)
+		assert !verb.reflexive
+		assert_nil verb.preposition
+		assert_nil verb.object_case
+
+		dict_text = "V 100 foo OBJ(,,,)\nV 100 bar REFLEX"
+		dict.read(dict_text)
+		assert_equal('Dictionary; 1x verb', dict.to_s)
+		verb = dict.get_random(VERB)
+		assert_equal('bar', verb.text)
+		assert_equal([], verb.gram_props)
+		assert verb.reflexive
+		assert_nil verb.preposition
+		assert_nil verb.object_case
+
+		dict_text = "V 100 foo/B OBJ(4)"
+		dict.read(dict_text)
+		verb = dict.get_random(VERB)
+		assert_equal(%w{B}, verb.gram_props)
+		assert !verb.reflexive
+		assert_nil verb.preposition
+		assert_equal(4, verb.object_case)
+
+		dict_text = "V 100 foo OBJ(4,na)"
+		dict.read(dict_text)
+		assert_equal('Dictionary', dict.to_s) # no words, parse error
+
+		dict_text = "V 100 foo OBJ(8)"
+		dict.read(dict_text)
+		assert_equal('Dictionary', dict.to_s) # no words, wrong case
+
+		dict_text = "V 100 foo OBJ(na)"
+		dict.read(dict_text)
+		assert_equal('Dictionary', dict.to_s) # no words, parse error
+
+		dict_text = "V 100 foo/B OBJ(na,4) REFLEX"
+		dict.read(dict_text)
+		verb = dict.get_random(VERB)
+		assert verb.reflexive
+		assert_equal('na', verb.preposition)
+		assert_equal(4, verb.object_case)
+	end
 end
 
 class WordTest < Test::Unit::TestCase
@@ -88,6 +140,16 @@ A D 102 0 TooWrong .
 		adjective = Adjective.new('bar',%w{C},100)
 		assert_equal('barBar', adjective.inflect(grammar,
 			{:case=>GENITIVE,:gender=>MASCULINE}))
+	end
+end
+
+class VerbTest < Test::Unit::TestCase
+	def test_parse
+		assert_raise(ParseError) { Verb.parse('foo',[],100,"OBJ(na)") } # wrong existing option
+		Verb.parse('foo',[],100,"SUBJ") # unknown option - ignore
+		assert_raise(ParseError) { Verb.parse('foo',[],100,"OBJ(8)") } # wrong case
+		verb = Verb.parse('foo',[],100,"OBJ(3)")
+		assert_equal(3,verb.object_case)
 	end
 end
 

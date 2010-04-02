@@ -74,12 +74,50 @@ module Grammar
 	end
 
 	class Verb < Word
-		def initialize(text,gram_props,frequency,preposition,object)
+		attr_reader :reflexive, :preposition, :object_case
+
+		def initialize(text,gram_props,frequency,reflexive=false,preposition=nil,object_case=nil)
 			super(text,gram_props,frequency)
+			raise VerbError, "invalid case: #{object_case}" if object_case && !CASES.include?(object_case)
+			@reflexive,@preposition,@object_case = reflexive,preposition,object_case
 		end
 
 		def Verb.parse(text,gram_props,frequency,line)
-			Verb.new(text,gram_props,frequency,'','') # TODO TEMP
+			reflexive = false
+			preposition,object_case = nil,nil
+			line.strip! if line
+			if line && !line.empty?
+				line.split(/\s+/).each do |part|
+					case part
+						when 'REFLEX' then reflexive = true
+						when /^OBJ\(([^)]+)\)$/
+							opts = $1
+							case opts
+								when /^([^,]+),(\d+)$/
+									preposition,object_case = $1.strip,Integer($2)
+								when /^\d+$/
+									preposition,object_case = nil,Integer(opts)
+								else
+									raise ParseError, "wrong option format for #{text}: '#{part}'"
+							end
+						else
+							puts "warn: unknown option '#{part}' for '#{text}'"
+					end
+				end
+			end
+			begin
+				Verb.new(text,gram_props,frequency,reflexive,preposition,object_case)
+			rescue VerbError => e
+				raise ParseError, e.message
+			end
+		end
+
+		def inflect(grammar,form)
+			grammar.inflect_verb(text,form,@reflexive,*gram_props)
+		end
+
+		private
+		class VerbError < RuntimeError
 		end
 	end
 
@@ -129,12 +167,14 @@ module Grammar
 		end
 
 		def to_s
-			retval = 'Dictionary; '
+			retval = 'Dictionary'
 			word_stats = []
 			@words.keys.sort.each do |speech_part|
 				word_stats << "#{@words[speech_part].size}x #{Grammar.describe_speech_part(speech_part)}"
 			end
-			retval += word_stats.join(', ')
+			words_part = word_stats.join(', ')
+			retval += '; ' + words_part unless (words_part.empty?)
+			retval
 		end
 
 		def get_random(speech_part)
@@ -143,6 +183,7 @@ module Grammar
 		end
 
 		def read(source)
+			@words = {}
 			source.each_line do |line|
 				begin
 					next if line =~ /^#/ || line !~ /\w/
@@ -155,7 +196,7 @@ module Grammar
 					@words[speech_part] ||= []
 					@words[speech_part] << word
 # 					puts "#{word.inspect}"
-				rescue DictParseError => e
+				rescue ParseError => e
 					puts "error: #{e.message}"
 				end
 			end
@@ -169,9 +210,6 @@ module Grammar
 
 		protected
 
-		class DictParseError < RuntimeError
-		end
-
 		# returns index of random word or -1 if none can be selected
 		def get_random_index(speech_part)
 			return -1 unless(@words.has_key?(speech_part))
@@ -184,18 +222,18 @@ module Grammar
 
 		def read_speech_part(line)
 			unless line =~ /^(\w)\s+/:
-				raise DictParseError, "cannot read speech part from line '#{line}'"
+				raise ParseError, "cannot read speech part from line '#{line}'"
 			end
 			speech_part,rest = $1,$'
 			if !SPEECH_PARTS.include?(speech_part):
-				raise DictParseError, "unknown speech part #{speech_part} in line '#{line}'"
+				raise ParseError, "unknown speech part #{speech_part} in line '#{line}'"
 			end
 			[speech_part,rest]
 		end
 
 		def read_frequency(line)
 			unless line =~ /^\s*(\d+)\s+/:
-				raise DictParseError, "cannot read frequency from '#{line}'"
+				raise ParseError, "cannot read frequency from '#{line}'"
 			end
 			frequency,rest = $1.to_i,$'
 			[frequency,rest]
@@ -208,14 +246,15 @@ module Grammar
 			elsif line =~ /^([^\s\/]+)/:
 				word,rest = $1,$'
 			else
-				raise DictParseError, "cannot read word from '#{line}'"
+				raise ParseError, "cannot read word from '#{line}'"
 			end
 
 			if rest =~ %r{^/(\w*)}:
 				if $1.empty?:
-					raise DictParseError, "cannot read word gram props from '#{line}'"
+					raise ParseError, "cannot read word gram props from '#{line}'"
 				end
-				gram_props,rest = $1.split(//),$'
+				rest=$'
+				gram_props = $1.split(//)
 			end
 			[word,gram_props,rest]
 		end
