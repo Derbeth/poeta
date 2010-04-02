@@ -9,6 +9,7 @@ module Sentences
 	NOUN = 'NOUN'
 	ADJECTIVE = 'ADJ'
 	VERB = 'VERB'
+	OBJECT = 'OBJ'
 end
 
 class SentenceManager
@@ -85,9 +86,8 @@ class Sentence
 
 	def initialize(dictionary,grammar,pattern,better=false,debug=false)
 		@dictionary,@grammar,@pattern,@better,@debug = dictionary,grammar,pattern.strip,better,debug
-		@pattern.gsub!(/ {2,}/, ' ')
 		@subject = nil
-		@nouns = {}
+		@nouns,@verbs = {},{}
 	end
 
 	def Sentence.validate_pattern(pattern)
@@ -100,7 +100,7 @@ class Sentence
 				raise "too many occurances of noun #{noun_index}" if noun_occurs[noun_index] > 1
 			end
 		end
-		[Sentences::ADJECTIVE, Sentences::VERB].each do |part|
+		[Sentences::ADJECTIVE, Sentences::VERB, Sentences::OBJECT].each do |part|
 			pattern.scan(match_token(part)) do |full_match,options|
 				noun_index = read_index(full_match,options)
 				raise "undefined noun referenced from #{full_match}" unless noun_occurs.include? noun_index
@@ -115,8 +115,10 @@ class Sentence
 		@text.gsub!(match_token(Sentences::NOUN))      { handle_noun($1,$2) }
 		@text.gsub!(match_token(Sentences::ADJECTIVE)) { handle_adjective($1,$2) }
 		@text.gsub!(match_token(Sentences::VERB))      { handle_verb($1,$2) }
-		@text.strip!
+		@text.gsub!(match_token(Sentences::OBJECT))    { handle_object($1,$2) }
 		@text += ' END' if @debug
+		@text.strip!
+		@text.gsub!(/ {2,}/, ' ')
 		@text
 	end
 
@@ -161,7 +163,7 @@ class Sentence
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE)
 		return '' unless adjective
 		noun = @nouns[noun_index]
-		form = {:case=>NOMINATIVE, :gender=>noun.gender}
+		form = {:case=>NOMINATIVE, :gender=>noun.gender, :number=>noun.number}
 		adjective.inflect(@grammar,form)
 	end
 
@@ -170,8 +172,22 @@ class Sentence
 		raise "no noun for #{full_match}" unless @nouns.include? noun_index
 		verb = @dictionary.get_random(Grammar::VERB)
 		return '' unless verb
+		@verbs[noun_index] = verb
 		noun = @nouns[noun_index]
-		verb.text
+		form = {:number=>noun.number,:person=>3} # TODO TEMP
+		verb.inflect(@grammar,form)
+	end
+
+	def handle_object(full_match,options)
+		noun_index = self.class.read_index(full_match,options)
+		verb = @verbs[noun_index]
+		raise "no verb for #{full_match}" unless verb
+		return '' unless verb.object_case
+		object = @dictionary.get_random(Grammar::NOUN)
+		return '' unless object
+		preposition_part = verb.preposition ? verb.preposition + ' ' : ''
+		form = {:case=>verb.object_case}
+		preposition_part + object.inflect(@grammar,form)
 	end
 
 	def Sentence.read_index(full_match,options)

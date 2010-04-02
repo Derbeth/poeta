@@ -41,21 +41,28 @@ module Grammar
 	end
 
 	class Noun < Word
-		attr_reader :gender
+		attr_reader :gender, :number
 		STRING2GENDER = {'m'=>MASCULINE,'n'=>NEUTER,'f'=>FEMININE}
 
-		def initialize(text,gram_props,frequency,gender)
+		def initialize(text,gram_props,frequency,gender,number=SINGULAR)
 			super(text,gram_props,frequency)
-			@gender = gender
+			@gender,@number = gender,number
 			raise "invalid gender #{gender}" unless(GENDERS.include?(gender))
+			raise "invalid number #{number}" unless(NUMBERS.include?(number))
 		end
 
 		def Noun.parse(text,gram_props,frequency,line)
-			gender = MASCULINE
-			if line =~ /\b([mfn])\b/
-				gender = STRING2GENDER[$1]
+			gender,number = MASCULINE,SINGULAR
+			line.strip! if line
+			if line && !line.empty?
+				line.split(/\s+/).each do |part|
+					case part
+						when /^([mfn])$/ then gender = STRING2GENDER[$1]
+						when 'Pl' then number = PLURAL
+					end
+				end
 			end
-			Noun.new(text,gram_props,frequency,gender)
+			Noun.new(text,gram_props,frequency,gender,number)
 		end
 
 		def all_forms
@@ -69,6 +76,7 @@ module Grammar
 		end
 
 		def inflect(grammar,form)
+			form[:number] = @number
 			return grammar.inflect_noun(text,form,*gram_props)
 		end
 	end
@@ -89,7 +97,7 @@ module Grammar
 			if line && !line.empty?
 				line.split(/\s+/).each do |part|
 					case part
-						when 'REFLEX' then reflexive = true
+						when /^REFL(?:EXIVE|EX)?$/ then reflexive = true
 						when /^OBJ\(([^)]+)\)$/
 							opts = $1
 							case opts

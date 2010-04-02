@@ -63,6 +63,8 @@ class PolishGrammarTest < Test::Unit::TestCase
 		assert_equal('łobu', grammar.inflect_noun('łob', {:case=>LOCATIVE}, 'A'))
 		assert_equal('waltie', grammar.inflect_noun('walt', {:case=>LOCATIVE}, 'X', 'A'))
 		assert_equal('waltie', grammar.inflect_noun('walt', {:case=>LOCATIVE}, 'A', 'X'))
+
+		assert_equal('watah', grammar.inflect_noun('wataha', {:case=>GENITIVE,:number=>2}, 'B'))
 	end
 
 	def test_read_rules

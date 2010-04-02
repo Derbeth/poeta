@@ -95,6 +95,7 @@ module Grammar
 				forms = read_forms(form)
 				find,required = condition.split(/\//)
 				remove = '' if (remove == '0')
+				add = '' if (add == '0')
 				required_props = [pattern]
 				if required:
 					required.split().each { |r| required_props << r }
@@ -161,7 +162,7 @@ module Grammar
 			form_id = form[:case]
 			form_id += (number-1) * 10
 			form_id += form[:gender] * 100
-# 			puts "form id: #{form_id} #{@rules[ADJECTIVE].keys.sort.inspect}"
+# 			puts "adj form id: #{form_id} #{@rules[ADJECTIVE].keys.sort.inspect}"
 
 			inflected = get_inflected_form(ADJECTIVE,form_id,adjective,*gram_props)
 			inflected || adjective
@@ -174,6 +175,7 @@ module Grammar
 			number = form[:number] || 1
 			form_id = form[:person].to_int
 			form_id += (number.to_int-1) * 10
+# 			puts "verb form id: #{form_id} #{@rules[VERB].keys.sort.inspect}"
 
 			inflected = get_inflected_form(VERB,form_id,text,*gram_props)
 			inflected ||= text

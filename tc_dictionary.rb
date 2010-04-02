@@ -128,18 +128,29 @@ end
 class WordTest < Test::Unit::TestCase
 	def test_inflect
 		grammar_text = <<-END
-N A 2   0 Foo .
-N B 2   0 Wrong .
+N A   2 0 Foo .
+N B   2 0 Wrong .
+N A  12 0 PlFoo .
+N B  12 0 WrongPlFoo .
 A C 102 0 Bar .
 A D 102 0 TooWrong .
+V v   3 0 s .
+V w   3 0 AlsoWrong .
 		END
 		grammar = PolishGrammar.new
 		grammar.read_rules(grammar_text)
-		noun = Noun.new('foo',%w{A},100,1)
+
+		noun = Noun.new('foo',%w{A},100,MASCULINE)
 		assert_equal('fooFoo', noun.inflect(grammar, {:case=>GENITIVE}))
+		noun = Noun.new('foo',%w{A},100,MASCULINE,PLURAL)
+		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE}))
+
 		adjective = Adjective.new('bar',%w{C},100)
 		assert_equal('barBar', adjective.inflect(grammar,
 			{:case=>GENITIVE,:gender=>MASCULINE}))
+
+		verb = Verb.new('eat',%w{v},100)
+		assert_equal('eats', verb.inflect(grammar, {:person=>3}))
 	end
 end
 
@@ -150,6 +161,26 @@ class VerbTest < Test::Unit::TestCase
 		assert_raise(ParseError) { Verb.parse('foo',[],100,"OBJ(8)") } # wrong case
 		verb = Verb.parse('foo',[],100,"OBJ(3)")
 		assert_equal(3,verb.object_case)
+		verb = Verb.parse('foo',[],100,"REFL")
+		assert verb.reflexive
+		verb = Verb.parse('foo',[],100,"REFLEX")
+		assert verb.reflexive
+		verb = Verb.parse('foo',[],100,"REFLEXIVE")
+		assert verb.reflexive
+	end
+end
+
+class NounTest < Test::Unit::TestCase
+	def test_parse
+		noun = Noun.parse('foo',[],100,"NOTEXIST") # unknown option - ignore
+		assert_equal(MASCULINE, noun.gender)
+		assert_equal(1, noun.number)
+		noun = Noun.parse('foo',[],100,"f Pl")
+		assert_equal(FEMININE, noun.gender)
+		assert_equal(2, noun.number)
+		noun = Noun.parse('foo',[],100,"Pl n")
+		assert_equal(NEUTER, noun.gender)
+		assert_equal(2, noun.number)
 	end
 end
 
