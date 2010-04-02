@@ -1,6 +1,28 @@
-N A 2 a   0  .
-N A 5 em  0  .
-N A 6 cie t t
+# ręka, apteka, pustka
+N a  2   a  i  ka
+N a  3,6 ka ce ka
+N a  4   a  ę  ka
+N a  5   a  ą  ką
+N a  7   a  o  ka
+
+# 139, miotła, kołdra, panna, igła, gra, wiara
+N b  2       a  y a
+N b  3,6     ła le   ła
+N b  3,6     ra rze  ra
+N b  3,6     a  ie   na
+N b  3,6     da dzie da
+N b  4       a  ę    a
+N b  5       a  ą    a
+N b  7       a  o    a
+N b 11,14,17 a  y    a
+N b 12       ła eł   ła
+N b 12       ra ier  ra/1  # gra -> gier
+N b 12       a  0    ra/2  # kara -> kar
+N b 12       ra er   ra    # kołdra -> kołder
+N b 12       na ien  na
+N b 13       a  om   a
+N b 15       0  mi   a
+N b 16       0  ch   a
 
 A a 102,202     y  ego y
 A a 103,203     y  emu y
