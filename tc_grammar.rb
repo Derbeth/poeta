@@ -91,13 +91,41 @@ N f 1 f f f
 		END
 		grammar.read_rules(grammar_text)
 		assert_equal(4,grammar.size)
+
+		grammar_text = "N a 100,200,300 a b c"
+		grammar.read_rules(grammar_text)
+		assert_equal(3,grammar.size)
+
+		grammar_text = "N a 100,200,100 a b c"
+		grammar.read_rules(grammar_text)
+		assert_equal(2,grammar.size)
+
+		grammar_text = "N a 100-110 a b c"
+		grammar.read_rules(grammar_text)
+		assert_equal(11,grammar.size)
+
+		grammar_text = "N a 100, a b c"
+		assert_raise(RuntimeError) { grammar.read_rules(grammar_text) }
+		assert_equal(0,grammar.size)
+
+		grammar_text = "N a 100- a b c"
+		assert_raise(RuntimeError) { grammar.read_rules(grammar_text) }
+
+		grammar_text = "N a a-b a b c"
+		assert_raise(RuntimeError) { grammar.read_rules(grammar_text) }
+
+		grammar_text = "N a 50-1 a b c"
+		assert_raise(RuntimeError) { grammar.read_rules(grammar_text) }
+
+		grammar_text = "N a a a b c"
+		assert_raise(RuntimeError) { grammar.read_rules(grammar_text) }
 	end
 
 	def test_adjective
 		grammar_text = <<-END
-A K 102 y ego y
-A K 112 0 ch  y
-A K 206 y ej  y
+A K 102     y ego y
+A K 112,116 0 ch  y
+A K 302-303 y ej  y
 		END
 		grammar = PolishGrammar.new
 		grammar.read_rules(grammar_text)
@@ -106,14 +134,18 @@ A K 206 y ej  y
 
 		assert_equal('dobry', grammar.inflect_adjective('dobry',
 			{:gender=>MASCULINE, :number=>1, :case=>NOMINATIVE}, 'K'))
-			assert_equal('dobry', grammar.inflect_adjective('dobry',
-			{:gender=>MASCULINE, :number=>1, :case=>INSTRUMENTAL}, 'K'))
+		assert_equal('dobry', grammar.inflect_adjective('dobry',
+			{:gender=>MASCULINE, :number=>1, :case=>INSTRUMENTAL}, 'K')) # no rule
 		assert_equal('dobrego', grammar.inflect_adjective('dobry',
 			{:gender=>MASCULINE, :number=>1, :case=>GENITIVE}, 'K'))
 		assert_equal('dobrych', grammar.inflect_adjective('dobry',
 			{:gender=>MASCULINE, :number=>2, :case=>GENITIVE}, 'K'))
+		assert_equal('dobrych', grammar.inflect_adjective('dobry',
+			{:gender=>MASCULINE, :number=>2, :case=>LOCATIVE}, 'K'))
 		assert_equal('dobrej', grammar.inflect_adjective('dobry',
-			{:gender=>FEMININE, :number=>1, :case=>LOCATIVE}, 'K'))
+			{:gender=>FEMININE, :number=>1, :case=>GENITIVE}, 'K'))
+		assert_equal('dobrej', grammar.inflect_adjective('dobry',
+			{:gender=>FEMININE, :number=>1, :case=>DATIVE}, 'K'))
 	end
 end
 

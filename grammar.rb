@@ -14,9 +14,9 @@ module Grammar
 	CASE2STRING = Hash[*CASES.zip(CASE_NAMES).flatten]
 	CASE_NAME_LEN = 2
 
-	MASCULINE,FEMININE,NEUTER = *(1..3)
-	GENDERS = [MASCULINE,FEMININE,NEUTER]
-	GENDER_NAMES = %w{m f n}
+	MASCULINE,NEUTER,FEMININE = *(1..3)
+	GENDERS = [MASCULINE,NEUTER,FEMININE]
+	GENDER_NAMES = %w{m n f}
 	GENDER2STRING = Hash[*GENDERS.zip(GENDER_NAMES).flatten]
 
 	SINGULAR,PLURAL = *(1..2)
@@ -89,7 +89,7 @@ module Grammar
 					print "wrong line: '#{line}'"
 					next
 				end
-				form = form.to_i
+				forms = read_forms(form)
 				find,required = condition.split(/\//)
 				remove = '' if (remove == '0')
 				required_props = [pattern]
@@ -100,11 +100,34 @@ module Grammar
 					print "no such speed part: #{speech_part}"
 					next
 				end
-				@rules[speech_part][form] ||= []
-				@rules[speech_part][form] << Rule.new(remove,add,find,*required_props)
-# 				puts "#{speech_part} #{form} #{@rules[speech_part][form].inspect}"
+				forms.each do |form|
+					form = form.to_i
+					@rules[speech_part][form] ||= []
+					@rules[speech_part][form] << Rule.new(remove,add,find,*required_props)
+				end
 			end
 		end
+
+		private
+		def read_forms(form_str)
+			forms = case form_str
+				when /^(\d+)-(\d+)$/
+					from,to = Integer($1),Integer($2)
+					raise "wrong range: #{$&}" unless(to > from)
+					(from..to).to_a
+				when /^\d+(?:,\d+)+$/
+					form_str.split(',')
+				when /^\d+$/
+					[Integer(form_str)]
+				else
+					raise "should be either a number or a range: '#{form_str}'"
+			end
+			unique = forms.uniq
+			puts "warning: duplicates in #{form_str}" if unique.size != forms.size
+			unique
+		end
+
+		public
 
 		# returns complete number of rules for all parts of speech
 		def size
@@ -146,7 +169,7 @@ module Grammar
 			form_id = form[:case]
 			form_id += (number-1) * 10
 			form_id += form[:gender] * 100
-# 			puts "form id: #{form_id} #{@rules[ADJECTIVE].keys.inspect}"
+# 			puts "form id: #{form_id} #{@rules[ADJECTIVE].keys.sort.inspect}"
 
 			if (@rules[ADJECTIVE].has_key?(form_id)):
 				@rules[ADJECTIVE][form_id].each() do |rule|
