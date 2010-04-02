@@ -82,6 +82,10 @@ class PolishGrammarTest < Test::Unit::TestCase
 		grammar.read_rules(grammar_text)
 		assert_equal(0,grammar.size)
 
+		grammar_text = "N b 2 a b c # c c" # test inline comments
+		grammar.read_rules(grammar_text)
+		assert_equal(1,grammar.size)
+
 		grammar_text = <<-END
 # starts with a comment
 N c 1 a b c

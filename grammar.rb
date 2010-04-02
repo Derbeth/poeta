@@ -85,7 +85,8 @@ module Grammar
 		def read_rules(source)
 			initialize
 			source.each_line do |line|
-				next if line =~ /^#/ || line !~ /\w/
+				line.gsub!(/#.*/, '')
+				next if line !~ /\w/
 				line.chomp!
 				speech_part,pattern,form,remove,add,condition = line.split(/\s+/)
 				unless speech_part && pattern && form && remove && add && condition

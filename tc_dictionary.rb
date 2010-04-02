@@ -123,6 +123,13 @@ V 0 nic
 		assert_equal('na', verb.preposition)
 		assert_equal(4, verb.object_case)
 	end
+
+	def test_inline_comments
+		dict = Dictionary.new
+		dict.read("V 100 foo # REFLEX")
+		verb = dict.get_random(VERB)
+		assert !verb.reflexive
+	end
 end
 
 class WordTest < Test::Unit::TestCase

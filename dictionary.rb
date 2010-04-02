@@ -215,7 +215,8 @@ module Grammar
 			@words = {}
 			source.each_line do |line|
 				begin
-					next if line =~ /^#/ || line !~ /\w/
+					line.gsub!(/#.*/, '')
+					next if line !~ /\w/
 					line.chomp!
 					speech_part, rest = read_speech_part(line)
 					frequency, rest = read_frequency(rest)
