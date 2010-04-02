@@ -149,6 +149,8 @@ V w   3 0 AlsoWrong .
 
 		noun = Noun.new('foo',%w{A},100,MASCULINE)
 		assert_equal('fooFoo', noun.inflect(grammar, {:case=>GENITIVE}))
+		noun = Noun.new('foo',%w{A},100,MASCULINE,SINGULAR)
+		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE, :number=>PLURAL}))
 		noun = Noun.new('foo',%w{A},100,MASCULINE,PLURAL)
 		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE}))
 

@@ -78,7 +78,7 @@ module Grammar
 		end
 
 		def inflect(grammar,form)
-			form[:number] = @number
+			form[:number] ||= @number
 			return grammar.inflect_noun(text,form,*gram_props)
 		end
 	end
