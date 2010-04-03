@@ -1,12 +1,12 @@
-N 100 ból m
-N 100 cierpienie n
-N 100 grzech m
+N 100 ból/c m
+N 100 cierpienie/d n
+N 100 grzech/e m
 N 100 kara/b2 f
 N 100 pustka/a f
-N 100 słońce n
-N 100 szatan m
-N 100 upadek m
-N 100 wina f
+N 100 słońce/d n
+N 100 szatan/f m
+N 100 upadek/g m
+N 100 wina/b1 f
 
 V 100 dotykać/1 OBJ(4)
 V 100 kłamać/9

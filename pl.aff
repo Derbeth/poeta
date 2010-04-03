@@ -19,10 +19,82 @@ N b 12       ła eł   ła
 N b 12       ra ier  ra/1  # gra -> gier
 N b 12       a  0    ra/2  # kara -> kar
 N b 12       ra er   ra    # kołdra -> kołder
+N b 12       a  0    na/1  # wina -> win
 N b 12       na ien  na
 N b 13       a  om   a
 N b 15       0  mi   a
 N b 16       0  ch   a
+
+# 95, ból, lokal, pokój, szczaw, dziegć
+N c 1,4       0 0     .
+N c 2,6,7     0 u     [^cćnńw]
+N c 2,6,7     0 iu    [cnw]
+N c 2,6,7     ć ciu   ć
+N c 2,6,7     ń niu   ń
+N c 3         0 owi   [^cćnńw]
+N c 3         0 iowi  [cnw]
+N c 2,6,7     ć ciowi ć
+N c 5         0 em    [^cćnńw]
+N c 5         0 iem   [^cnw]
+N c 11,14,17  0 e     [^cćnńw]
+N c 11,14,17  0 ie    [cnw]
+N c 12        0 i     [^ćń]
+N c 12        ć ci    ć
+N c 12        ń ni    ń
+N c 13        0 om    [^cćnńw]
+N c 13        0 iom   [cnw]
+N c 15        0 ami   [^cćnńw]
+N c 15        0 iami  [cnw]
+N c 16        0 ach   [^cćnńw]
+N c 16        0 iach  [cnw]
+
+# 103, danie, wesele, słońce, przysłowie, nasienie
+N d 1,4,7     0   0   e
+N d 2         e   a   e
+N d 3         e   u   e
+N d 5         0   m   e
+N d 6         e   u   e
+N d 11,14,17  e   a   e
+N d 12        nie ń   nie
+N d 12        e   0   e
+N d 13        e   om  e
+N d 15        e   ami e
+N d 16        e   ach e
+
+# 93, sad, wał, mur, dąb, sen, chrzest, kwiat wiatr
+N e 1,4       0 0 .
+N e 2         0 u .
+N e 3         0 owi .
+N e 5         0 em  .
+N e 6,7       0 zie d
+N e 6,7       0 ze  r
+N e 6,7       0 ie  b
+N e 11,14,17  0 y   .
+N e 12        0 ów .
+N e 13        0 om .
+N e 15        0 ami .
+N e 15        0 ach .
+
+# 2, szatan, hiszpan
+N f 2,4    0 a .
+N f 3      0 owi .
+N f 5      0 em  .
+N f 6,7    0 ie  n
+N f 11     0 y   .
+N f 12,14  0 ów  .
+N f 15     0 ami .
+N f 16     0 ach .
+
+# 98, statek
+N g 1,4      0  0    .
+N g 2,6,7    ek ku   ek
+N g 3        ek kowi ek
+N g 5        ek kiem ek
+N g 11,14,17 ek ki   ek
+N g 12       ek ków  ek
+N g 13       ek kom  ek
+N g 15       ek kami ek
+N g 16       ek kach ek
 
 A a 102,202     y  ego y
 A a 103,203     y  emu y
