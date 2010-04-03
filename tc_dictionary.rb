@@ -59,16 +59,19 @@ N 0 też nigdy
 A 1 jedyny
 
 V 0 nic
+
+O 100 "some other"
 		END
 		dict = Dictionary.new
 		dict.read(input)
-		assert_equal('Dictionary; 1x adjective, 5x noun, 1x verb', dict.to_s)
+		assert_equal('Dictionary; 1x adjective, 5x noun, 1x other, 1x verb', dict.to_s)
 		100.times() do
 			noun = dict.get_random(NOUN)
 			assert_not_equal('nigdy', noun.text)
 			assert(%w{jeden dwa}.include?(noun.text), "unexpected noun text: '#{noun.text}'")
 			adj = dict.get_random(ADJECTIVE)
 			assert_equal('jedyny', adj.text)
+			assert_equal('some other',dict.get_random(OTHER).text)
 			assert_nil(dict.get_random(VERB))
 			assert_nil(dict.get_random(ADVERB))
 		end
@@ -218,6 +221,17 @@ class AdjectiveTest < Test::Unit::TestCase
 		assert any
 	end
 end
+
+class OtherWordTest < Test::Unit::TestCase
+	def test_parse
+		word = Other.parse('some other',[],100,'')
+		assert_equal 'some other', word.text
+
+		assert_raise(ParseError) { Other.parse('some other',['A'],100,'') }
+		assert_raise(ParseError) { Other.parse('some other',[],100,'word') }
+	end
+end
+
 class SmartRandomDictionaryTest < Test::Unit::TestCase
 	def test_correct
 		dictionary_text = "N 1 foo\nN 1 bar"

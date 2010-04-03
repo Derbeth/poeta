@@ -6,7 +6,8 @@ module Grammar
 	VERB = 'V'
 	ADJECTIVE = 'A'
 	ADVERB = 'D'
-	SPEECH_PARTS = [NOUN,VERB,ADJECTIVE,ADVERB]
+	OTHER = 'O'
+	SPEECH_PARTS = [NOUN,VERB,ADJECTIVE,ADVERB,OTHER]
 
 	NOMINATIVE,GENITIVE,DATIVE,ACCUSATIVE,INSTRUMENTAL,LOCATIVE,VOCATIVE = *(1..7)
 	CASES = [NOMINATIVE,GENITIVE,DATIVE,ACCUSATIVE,INSTRUMENTAL,LOCATIVE,VOCATIVE]
@@ -35,6 +36,7 @@ module Grammar
 				when NOUN then 'noun'
 				when VERB then 'verb'
 				when ADJECTIVE then 'adjective'
+				when OTHER then 'other'
 				else raise "unknown speech part #{s}"
 			end
 		end

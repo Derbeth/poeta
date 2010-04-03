@@ -10,6 +10,7 @@ module Sentences
 	ADJECTIVE = 'ADJ'
 	VERB = 'VERB'
 	OBJECT = 'OBJ'
+	OTHER = 'OTHER'
 end
 
 class SentenceManager
@@ -82,12 +83,18 @@ end
 
 class Sentence
 	attr_accessor :debug
-	attr_reader :text, :subject
+	attr_reader :text, :subject, :other_word_chance
 
 	def initialize(dictionary,grammar,pattern,better=false,debug=false)
 		@dictionary,@grammar,@pattern,@better,@debug = dictionary,grammar,pattern.strip,better,debug
 		@subject = nil
 		@nouns,@verbs = {},{}
+		self.other_word_chance = DEFAULT_OTHER_CHANCE
+	end
+
+	def other_word_chance=(chance)
+		raise "chance should be 0.0 and 1.0, but got #{chance}" if chance < 0.0 || chance > 1.0
+		@other_word_chance = chance
 	end
 
 	def Sentence.validate_pattern(pattern)
@@ -111,6 +118,7 @@ class Sentence
 	# creates and returns a new sentence
 	def write
 		@text = @pattern
+		@text.gsub!(match_token(Sentences::OTHER))     { handle_other($1,$2) }
 		@text.gsub!(match_token(Sentences::SUBJECT))   { handle_subject($1,$2) }
 		@text.gsub!(match_token(Sentences::NOUN))      { handle_noun($1,$2) }
 		@text.gsub!(match_token(Sentences::ADJECTIVE)) { handle_adjective($1,$2) }
@@ -129,6 +137,7 @@ class Sentence
 
 	private
 
+	DEFAULT_OTHER_CHANCE = 0.3
 	def handle_subject(full_match,options)
 		subject_index = self.class.read_index(full_match,options)
 		if subject_index == 1 && @subject
@@ -188,6 +197,14 @@ class Sentence
 		preposition_part = verb.preposition ? verb.preposition + ' ' : ''
 		form = {:case=>verb.object_case}
 		preposition_part + object.inflect(@grammar,form)
+	end
+
+	def handle_other(full_match,options)
+		draw = rand
+		return '' if draw >= @other_word_chance
+
+		other_word = @dictionary.get_random(Grammar::OTHER)
+		other_word ? other_word.text : ''
 	end
 
 	def Sentence.read_index(full_match,options)

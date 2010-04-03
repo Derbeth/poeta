@@ -27,7 +27,7 @@ class Verse
 		subjects = []
 		sentences.each { |sentence| subjects << sentence.subject if sentence.subject }
 		return nil if subjects.empty?
-		subjects[rand subjects.size]
+		subjects[rand(subjects.size)]
 	end
 end
 

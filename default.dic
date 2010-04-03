@@ -10,6 +10,7 @@ N 100 wina/b1 f
 
 V 100 dotykać/1 OBJ(4)
 V 100 kłamać/9
+V  50 pluć/A OBJ(na,4)
 V 100 płakać/9
 V 100 płonąć/5
 V 100 umierać/1
@@ -21,3 +22,23 @@ A 100 mroczny/a
 A 100 obcy/a
 A 100 zapomniany/a
 A 100 zdradziecki/b
+
+O 200 a
+O  50 ależ
+O 100 ale
+O 200 choć
+O 300 gdy
+O 100 gdyż
+O  50 jakże
+O  50 jeszcze
+O 100 kiedy
+O 100 oto
+O  10 "poza tym"
+O  20 ponownie
+O 100 skoro
+O  50 "spójrz tylko, jak"
+O 200 "widzę, jak"
+O  10 "wyobraź sobie, że"
+O 100 "w końcu"
+O 100 zanim
+O 100 znowu

@@ -6,6 +6,11 @@ require 'sentence'
 include Grammar
 
 class SentenceTest < Test::Unit::TestCase
+
+	def setup
+		srand
+	end
+
 	def test_trim
 		dictionary_text = 'N 100 foo'
 		dictionary = Dictionary.new
@@ -97,6 +102,34 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary.read("N 100 pies\nN 100 kot/a Pl\nV 100 goni OBJ(za,5)")
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('pies goni za kotami', sentence.write)
+	end
+
+	def test_handle_other
+		dictionary = Dictionary.new
+		dictionary.read('O 100 "some other"')
+
+		srand 7
+		draw = rand
+		sentence = Sentence.new(dictionary,'grammar','')
+		default_other_choice = sentence.other_word_chance
+		assert (draw < default_other_choice && draw < 0.5), "got #{draw} >= #{default_other_choice}"
+		srand 3
+		draw = rand
+		assert (draw > 0.5), "got #{draw}"
+
+		srand 3
+		sentence = Sentence.new(dictionary,'grammar','${OTHER}')
+		sentence.other_word_chance = 0.5
+		assert_equal('', sentence.write)
+
+		srand 7
+		sentence = Sentence.new(dictionary,'grammar','${OTHER}')
+		assert_equal('some other', sentence.write)
+
+		srand 7
+		sentence = Sentence.new(dictionary,'grammar','${OTHER}')
+		sentence.other_word_chance = 0.5
+		assert_equal('some other', sentence.write)
 	end
 
 	def test_handle_empty_dictionary

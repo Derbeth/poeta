@@ -148,6 +148,18 @@ module Grammar
 		end
 	end
 
+	class Other < Word
+		def initialize(text,gram_props,frequency)
+			super(text,gram_props,frequency)
+		end
+
+		def self.parse(text,gram_props,frequency,line)
+			raise ParseError, "does not expect any grammar properties for other but got '#{gram_props}'" if !gram_props.empty?
+			raise ParseError, "does not expect other properties for other but got '#{line}'" if line && line =~ /\w/
+			Other.new(text,gram_props,frequency)
+		end
+	end
+
 	class Adjective < Word
 		def initialize(text,gram_props,frequency)
 			super(text,gram_props,frequency)
@@ -183,6 +195,7 @@ module Grammar
 				when VERB then Verb
 				when ADJECTIVE then Adjective
 				when ADVERB then Adverb
+				when OTHER then Other
 				else raise "unknown speech part: #{speech_part}"
 			end
 		end
@@ -222,6 +235,7 @@ module Grammar
 					frequency, rest = read_frequency(rest)
 					word_text, gram_props, rest = read_word(rest)
 					word = Words.get_class(speech_part).parse(word_text,gram_props,frequency,rest)
+					raise ParseError, "line '#{line}' not parsed" unless word
 
 					@words[speech_part] ||= []
 					@words[speech_part] << word
