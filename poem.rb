@@ -9,7 +9,7 @@ class Verse
 		lines.times() { sentences << sentence_mgr.random_sentence }
 		sentences_text = []
 		sentences.each { |s| sentences_text << s.write }
-		@subject = sentences.inject(nil) { |found, cur| found ||= cur.subject }
+		@subject = find_subject(sentences)
 		@text = sentences_text.join("\n")
 	end
 
@@ -20,6 +20,14 @@ class Verse
 
 	def to_s
 		@text
+	end
+
+	private
+	def find_subject(sentences)
+		subjects = []
+		sentences.each { |sentence| subjects << sentence.subject if sentence.subject }
+		return nil if subjects.empty?
+		subjects[rand subjects.size]
 	end
 end
 

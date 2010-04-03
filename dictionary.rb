@@ -297,7 +297,7 @@ module Grammar
 		end
 
 		protected
-		DEFAULT_MAX_TRIES = 4
+		DEFAULT_MAX_TRIES = 5
 		DEFAULT_MAX_SIZE = 2
 
 		# returns index of random word or -1 if none can be selected
