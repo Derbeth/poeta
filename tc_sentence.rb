@@ -108,6 +108,19 @@ class SentenceTest < Test::Unit::TestCase
 		grammar.read_rules("A a 302 y ej y")
 		sentence = Sentence.new(dictionary,grammar,'${ADJ(2)} ${NOUN}')
 		assert_equal('dobrej pory', sentence.write)
+
+		# two adjectives to one noun
+		srand 1
+		dictionary.read("N 100 pora f\nA 100 dobry/a\nA 100 prosty/a")
+		grammar.read_rules("A a 301 y a y")
+		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${ADJ} ${NOUN}')
+		assert_equal('prosta dobra pora', sentence.write)
+
+		srand 1
+		dictionary.read("N 100 pora f\nA 100 dobry/a\nA 100 prosty/a")
+		grammar.read_rules("A a 301 y a y")
+		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${ADJ} ${SUBJ}')
+		assert_equal('prosta dobra pora', sentence.write)
 	end
 
 	def test_handle_verb
