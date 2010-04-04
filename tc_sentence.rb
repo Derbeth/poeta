@@ -25,20 +25,22 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary_text = 'N 100 foo'
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
+		grammar = PolishGrammar.new
 
-		sentence = Sentence.new(dictionary,'grammar','')
+		sentence = Sentence.new(dictionary,grammar,'')
 		assert_equal('', sentence.write)
-		sentence = Sentence.new(dictionary,'grammar','  ')
+		sentence = Sentence.new(dictionary,grammar,'  ')
 		assert_equal('', sentence.write)
-		sentence = Sentence.new(dictionary,'grammar',' ${VERB} ${SUBJ}   ${SUBJ} ')
+		sentence = Sentence.new(dictionary,grammar,' ${VERB} ${SUBJ}   ${SUBJ} ')
 		assert_equal('foo foo', sentence.write)
 	end
 
 	def test_write
 		pattern = '${NOUN}'
+		grammar = PolishGrammar.new
 		dictionary = Dictionary.new
 		dictionary.read('N 100 foo')
-		sentence = Sentence.new(dictionary,'grammar',pattern)
+		sentence = Sentence.new(dictionary,grammar,pattern)
 		assert_equal('${NOUN}', sentence.pattern)
 		sentence.write
 		assert_equal('${NOUN}', sentence.pattern)
@@ -48,8 +50,9 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary_text = 'N 100 foo'
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
+		grammar = PolishGrammar.new
 
-		sentence = Sentence.new(dictionary,'grammar','a ${SUBJ} b')
+		sentence = Sentence.new(dictionary,grammar,'a ${SUBJ} b')
 		text = sentence.write
 		assert_equal('a foo b', text)
 		assert_equal('foo', sentence.subject.text)
@@ -58,10 +61,23 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary2_text = "N 100 foo\nN 100 bar"
 		dictionary2 = Dictionary.new
 		dictionary2.read(dictionary2_text)
-		sentence = Sentence.new(dictionary2,'grammar','a ${SUBJ} ${SUBJ2} b')
+		sentence = Sentence.new(dictionary2,grammar,'a ${SUBJ} ${SUBJ2} b')
 		text = sentence.write
 		assert_equal('a foo bar b', text)
 		assert_equal('foo', sentence.subject.text)
+	end
+
+	def test_handle_noun
+		dictionary = Dictionary.new
+		grammar = PolishGrammar.new
+
+		dictionary.read("N 100 pora/a")
+		grammar.read_rules("N a 6 a ze ra")
+		sentence = Sentence.new(dictionary,grammar,'${NOUN(6)}')
+		assert_equal('porze', sentence.write)
+
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ(6)}')
+		assert_equal('porze', sentence.write)
 	end
 
 	def test_handle_adjective
@@ -87,6 +103,11 @@ class SentenceTest < Test::Unit::TestCase
 		grammar.read_rules("A a 211 y e y")
 		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
 		assert_equal('złe psy', sentence.write)
+
+		dictionary.read("N 100 pory f\nA 100 dobry/a")
+		grammar.read_rules("A a 302 y ej y")
+		sentence = Sentence.new(dictionary,grammar,'${ADJ(2)} ${NOUN}')
+		assert_equal('dobrej pory', sentence.write)
 	end
 
 	def test_handle_verb

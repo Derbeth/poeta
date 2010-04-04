@@ -163,18 +163,26 @@ class Sentence
 	DEFAULT_OTHER_CHANCE = 0.3
 	def handle_subject(full_match,index,options)
 		subject_index = self.class.read_index(full_match,index)
+		parsed_opts = self.class.parse_common_noun_options(options)
 		if subject_index == 1 && @subject
 			noun = @subject
 		else
 			noun = handle_noun_common(full_match,index,options)
 		end
 		@subject ||= noun
-		noun ? noun.text : ''
+		return '' unless noun
+		gram_case = parsed_opts[:case] || NOMINATIVE
+		form = {:case=>gram_case}
+		noun.inflect(@grammar,form)
 	end
 
 	def handle_noun(full_match,index,options)
+		parsed_opts = self.class.parse_common_noun_options(options)
 		noun = handle_noun_common(full_match,index,options)
-		noun ? noun.text : '' # TODO TEMP
+		return '' unless noun
+		gram_case = parsed_opts[:case] || NOMINATIVE
+		form = {:case=>gram_case}
+		noun.inflect(@grammar,form)
 	end
 
 	def handle_noun_common(full_match,index,options)
@@ -183,7 +191,6 @@ class Sentence
 		4.times do
 			noun = @dictionary.get_random(Grammar::NOUN)
 			break unless @better && @nouns.values.include?(noun)
-			puts "you shit! #{noun.inspect}"
 		end
 		@nouns[noun_index] = noun
 		noun
@@ -191,11 +198,13 @@ class Sentence
 
 	def handle_adjective(full_match,index,options)
 		noun_index = self.class.read_index(full_match,index)
+		parsed_opts = self.class.parse_adjective_options(options)
 		raise "no noun for #{full_match}" unless @nouns.include? noun_index
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE)
 		return '' unless adjective
 		noun = @nouns[noun_index]
-		form = {:case=>NOMINATIVE, :gender=>noun.gender, :number=>noun.number}
+		gram_case = parsed_opts[:case] || NOMINATIVE
+		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number}
 		adjective.inflect(@grammar,form)
 	end
 
@@ -271,6 +280,32 @@ class Sentence
 			form = {:person => person}
 			form[:number] = (number_i == 1) ? PLURAL : SINGULAR
 			parsed[:form] = form
+		end
+		parsed
+	end
+
+	def self.parse_adjective_options(opts)
+		parsed = {}
+		if opts && !opts.empty?
+			gram_case = Integer(opts)
+			raise "invalid case: #{gram_case}" unless CASES.include?(gram_case)
+			parsed[:case]=gram_case
+		end
+		parsed
+	end
+
+	def self.parse_common_noun_options(opts)
+		parsed = {}
+		if opts && !opts.empty?
+			opts.split(/, */).each do |opt|
+				case opt
+					when /^\d+$/ then
+						parsed[:case] = Integer(opt)
+						raise "invalid case: #{parsed[:case]}" unless CASES.include?(parsed[:case])
+					when 'ALL' then
+						parsed[:all] = true
+				end
+			end
 		end
 		parsed
 	end
