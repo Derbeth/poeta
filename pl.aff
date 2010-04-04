@@ -1,31 +1,34 @@
-# ręka, apteka, pustka
+# f ręka, apteka, pustka
 N a  2   a  i  ka
 N a  3,6 ka ce ka
 N a  4   a  ę  ka
 N a  5   a  ą  ką
 N a  7   a  o  ka
 
-# 139, miotła, kołdra, panna, igła, gra, wiara
-N b  2       a  y a
-N b  3,6     ła le   ła
-N b  3,6     ra rze  ra
-N b  3,6     a  ie   na
-N b  3,6     da dzie da
-N b  4       a  ę    a
-N b  5       a  ą    a
-N b  7       a  o    a
-N b 11,14,17 a  y    a
-N b 12       ła eł   ła
-N b 12       ra ier  ra/1  # gra -> gier
-N b 12       a  0    ra/2  # kara -> kar
-N b 12       ra er   ra    # kołdra -> kołder
-N b 12       a  0    na/1  # wina -> win
-N b 12       na ien  na
-N b 13       a  om   a
-N b 15       0  mi   a
-N b 16       0  ch   a
+# 139 f, miotła, kołdra, panna, igła, gra, wiara
+N b 2        a   y a
+N b 3,6      ła  le   ła
+N b 3,6      ra  rze  ra
+N b 3,6      cha sze cha # mucha -> musze
+N b 3,6      a   ie   [nps]a
+N b 3,6      da  dzie da
+N b 4        a   ę    a
+N b 5        a   ą    a
+N b 7        a   o    a
+N b 11,14,17 a   y    a
+N b 12       ła  eł   ła
+N b 12       ra  ier  ra/1  # gra -> gier
+N b 12       a   0    ra/2  # kara -> kar
+N b 12       ra  er   ra    # kołdra -> kołder
+N b 12       a   0    na/1  # wina -> win
+N b 12       a   0    [psh]a
+N b 12       na  en   jna   # wojna -> wojen
+N b 12       na  ien  na
+N b 13       a   om   a
+N b 15       0   mi   a
+N b 16       0   ch   a
 
-# 95, ból, lokal, pokój, szczaw, dziegć
+# 95 m, ból, lokal, pokój, szczaw, dziegć, szmal
 N c 1,4       0 0     .
 N c 2,6,7     0 u     [^cćnńw]
 N c 2,6,7     0 iu    [cnw]
@@ -48,7 +51,7 @@ N c 15        0 iami  [cnw]
 N c 16        0 ach   [^cćnńw]
 N c 16        0 iach  [cnw]
 
-# 103, danie, wesele, słońce, przysłowie, nasienie
+# 103 n, danie, wesele, słońce, przysłowie, nasienie
 N d 1,4,7     0   0   e
 N d 2         e   a   e
 N d 3         e   u   e
@@ -61,7 +64,7 @@ N d 13        e   om  e
 N d 15        e   ami e
 N d 16        e   ach e
 
-# 93, sad, wał, mur, dąb, sen, chrzest, kwiat wiatr
+# 93 m, sad, wał, mur, dąb, sen, chrzest, kwiat wiatr
 N e 1,4       0 0 .
 N e 2         0 u .
 N e 3         0 owi .
@@ -69,13 +72,14 @@ N e 5         0 em  .
 N e 6,7       0 zie d
 N e 6,7       0 ze  r
 N e 6,7       0 ie  b
+N e 6,7       t cie t
 N e 11,14,17  0 y   .
 N e 12        0 ów .
 N e 13        0 om .
 N e 15        0 ami .
-N e 15        0 ach .
+N e 16        0 ach .
 
-# 2, szatan, hiszpan
+# 2 m, szatan, hiszpan
 N f 2,4    0 a .
 N f 3      0 owi .
 N f 5      0 em  .
@@ -85,7 +89,7 @@ N f 12,14  0 ów  .
 N f 15     0 ami .
 N f 16     0 ach .
 
-# 98, statek
+# 98 m, statek
 N g 1,4      0  0    .
 N g 2,6,7    ek ku   ek
 N g 3        ek kowi ek
@@ -95,6 +99,136 @@ N g 12       ek ków  ek
 N g 13       ek kom  ek
 N g 15       ek kami ek
 N g 16       ek kach ek
+
+# 135 f, opcja, głębia, butla, idea, zbroja, lilia
+N h 2,3,6,12  a 0   ia
+N h 2,3,6,12  a i   [^i]a
+N h 4         a ę   a
+N h 5         a ą   a
+N h 7         a o   a
+N h 11,14,17  a e   a
+N h 13        a om  a
+N h 15        a ami a
+N h 16        a ach a
+
+# 72 m, duch
+N i 2,4       0 a .
+N i 3         0 owi .
+N i 5         0 em  .
+N i 6,7       0 u   .
+N i 11,14,17  0 y   .
+N i 12        0 ów  .
+N i 13        0 om  .
+N i 15        0 ami .
+N i 16        0 ach .
+
+# 3 m, facet, Hucuł, błazen, sąsiad
+N j 2,4    0 a .
+N j 3      0 owi .
+N j 5      0 em  .
+N j 6,7    t cie t
+N j 6,7    ł le  ł
+N j 11,17  t ci  t
+N j 12,14  0 ów  .
+N j 13     0 om  .
+N j 15     0 ami .
+N j 16     0 ach .
+
+# 125 f, noc, uprząż
+N k 2,3,6,7,12  0 y   .
+N k 4           0 0   .
+N k 5           0 ą   .
+N k 11,14,17    0 e   .
+N k 13          0 om  .
+N k 15          0 ami .
+N k 16          0 ach .
+
+# 143 f, ulica, zorza, owca, skrzypce
+N l 2,3,6     a y a
+N l 4         a ę a
+N l 5         a ą a
+N l 7         a o a
+N l 11,14,17  a e a
+N l 12        a 0 a
+N l 13        a om a
+N l 15        0 mi a
+N l 16        0 ch a
+
+# 66 m, gad, muł, tur
+N m 2,4       0 a   .
+N m 3         0 owi .
+N m 5         0 em  .
+N m 6,7       t cie t
+N m 6,7       0 ze  r
+N m 6,7       ł le  ł
+N m 11,14,17  0 y   .
+N m 12        0 ów  .
+N m 13        0 om  .
+N m 15        0 ami .
+N m 16        0 ach .
+
+# 124 f, kość, część
+N n 2,3,6,7,11,14,17 ć ci    ć
+N n 4                0 0     ć
+N n 5                ć cią   ć
+N n 13               ć ciom  ć
+N n 15               ć ciami ć
+N n 16               ć ciach ć
+
+# 82 m, dzień, cień, modrzew, bal, gwóźdź, tułów, mięsień, mebel, pień, węgiel
+N o 2    zień nia   zień
+N o 2    ń    nia   ń
+N o 2    0    ia    w
+N o 2    0    a     .
+N o 3    zień niowi zień
+N o 3    ń    niowi ń
+N o 3    0    iowi  w
+N o 3    0    owi   .
+N o 5    zień niem  zień
+N o 5    ń    niem  ń
+N o 5    0    iem   w
+N o 5    0    em    .
+N o 6,7  zień niu   zień
+N o 6,7  ń    niu   ń
+N o 6,7  0    iu    w
+N o 6,7  0    u     .
+N o 11,14,17  zień ni  zień/1 # dzień -> dni
+N o 11,14,17  zień nie zień   # tydzień -> tygodnie
+N o 11,14,17  ń    nie ń
+N o 11,14,17  0    ie  w
+N o 12        zień ni  zień
+N o 12        ń    ni  ń
+N o 12        0    i   .
+N o 13        zień niom zień
+N o 13        ń    niom ń
+N o 13        0    iom  w
+N o 13        0    om   .
+N o 15        zień niami zień
+N o 15        ń    niami ń
+N o 15        0    iami  w
+N o 15        0    ami   .
+N o 16        zień niach zień
+N o 16        ń    niach ń
+N o 16        0    iach  w
+N o 16        0    ach   .
+
+# 113 n, udo, działo, zero, niebo, słowo, koło
+N p 2        o    a     o
+N p 3        o    u     o
+N p 5        o    em    o
+N p 6        o    zie   do
+N p 6        o    ze    ro
+N p 6        ło   le    ło
+N p 6        asto eście iasto
+N p 6        to   cie   to
+N p 6        o    ie    o
+N p 11,14,17 o    a     o
+N p 12       oło  ół    oło
+N p 12       owo  ów    owo
+N p 12       o    0     o
+N p 13       0    m     o
+N p 15       o    ami   o
+N p 16       o    ach   o
 
 A a 102,202     y  ego y
 A a 103,203     y  emu y
@@ -121,17 +255,74 @@ A a 211,311     y  e   y
 A a 214,314     y  e   y
 A a 217,317     y  e   y
 
-A b 102,202     0 ego i
-A b 103,203     0 emu i
-A b 104         0 ego i
-A b 105,205     0 m   i
-A b 106,206     0 m   i
-A b 201         0 e   i
-A b 207         0 e   i
-A b 301         i a   i
-A b 302,303,306 0 ej  i
-A b 304,305     i ą   i
-A b 307         i a   i
+A b 102,202          0  ego i
+A b 103,203          0  emu i
+A b 104              0  ego i
+A b 105,205          0  m   i
+A b 106,206          0  m   i
+A b 201              0  e   i
+A b 207              0  e   i
+A b 301              i  a   i
+A b 302,303,306      0  ej  i
+A b 304,305          i  ą   i
+A b 307              i  a   i
+A b 111,117          ki cy ki
+A b 211,311,214,314  0  e   i
+A b 217,317          0  e   i
+A b 112,212,312      0  ch  i
+A b 113,213,313      0  m   i
+A b 115,215,315      0  mi  i
+A b 116,216,316      0  ch  i
+
+# ten
+A c 102,202,104      n  go en
+A c 103,203          n  mu en
+A c 105,205,106,206  en ym en
+A c 107,207,307      en y  en
+A c 201,204          en o  en
+A c 301              en a  en
+A c 302,303,306      n  j  en
+A c 304              en ę  en
+A c 305              en ą  en
+A c 111,211,311      n  0  en
+A c 117,217,317      n  0  en
+A c 112,212,312      en ych en
+A c 116,216,316      en ych en
+A c 113,213,313      en ym  en
+A c 114              en ych en
+A c 214,314          n  0   en
+A c 115,215,315      en ymi en
+
+# nasz
+A d 102,202,104      0 ego .
+A d 103,203          0 emu .
+A d 105,205,106,206  0 ym  .
+A d 301,307          0 a   .
+A d 302,303,306      0 ej  .
+A d 304,305          0 ą   .
+A d 111,117          z i   z
+A d 211,311,214,314  0 e   .
+A d 217,317          0 e   .
+A d 112,212,312,114  0 ych .
+A d 113,213,313      0 ym  .
+A d 115,215,315      0 ymi .
+A d 116,216,316      0 ych .
+
+# mój, twój
+A e 102,202,104              ój ojego ój
+A e 103,203                  ój ojemu ój
+A e 105,205,106,206  ój oim   ój
+A e 201,204          ój oje ój
+A e 301,307          ój oja ój
+A e 302,303,306      ój ojej ój
+A e 304,305          ój oją  ój
+A e 111,117          ój oi   ój
+A e 112,114,116      ój oich ój
+A e 113,213,313      ój oim  ój
+A e 115,215,315      ój oimi ój
+A e 211,311,214,314  ój oje  ój
+A e 217,317          ój oje  ój
+A e 212,312,216,316  ój oich ój
 
 # koniugacja I, umierać, czytać
 V 1  1 ć m   ać
@@ -141,6 +332,14 @@ V 1 11 ć my  ać
 V 1 12 ć cie ać
 V 1 13 ć ją  ać
 
+# koniugacja IV, malować
+V 4  1 ować uję    ować
+V 4  2 ować ujesz  ować
+V 4  3 ować uje    ować
+V 4 11 ować ujemy  ować
+V 4 12 ować ujecie ować
+V 4 13 ować ują    ować
+
 # koniugacja Va, płonąć, ciągnąć
 V 5	 1 ąć ę     nąć
 V 5  2 ąć iesz  nąć
@@ -149,13 +348,31 @@ V 5 11 ąć iemy  nąć
 V 5 12 ąć iecie nąć
 V 5 13 ć  0     nąć
 
-# koniugacja VIIa, widzieć
-V 7  1 ieć ę   ieć
-V 7  2 eć  sz  ieć
-V 7  3 eć  0   ieć
-V 7 11 eć  my  ieć
-V 7 12 eć  cie ieć
-V 7 13 ieć ą   ieć
+# koniugacja VIa, VIb robić, wierzyć, prosić
+V 6  1 sić szę sić
+V 6  1 yć  ę   yć
+V 6  1 ć   ę   ć
+V 6 13 sić szą sić
+V 6 13 yć  ą   yć
+V 6 13 ć   ą   ć
+V 6  2 ć   sz  ć
+V 6  3 ć   0   ć
+V 6 11 ć   my  ć
+V 6 12 ć   cie ć
+
+# koniugacja VIIa, widzieć i VIIb, leżeć, milczeć
+V 7  1 ieć ę    ieć
+V 7  1 eć  ę    eć
+V 7  2 eć  sz   ieć
+V 7  2 eć  ysz  eć
+V 7  3 eć  0    ieć
+V 7  3 eć  y    eć
+V 7 11 eć  my   ieć
+V 7 11 eć  ymy  eć
+V 7 12 eć  cie  ieć
+V 7 12 eć  ycie eć
+V 7 13 ieć ą    ieć
+V 7 13 eć  ą    eć
 
 # koniugacja IX, kłamać, mazać; z->ż, s->sz, r->rz
 V 9  1 ać  ię    [m]ać
@@ -185,3 +402,19 @@ V A  3 ć je    ć
 V A 11 ć jemy  ć
 V A 12 ć jecie ć
 V A 13 ć ją    ć
+
+# niereg. - brać
+V b  1 rać iorę     brać
+V b  2 rać ierzesz  brać
+V b  3 rać ierze    brać
+V b 11 rać ierzemy  brać
+V b 12 rać ierzecie brać
+V b 13 rać iorą     brać
+
+# niereg - iść
+V c  1 ść dę      iść
+V c  2 ść dziesz  iść
+V c  3 ść dzie    iść
+V c 11 ść dziemy  iść
+V c 12 ść dziecie iść
+V c 13 ść dą      iść

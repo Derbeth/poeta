@@ -1,0 +1,64 @@
+N 100 buch/i m ONLY_OBJ
+N  10 dzielnica/l f OBJ_FREQ(100)
+N 100 dzień/o1 m
+N 150 ekipa/b f
+N  10 kasa/b f OBJ_FREQ(100)
+N  50 komercha/b f
+N  10 konfident/j m
+N  10 konfident/j m Pl OBJ_FREQ(100)
+N 100 miasto/p n
+N 100 pięść/n f
+N 100 policja/h f
+N 100 skręt/m m
+N  10 szmal/c m OBJ_FREQ(100)
+N 100 temat/e ONLY_OBJ
+N 100 ulica/l f
+N  50 wojna/b f
+# N 200 "" m PERSON(1) ONLY_SUBJ
+# N 200 "" m Pl PERSON(1) ONLY_SUBJ
+
+V 100 brać/b OBJ(4)
+V 100 iść/c
+V 100 milczeć/7
+V 100 napierdalać/1
+V  50 nawijać/1
+V 100 popierdalać/1
+V  50 rymować/4
+V 100 wpadać/1 OBJ(na,4)
+V  50 wznosić/6 OBJ(4)
+V 100 zapierdalać/1
+V 100 zapalać/1 OBJ(4)
+V 100 zwijać/1 OBJ(4)
+# napierdalam (kamieniem) (w policję)
+
+A 100 chujowy/a
+A 100 jebany/a
+A 200 kolejny/a
+A 100 kurewski/b
+A  50 mistrzowski/b
+A 100 mocny/a
+A 200 mój/e
+A 200 nasz/d
+A 100 nowy/a
+A 100 ostatni/b
+A 100 pierdolony/a
+A 100 pierwszy/a
+A 100 prawdziwy/a
+A 100 prosty/a
+A 100 ten/c
+A 100 zajebisty/a
+
+D 100 ciągle
+D  50 "bez pierdolenia"
+D 100 mocno
+D 100 "od razu"
+D 100 ostro
+D 100 zawsze
+
+O 100 człowieku
+O 100 "dlatego że"
+O 100 pamiętaj
+O 100 posłuchaj
+O  50 "zapamiętaj ziomek"
+O 100 ziomek
+O 100 znowu
