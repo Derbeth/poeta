@@ -36,6 +36,7 @@ module Grammar
 				when NOUN then 'noun'
 				when VERB then 'verb'
 				when ADJECTIVE then 'adjective'
+				when ADVERB then 'adverb'
 				when OTHER then 'other'
 				else raise "unknown speech part #{s}"
 			end

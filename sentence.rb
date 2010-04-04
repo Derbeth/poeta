@@ -13,6 +13,19 @@ module Sentences
 	OTHER = 'OTHER'
 end
 
+class String
+	def fixed_ljust(width)
+		result = ljust(width)
+		two_byte_chars_count = 0;
+		scan(/[ąćęłóńśżź]/) { two_byte_chars_count += 1 }
+		two_byte_chars_count /= 2
+# 		puts "fuck: '#{self}' #{self.size}>#{result.size} #{two_byte_chars_count}"
+# 		result
+# 		result[0..(result.size-two_byte_chars_count)]
+		result + ' ' * two_byte_chars_count
+	end
+end
+
 class SentenceManager
 	attr_reader :debug
 
@@ -25,7 +38,8 @@ class SentenceManager
 		@sentence_builders = []
 		source.each_line do |line|
 			begin
-				next if line =~ /^#/ || line !~ /\w/
+				line.gsub!(/#.*/, '')
+				next if line !~ /\w/
 				line.chomp!
 				frequency, rest = read_frequency(line)
 				sentence_builder = SentenceBuilder.new(@dictionary,@grammar,rest,frequency,@better,@debug)
@@ -83,7 +97,7 @@ end
 
 class Sentence
 	attr_accessor :debug
-	attr_reader :text, :subject, :other_word_chance
+	attr_reader :text, :subject, :other_word_chance, :pattern
 
 	def initialize(dictionary,grammar,pattern,better=false,debug=false)
 		@dictionary,@grammar,@pattern,@better,@debug = dictionary,grammar,pattern.strip,better,debug
@@ -100,33 +114,42 @@ class Sentence
 	def Sentence.validate_pattern(pattern)
 		noun_occurs = {}
 		[Sentences::SUBJECT, Sentences::NOUN].each do |part|
-			pattern.scan(match_token(part)) do |full_match,options|
-				noun_index = read_index(full_match,options)
+			pattern.scan(match_token(part)) do |full_match,index,options|
+				noun_index = read_index(full_match,index)
 				noun_occurs[noun_index] ||= 0
 				noun_occurs[noun_index] += 1
-				raise "too many occurances of noun #{noun_index}" if noun_occurs[noun_index] > 1
+				raise "too many occurances of noun #{noun_index} in '#{pattern}'" if noun_occurs[noun_index] > 1
 			end
 		end
-		[Sentences::ADJECTIVE, Sentences::VERB, Sentences::OBJECT].each do |part|
-			pattern.scan(match_token(part)) do |full_match,options|
-				noun_index = read_index(full_match,options)
-				raise "undefined noun referenced from #{full_match}" unless noun_occurs.include? noun_index
+		[Sentences::VERB, Sentences::ADJECTIVE, Sentences::OBJECT].each do |part|
+			pattern.scan(match_token(part)) do |full_match,index,options|
+				noun_index = read_index(full_match,index)
+				if part == Sentences::VERB
+					parsed = parse_verb_options(options)
+					if parsed[:form]
+						noun_occurs[noun_index] ||= 0
+						noun_occurs[noun_index] += 1
+						next
+					end
+				end
+				raise "undefined noun referenced from #{full_match} in '#{pattern}'" unless noun_occurs.include? noun_index
 			end
 		end
 	end
 
 	# creates and returns a new sentence
 	def write
-		@text = @pattern
-		@text.gsub!(match_token(Sentences::OTHER))     { handle_other($1,$2) }
-		@text.gsub!(match_token(Sentences::SUBJECT))   { handle_subject($1,$2) }
-		@text.gsub!(match_token(Sentences::NOUN))      { handle_noun($1,$2) }
-		@text.gsub!(match_token(Sentences::ADJECTIVE)) { handle_adjective($1,$2) }
-		@text.gsub!(match_token(Sentences::VERB))      { handle_verb($1,$2) }
-		@text.gsub!(match_token(Sentences::OBJECT))    { handle_object($1,$2) }
-		@text += ' END' if @debug
+		@text = @pattern.clone
+		@text.gsub!(match_token(Sentences::OTHER))     { handle_other($1,$2,$3) }
+		@text.gsub!(match_token(Sentences::SUBJECT))   { handle_subject($1,$2,$3) }
+		@text.gsub!(match_token(Sentences::NOUN))      { handle_noun($1,$2,$3) }
+		@text.gsub!(match_token(Sentences::ADJECTIVE)) { handle_adjective($1,$2,$3) }
+		@text.gsub!(match_token(Sentences::VERB))      { handle_verb($1,$2,$3) }
+		@text.gsub!(match_token(Sentences::OBJECT))    { handle_object($1,$2,$3) }
+# 		@text += ' END' if @debug
 		@text.strip!
 		@text.gsub!(/ {2,}/, ' ')
+		@text = @text.fixed_ljust(40) + "| #{@pattern}" if debug
 		@text
 	end
 
@@ -138,24 +161,24 @@ class Sentence
 	private
 
 	DEFAULT_OTHER_CHANCE = 0.3
-	def handle_subject(full_match,options)
-		subject_index = self.class.read_index(full_match,options)
+	def handle_subject(full_match,index,options)
+		subject_index = self.class.read_index(full_match,index)
 		if subject_index == 1 && @subject
 			noun = @subject
 		else
-			noun = handle_noun_common(full_match,options)
+			noun = handle_noun_common(full_match,index,options)
 		end
 		@subject ||= noun
 		noun ? noun.text : ''
 	end
 
-	def handle_noun(full_match,options)
-		noun = handle_noun_common(full_match,options)
+	def handle_noun(full_match,index,options)
+		noun = handle_noun_common(full_match,index,options)
 		noun ? noun.text : '' # TODO TEMP
 	end
 
-	def handle_noun_common(full_match,options)
-		noun_index = self.class.read_index(full_match,options)
+	def handle_noun_common(full_match,index,options)
+		noun_index = self.class.read_index(full_match,index)
 		noun = nil
 		4.times do
 			noun = @dictionary.get_random(Grammar::NOUN)
@@ -166,8 +189,8 @@ class Sentence
 		noun
 	end
 
-	def handle_adjective(full_match,options)
-		noun_index = self.class.read_index(full_match,options)
+	def handle_adjective(full_match,index,options)
+		noun_index = self.class.read_index(full_match,index)
 		raise "no noun for #{full_match}" unless @nouns.include? noun_index
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE)
 		return '' unless adjective
@@ -176,19 +199,25 @@ class Sentence
 		adjective.inflect(@grammar,form)
 	end
 
-	def handle_verb(full_match,options)
-		noun_index = self.class.read_index(full_match,options)
-		raise "no noun for #{full_match}" unless @nouns.include? noun_index
+	def handle_verb(full_match,index,options)
+		noun_index = self.class.read_index(full_match,index)
+		parsed_opts = self.class.parse_verb_options(options)
+		if parsed_opts[:form]
+			form = parsed_opts[:form]
+		else
+			raise "no noun for #{full_match}" unless @nouns.include? noun_index
+			noun = @nouns[noun_index]
+			return '' unless noun
+			form = {:number=>noun.number,:person=>noun.person}
+		end
 		verb = @dictionary.get_random(Grammar::VERB)
 		return '' unless verb
 		@verbs[noun_index] = verb
-		noun = @nouns[noun_index]
-		form = {:number=>noun.number,:person=>3} # TODO TEMP
 		verb.inflect(@grammar,form)
 	end
 
-	def handle_object(full_match,options)
-		noun_index = self.class.read_index(full_match,options)
+	def handle_object(full_match,index,options)
+		noun_index = self.class.read_index(full_match,index)
 		verb = @verbs[noun_index]
 		raise "no verb for #{full_match}" unless verb
 		return '' unless verb.object_case
@@ -199,7 +228,7 @@ class Sentence
 		preposition_part + object.inflect(@grammar,form)
 	end
 
-	def handle_other(full_match,options)
+	def handle_other(full_match,index,options)
 		draw = rand
 		return '' if draw >= @other_word_chance
 
@@ -207,21 +236,43 @@ class Sentence
 		other_word ? other_word.text : ''
 	end
 
-	def Sentence.read_index(full_match,options)
-		options.strip! if options
-		if options && !options.empty?:
-			raise "invalid index in #{full_match}, should be number" if options !~ /^\d+$/
-			return options.to_i
+	def Sentence.read_index(full_match,index_match)
+		index_match.strip! if index_match
+		if index_match && !index_match.empty?:
+			raise "invalid index in #{full_match}, should be number" if index_match !~ /^\d+$/
+			return index_match.to_i
 		end
 		return 1
 	end
 
+	# matches tokens for given speech part, for example for NOUN matches
+	# ${NOUN}, ${NOUN2} and ${NOUN(7)}
+	# returns: [full_match, number, options_without_braces]
+	# for example, for ${NOUN2(7)} returns ['${NOUN2(7)}', '2', '7']
+	# for ${NOUN} returns ['${NOUN}','','']
 	def Sentence.match_token(part)
-		/(\$\{#{part}([^}]*)\})/
+		/(\$\{#{part}(\d*)(?:(?:\(([^)]*)\))?) *\})/
 	end
 
 	def match_token(part)
 		Sentence.match_token(part)
+	end
+
+	# parses verb options and returns a hash with parsed elements
+	# hash keys: :form => hash with verb form
+	def self.parse_verb_options(opts)
+		parsed = {}
+		if opts && !opts.empty?
+			form_i = Integer(opts)
+			raise "nonsense form: #{form_i}" if form_i <= 0
+			number_i,person = form_i.divmod(10)
+			raise "unsupported number: #{number_i}" if number_i > 1
+			raise "unsupported person: #{person}" if !([1,2,3].include?(person))
+			form = {:person => person}
+			form[:number] = (number_i == 1) ? PLURAL : SINGULAR
+			parsed[:form] = form
+		end
+		parsed
 	end
 end
 

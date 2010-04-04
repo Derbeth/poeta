@@ -7,6 +7,7 @@ include Grammar
 
 dict_file = 'default'
 only_list = false
+direct_input = nil
 OptionParser.new do |opts|
 	opts.banner = "Usage: inflect.rb [options] word"
 
@@ -17,6 +18,9 @@ OptionParser.new do |opts|
 	opts.on("-l", "--list-only", "Only lists found words, does not inflect them") do |d|
 		only_list = true
 	end
+	opts.on("-i", "--input LINE", "Direct input given line as dictionary") do |d|
+		direct_input = d
+	end
 	opts.separator ""
 	opts.separator "Common options:"
 	opts.on_tail('-h','--help','Show full help') do
@@ -25,17 +29,28 @@ OptionParser.new do |opts|
 	end
 end.parse!
 
-raise "Please provide a name" if (ARGV.size == 0)
-
 dict_file += '.dic' unless dict_file =~ /\.dic/
 
 dictionary = Dictionary.new
-dictionary.read(File.open(dict_file))
+if direct_input
+	dictionary.read(direct_input)
+else
+	dictionary.read(File.open(dict_file))
+end
+
+if direct_input
+	words_to_list = dictionary.collect { |word| word.text }
+else
+	puts "napierdalacz"
+	words_to_list = ARGV.find_all { true }
+end
+
+raise "Please provide words to list" if words_to_list.size == 0
 
 grammar = PolishGrammar.new
 File.open('pl.aff') { |f| grammar.read_rules(f) }
 
-ARGV.each do |to_find|
+words_to_list.each do |to_find|
 	mask = to_find.gsub(/\*/, '.*')
 	any_found = false
 	dictionary.find_all {|wrd| wrd.text =~ /^#{mask}$/ }.sort.each do |word|
@@ -48,6 +63,7 @@ ARGV.each do |to_find|
 		word.all_forms.each do |form|
 			puts "#{GrammarForm.pretty_print(form)}  #{word.inflect(grammar,form)}"
 		end
+		puts "==============="
 	end
 	puts "'#{to_find}' not found" unless any_found
 end

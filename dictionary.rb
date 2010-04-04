@@ -42,14 +42,15 @@ module Grammar
 	end
 
 	class Noun < Word
-		attr_reader :gender, :number
+		attr_reader :gender, :number, :person
 		STRING2GENDER = {'m'=>MASCULINE,'n'=>NEUTER,'f'=>FEMININE}
 
-		def initialize(text,gram_props,frequency,gender,number=SINGULAR)
+		def initialize(text,gram_props,frequency,gender,number=SINGULAR,person=3)
 			super(text,gram_props,frequency)
-			@gender,@number = gender,number
 			raise "invalid gender #{gender}" unless(GENDERS.include?(gender))
 			raise "invalid number #{number}" unless(NUMBERS.include?(number))
+			raise "invalid person #{person}" unless([1,2,3].include?(person))
+			@gender,@number,@person = gender,number,person
 		end
 
 		def Noun.parse(text,gram_props,frequency,line)
@@ -145,6 +146,10 @@ module Grammar
 	class Adverb < Word
 		def initialize(text,gram_props,frequency)
 			super(text,gram_props,frequency)
+		end
+
+		def self.parse(text,gram_props,frequency,line)
+			Adverb.new(text,gram_props,frequency)
 		end
 	end
 

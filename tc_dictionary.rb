@@ -61,10 +61,12 @@ A 1 jedyny
 V 0 nic
 
 O 100 "some other"
+
+D 100 czasem
 		END
 		dict = Dictionary.new
 		dict.read(input)
-		assert_equal('Dictionary; 1x adjective, 5x noun, 1x other, 1x verb', dict.to_s)
+		assert_equal('Dictionary; 1x adjective, 1x adverb, 5x noun, 1x other, 1x verb', dict.to_s)
 		100.times() do
 			noun = dict.get_random(NOUN)
 			assert_not_equal('nigdy', noun.text)
@@ -72,8 +74,8 @@ O 100 "some other"
 			adj = dict.get_random(ADJECTIVE)
 			assert_equal('jedyny', adj.text)
 			assert_equal('some other',dict.get_random(OTHER).text)
+			assert_equal('czasem',dict.get_random(ADVERB).text)
 			assert_nil(dict.get_random(VERB))
-			assert_nil(dict.get_random(ADVERB))
 		end
 	end
 
@@ -203,6 +205,18 @@ class NounTest < Test::Unit::TestCase
 		assert_equal(2, noun.number)
 	end
 
+	def test_validation
+		noun = Noun.new('bar',[],100,MASCULINE)
+		assert_equal(3, noun.person)
+		assert_equal(SINGULAR, noun.number)
+
+		noun = Noun.new('bar',[],100,FEMININE,PLURAL,2)
+		assert_equal(2,noun.person)
+		assert_equal(PLURAL,noun.number)
+
+		assert_raise(RuntimeError) { Noun.new('bar',[],100,FEMININE,PLURAL,5) }
+	end
+
 	def test_all_forms
 		grammar = PolishGrammar.new
 		noun = Noun.new('foo',[],100,MASCULINE)
@@ -229,6 +243,13 @@ class OtherWordTest < Test::Unit::TestCase
 
 		assert_raise(ParseError) { Other.parse('some other',['A'],100,'') }
 		assert_raise(ParseError) { Other.parse('some other',[],100,'word') }
+	end
+end
+
+class AdverbTest < Test::Unit::TestCase
+	def test_parse
+		word = Adverb.parse('an adverb',[],100,'')
+		assert_equal 'an adverb', word.text
 	end
 end
 
