@@ -41,7 +41,6 @@ end
 if direct_input
 	words_to_list = dictionary.collect { |word| word.text }
 else
-	puts "napierdalacz"
 	words_to_list = ARGV.find_all { true }
 end
 

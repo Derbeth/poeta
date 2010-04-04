@@ -10,6 +10,7 @@ module Sentences
 	ADJECTIVE = 'ADJ'
 	VERB = 'VERB'
 	OBJECT = 'OBJ'
+	ADVERB = 'ADV'
 	OTHER = 'OTHER'
 end
 
@@ -146,6 +147,7 @@ class Sentence
 		@text.gsub!(match_token(Sentences::ADJECTIVE)) { handle_adjective($1,$2,$3) }
 		@text.gsub!(match_token(Sentences::VERB))      { handle_verb($1,$2,$3) }
 		@text.gsub!(match_token(Sentences::OBJECT))    { handle_object($1,$2,$3) }
+		@text.gsub!(match_token(Sentences::ADVERB))    { handle_adverb($1,$2,$3) }
 # 		@text += ' END' if @debug
 		@text.strip!
 		@text.gsub!(/ {2,}/, ' ')
@@ -243,6 +245,11 @@ class Sentence
 
 		other_word = @dictionary.get_random(Grammar::OTHER)
 		other_word ? other_word.text : ''
+	end
+
+	def handle_adverb(full_match,index,options)
+		adverb = @dictionary.get_random(Grammar::ADVERB)
+		adverb ? adverb.text : ''
 	end
 
 	def Sentence.read_index(full_match,index_match)

@@ -204,6 +204,14 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('some other', sentence.write)
 	end
 
+	def test_handle_adverb
+		dictionary = Dictionary.new
+		dictionary.read('D 100 fast')
+
+		sentence = Sentence.new(dictionary,'grammar','${ADV}')
+		assert_equal('fast', sentence.write)
+	end
+
 	def test_handle_empty_dictionary
 		dictionary = Dictionary.new
 		sentence = Sentence.new(dictionary,'grammar','${NOUN} ${ADJ} ${VERB}')
