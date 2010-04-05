@@ -10,7 +10,7 @@ class DictionaryTest < Test::Unit::TestCase
 		assert_raise(RuntimeError) { Word.new('foo',[],-1) }  # wrong freq
 		assert_raise(RuntimeError) { Word.new('foo',[1, 2]) } # wrong props, not strings
 		assert_raise(ArgumentError) { Word.new() }            # no args
-		assert_raise(RuntimeError) { Word.new('') }
+		Word.new('')
 		Word.new('foo')
 		Word.new('foo',[])
 		Word.new('foo',[],1)
@@ -77,6 +77,20 @@ D 100 czasem
 			assert_equal('czasem',dict.get_random(ADVERB).text)
 			assert_nil(dict.get_random(VERB))
 		end
+	end
+
+	def test_parse_noun
+		dict = Dictionary.new
+
+		dict.read('N 100 ty PERSON(2)')
+		noun = dict.get_random(NOUN)
+		assert_equal('ty', noun.text)
+		assert_equal(2, noun.person)
+
+		dict.read('N 100 "" PERSON(2)')
+		noun = dict.get_random(NOUN)
+		assert_equal('', noun.text)
+		assert_equal(2, noun.person)
 	end
 
 	def test_parse_verb
@@ -197,12 +211,23 @@ class NounTest < Test::Unit::TestCase
 		noun = Noun.parse('foo',[],100,"NOTEXIST") # unknown option - ignore
 		assert_equal(MASCULINE, noun.gender)
 		assert_equal(1, noun.number)
+
 		noun = Noun.parse('foo',[],100,"f Pl")
 		assert_equal(FEMININE, noun.gender)
 		assert_equal(2, noun.number)
+
 		noun = Noun.parse('foo',[],100,"Pl n")
 		assert_equal(NEUTER, noun.gender)
 		assert_equal(2, noun.number)
+		assert_equal(3, noun.person)
+
+		noun = Noun.parse('foo',[],100,'PERSON(2)')
+		assert_equal(2, noun.person)
+		noun = Noun.parse('',[],100,'PERSON(2)')
+
+		assert_raise(ParseError) { Noun.parse('foo',[],100,'PERSON()') }
+		assert_raise(ParseError) { Noun.parse('foo',[],100,'PERSON(a)') }
+		assert_raise(ParseError) { Noun.parse('foo',[],100,'PERSON(5)') }
 	end
 
 	def test_validation

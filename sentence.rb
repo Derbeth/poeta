@@ -205,6 +205,7 @@ class Sentence
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE)
 		return '' unless adjective
 		noun = @nouns[noun_index]
+		return '' if noun.person != 3
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number}
 		adjective.inflect(@grammar,form)

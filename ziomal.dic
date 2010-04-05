@@ -15,9 +15,9 @@ N  10 szmal/c m OBJ_FREQ(100)
 N 100 temat/e ONLY_OBJ
 N 100 ulica/l f
 N  50 wojna/b f
-# N 200 "" m PERSON(1) ONLY_SUBJ
-# N 150 "" m PERSON(2) ONLY_SUBJ
-# N 200 "" m Pl PERSON(1) ONLY_SUBJ
+N 200 "" m PERSON(1) ONLY_SUBJ
+N 150 "" m PERSON(2) ONLY_SUBJ
+N 200 "" m Pl PERSON(1) ONLY_SUBJ
 # ludzie
 # jazda
 # hasło

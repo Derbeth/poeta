@@ -121,6 +121,11 @@ class SentenceTest < Test::Unit::TestCase
 		grammar.read_rules("A a 301 y a y")
 		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${ADJ} ${SUBJ}')
 		assert_equal('prosta dobra pora', sentence.write)
+
+		dictionary.read(%Q{N 100 "" PERSON(2)\nA 100 dobry\nV 100 rozumieć/a})
+		grammar.read_rules("V a 2 ć sz ć")
+		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${SUBJ} ${VERB}')
+		assert_equal('rozumiesz', sentence.write)
 	end
 
 	def test_handle_verb

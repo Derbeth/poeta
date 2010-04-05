@@ -22,9 +22,6 @@ module Grammar
 			if frequency < 0:
 				raise "invalid frequency for #{text}: #{frequency}"
 			end
-			if text == '':
-				raise "word text is empty"
-			end
 		end
 
 		def <=>(other)
@@ -54,17 +51,23 @@ module Grammar
 		end
 
 		def Noun.parse(text,gram_props,frequency,line)
-			gender,number = MASCULINE,SINGULAR
-			line.strip! if line
-			if line && !line.empty?
-				line.split(/\s+/).each do |part|
-					case part
-						when /^([mfn])$/ then gender = STRING2GENDER[$1]
-						when 'Pl' then number = PLURAL
+			begin
+				gender,number,person = MASCULINE,SINGULAR,3
+				line.strip! if line
+				if line && !line.empty?
+					line.split(/\s+/).each do |part|
+						case part
+							when /^([mfn])$/ then gender = STRING2GENDER[$1]
+							when 'Pl' then number = PLURAL
+							when /^PERSON\(([^)]*)\)/
+								person = Integer($1.strip)
+						end
 					end
 				end
+				Noun.new(text,gram_props,frequency,gender,number,person)
+			rescue RuntimeError, ArgumentError
+				raise ParseError, "cannot parse '#{line}': #{$!.message}"
 			end
-			Noun.new(text,gram_props,frequency,gender,number)
 		end
 
 		# returns an Enumerable collection of all applicable grammar forms
@@ -290,7 +293,7 @@ module Grammar
 
 		def read_word(line)
 			word,gram_props,rest=nil,[],nil
-			if line =~ /^"([^"]+)"/:
+			if line =~ /^"([^"]*)"/:
 				word,rest = $1,$'
 			elsif line =~ /^([^\s\/]+)/:
 				word,rest = $1,$'
