@@ -10,7 +10,7 @@ N b 2        a   y a
 N b 3,6      ła  le   ła
 N b 3,6      ra  rze  ra
 N b 3,6      cha sze cha # mucha -> musze
-N b 3,6      a   ie   [nps]a
+N b 3,6      a   ie   [npsz]a
 N b 3,6      da  dzie da
 N b 4        a   ę    a
 N b 5        a   ą    a
@@ -21,7 +21,7 @@ N b 12       ra  ier  ra/1  # gra -> gier
 N b 12       a   0    ra/2  # kara -> kar
 N b 12       ra  er   ra    # kołdra -> kołder
 N b 12       a   0    na/1  # wina -> win
-N b 12       a   0    [psh]a
+N b 12       a   0    [pshz]a
 N b 12       na  en   jna   # wojna -> wojen
 N b 12       na  ien  na
 N b 13       a   om   a

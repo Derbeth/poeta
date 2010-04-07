@@ -2,6 +2,7 @@ N 100 buch/i m ONLY_OBJ
 N  10 dzielnica/l f OBJ_FREQ(100)
 N 100 dzień/o1 m
 N 150 ekipa/b f
+N  50 impreza/b f OBJ_FREQ(100)
 N  10 kasa/b f OBJ_FREQ(100)
 N  50 komercha/b f
 N  10 konfident/j m
@@ -26,19 +27,22 @@ N 200 "" m Pl PERSON(1) ONLY_SUBJ
 # chce + imiesł.
 V 100 brać/b OBJ(4)
 V 100 iść/c
+V 100 lecieć/7
 V 100 milczeć/7
 V 100 napierdalać/1
 V  50 nawijać/1
 V 100 popierdalać/1
 V 100 rozpierdalać/1 OBJ(4)
 V  50 rymować/4
-V  50 słuchać/1 OBJ(4)
+V  50 słuchać/1 OBJ(2)
+V  50 uderzać/1 OBJ(na,4)
 V 100 wpadać/1 OBJ(na,4)
 V  50 wznosić/6 OBJ(4)
 V 100 zapierdalać/1
 V 100 zapalać/1 OBJ(4)
 V 100 zwijać/1 OBJ(4)
 # napierdalam (kamieniem) (w policję)
+# zaczyna/idzie napierdalać
 
 A 150 cały/a
 A 100 chujowy/a
@@ -71,10 +75,11 @@ A 100 ten/c
 A 100 uliczny/a
 A 100 zajebisty/a
 
+D  50 "bez pierdolenia"
 D 100 ciągle
 D  25 ciężko
 D  50 dobrze
-D  50 "bez pierdolenia"
+D 100 dookoła
 D  50 już
 D 150 "kolejny raz"
 D 100 mocno

@@ -113,6 +113,8 @@ class Sentence
 	end
 
 	def Sentence.validate_pattern(pattern)
+		pattern_copy = pattern.gsub(/\$\{[^{}]+\}/, '')
+
 		noun_occurs = {}
 		[Sentences::SUBJECT, Sentences::NOUN].each do |part|
 			pattern.scan(match_token(part)) do |full_match,index,options|
@@ -169,7 +171,17 @@ class Sentence
 		if subject_index == 1 && @subject
 			noun = @subject
 		else
-			noun = handle_noun_common(full_match,index,options)
+			noun = @dictionary.get_random_subject do |counted_frequency,word|
+				if parsed_opts[:not_empty] && word.text.empty?
+					0
+				elsif parsed_opts[:ignore_only]
+					word.frequency
+				else
+					counted_frequency
+				end
+			end
+			noun_index = self.class.read_index(full_match,index)
+			@nouns[noun_index] = noun
 		end
 		@subject ||= noun
 		return '' unless noun
@@ -179,23 +191,18 @@ class Sentence
 	end
 
 	def handle_noun(full_match,index,options)
+		noun_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_common_noun_options(options)
-		noun = handle_noun_common(full_match,index,options)
+
+		noun = @dictionary.get_random(Grammar::NOUN) do |word|
+			word.text.empty? ? 0 : word.frequency
+		end
+
+		@nouns[noun_index] = noun
 		return '' unless noun
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case}
 		noun.inflect(@grammar,form)
-	end
-
-	def handle_noun_common(full_match,index,options)
-		noun_index = self.class.read_index(full_match,index)
-		noun = nil
-		4.times do
-			noun = @dictionary.get_random(Grammar::NOUN)
-			break unless @better && @nouns.values.include?(noun)
-		end
-		@nouns[noun_index] = noun
-		noun
 	end
 
 	def handle_adjective(full_match,index,options)
@@ -233,8 +240,11 @@ class Sentence
 		verb = @verbs[noun_index]
 		raise "no verb for #{full_match}" unless verb
 		return '' unless verb.object_case
-		object = @dictionary.get_random(Grammar::NOUN)
+
+		object = @dictionary.get_random_object
+		@nouns[noun_index] = object
 		return '' unless object
+
 		preposition_part = verb.preposition ? verb.preposition + ' ' : ''
 		form = {:case=>verb.object_case}
 		preposition_part + object.inflect(@grammar,form)
@@ -310,8 +320,9 @@ class Sentence
 					when /^\d+$/ then
 						parsed[:case] = Integer(opt)
 						raise "invalid case: #{parsed[:case]}" unless CASES.include?(parsed[:case])
-					when 'ALL' then
-						parsed[:all] = true
+					when 'NE' then parsed[:not_empty] = true
+					when 'IG_ONLY' then parsed[:ignore_only] = true
+					else puts "warn: unknown noun option #{opt}"
 				end
 			end
 		end

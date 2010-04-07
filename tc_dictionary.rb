@@ -7,16 +7,17 @@ include Grammar
 
 class DictionaryTest < Test::Unit::TestCase
 	def test_word
-		assert_raise(RuntimeError) { Word.new('foo',[],-1) }  # wrong freq
+		assert_raise(RuntimeError) { Word.new('foo',[],{},-1) }  # wrong freq
 		assert_raise(RuntimeError) { Word.new('foo',[1, 2]) } # wrong props, not strings
 		assert_raise(ArgumentError) { Word.new() }            # no args
 		Word.new('')
 		Word.new('foo')
 		Word.new('foo',[])
-		Word.new('foo',[],1)
+		Word.new('foo',[],{})
+		Word.new('foo',[],{},1)
 		assert_equal([], Word.new('foo',nil).gram_props)
 		Word.new('foo',%w{A B})
-		word = Word.new('foo',%w{A B}, 1000)
+		word = Word.new('foo',%w{A B}, {}, 1000)
 		assert_equal('foo', word.text)
 		assert_equal(['A', 'B'], word.gram_props)
 		assert_equal(1000, word.frequency)
@@ -166,11 +167,11 @@ V w   3 0 AlsoWrong .
 		grammar = PolishGrammar.new
 		grammar.read_rules(grammar_text)
 
-		noun = Noun.new('foo',%w{A},100,MASCULINE)
+		noun = Noun.new('foo',%w{A},{},100,MASCULINE)
 		assert_equal('fooFoo', noun.inflect(grammar, {:case=>GENITIVE}))
-		noun = Noun.new('foo',%w{A},100,MASCULINE,SINGULAR)
+		noun = Noun.new('foo',%w{A},{},100,MASCULINE,SINGULAR)
 		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE, :number=>PLURAL}))
-		noun = Noun.new('foo',%w{A},100,MASCULINE,PLURAL)
+		noun = Noun.new('foo',%w{A},{},100,MASCULINE,PLURAL)
 		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE}))
 
 		adjective = Adjective.new('bar',%w{C},100)
@@ -179,6 +180,40 @@ V w   3 0 AlsoWrong .
 
 		verb = Verb.new('eat',%w{v},100)
 		assert_equal('eats', verb.inflect(grammar, {:person=>3}))
+	end
+
+	def test_only_obj_only_subj
+		dict_text = <<-END
+N 100 Object1 ONLY_OBJ
+N  10 MySubject
+N   0 Object2 OBJ_FREQ(100)
+		END
+		dict = Dictionary.new
+		dict.read(dict_text)
+		20.times do
+			assert_equal('MySubject', dict.get_random_subject.text)
+		end
+
+		dict_text = <<-END
+N 100 Subject1 ONLY_SUBJ
+N   0 MyObject OBJ_FREQ(100)
+N 100 Subject2 ONLY_SUBJ
+N   0 ObjectNever
+		END
+		dict.read(dict_text)
+		20.times do
+			assert_equal('MyObject', dict.get_random_object.text)
+		end
+
+		dict_text = <<-END
+N 10 MySubject3 ONLY_SUBJ
+N 10 MyObject3  ONLY_OBJ
+		END
+		dict.read(dict_text)
+		20.times do
+			assert_equal('MySubject3', dict.get_random_subject.text)
+			assert_equal('MyObject3', dict.get_random_object.text)
+		end
 	end
 end
 
@@ -228,14 +263,25 @@ class NounTest < Test::Unit::TestCase
 		assert_raise(ParseError) { Noun.parse('foo',[],100,'PERSON()') }
 		assert_raise(ParseError) { Noun.parse('foo',[],100,'PERSON(a)') }
 		assert_raise(ParseError) { Noun.parse('foo',[],100,'PERSON(5)') }
+
+		noun = Noun.parse('foo',[],100,'ONLY_SUBJ')
+		assert_nil(noun.get_property(:only_obj))
+		assert_nil(noun.get_property(:obj_freq))
+		assert_not_nil(noun.get_property(:only_subj))
+
+		assert_not_nil(Noun.parse('foo',[],100,'ONLY_OBJ').get_property(:only_obj))
+		assert_equal(53, Noun.parse('foo',[],100,'OBJ_FREQ(53)').get_property(:obj_freq))
+		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ') }
+		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ()') }
+		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ(a)') }
 	end
 
 	def test_validation
-		noun = Noun.new('bar',[],100,MASCULINE)
+		noun = Noun.new('bar',[],{},100,MASCULINE)
 		assert_equal(3, noun.person)
 		assert_equal(SINGULAR, noun.number)
 
-		noun = Noun.new('bar',[],100,FEMININE,PLURAL,2)
+		noun = Noun.new('bar',[],{},100,FEMININE,PLURAL,2)
 		assert_equal(2,noun.person)
 		assert_equal(PLURAL,noun.number)
 
@@ -244,7 +290,7 @@ class NounTest < Test::Unit::TestCase
 
 	def test_all_forms
 		grammar = PolishGrammar.new
-		noun = Noun.new('foo',[],100,MASCULINE)
+		noun = Noun.new('foo',[],{},100,MASCULINE)
 		any = false
 		noun.all_forms.each { |form| noun.inflect(grammar,form) ; any = true }
 		assert any

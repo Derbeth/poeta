@@ -1,6 +1,9 @@
 #!/usr/bin/ruby -w
 
 module ByFrequencyChoser
+	# gets random index in given array based on frequencies.
+	# Each element of the array has to respond to 'frequency' message, returning
+	# a number.
 	def ByFrequencyChoser.choose_random_index(freqs_array)
 		sum_freqs = freqs_array.inject(0) {|sum,elem| sum + elem.frequency}
 		point = rand sum_freqs

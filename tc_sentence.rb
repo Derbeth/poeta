@@ -238,7 +238,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary_text = "N 100 foo\nA 100 cool"
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
-		subject = Noun.new('bar',[],0,1)
+		subject = Noun.new('bar',[],{},0,1)
 		grammar = PolishGrammar.new
 
 		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${SUBJ2} ${SUBJ3}')
@@ -248,6 +248,52 @@ class SentenceTest < Test::Unit::TestCase
 		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${ADJ}')
 		sentence.subject = subject
 		assert_equal('bar cool', sentence.write)
+	end
+
+	def test_empty_nouns
+		grammar = PolishGrammar.new
+		dictionary = Dictionary.new
+		dictionary_text = <<-END
+N 100 "" PERSON(2)
+N  10 "foo"
+		END
+		dictionary.read(dictionary_text)
+		10.times do
+			assert_equal('foo', Sentence.new(dictionary,grammar,'${NOUN}').write)
+			assert_equal('foo', Sentence.new(dictionary,grammar,'${SUBJ(NE)}').write)
+		end
+
+	end
+
+	def test_only_subj_only_obj
+		grammar = PolishGrammar.new
+		dictionary = Dictionary.new
+		dictionary_text = <<-END
+N 100 noun1 ONLY_SUBJ
+N  10 noun2
+V 100 verb1 OBJ(4)
+		END
+		dictionary.read(dictionary_text)
+		10.times do
+			assert_equal('verb1 noun2', Sentence.new(dictionary,grammar,'${VERB(2)} ${OBJ}').write)
+		end
+
+		dictionary_text = <<-END
+N 100 noun1 ONLY_OBJ
+N  10 noun2
+		END
+		dictionary.read(dictionary_text)
+		10.times do
+			assert_equal('noun2', Sentence.new(dictionary,grammar,'${SUBJ}').write)
+		end
+
+		dictionary_text = <<-END
+N 100 noun1 ONLY_OBJ
+		END
+		dictionary.read(dictionary_text)
+		10.times do
+			assert_equal('noun1', Sentence.new(dictionary,grammar,'${SUBJ(IG_ONLY)}').write)
+		end
 	end
 end
 
@@ -312,6 +358,9 @@ class SentenceManagerTest < Test::Unit::TestCase
 
 	def test_validation
 		mgr = SentenceManager.new("dictionary",'grammar')
+
+		assert_raise(RuntimeError) { mgr.read('10 ${SUBJ ${VERB}') }
+
 		input = '10 ${SUBJ} ${VERB} ${SUBJ}' # double subject
 		assert_raise(RuntimeError) { mgr.read(input) }
 

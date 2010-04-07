@@ -10,11 +10,14 @@ module Grammar
 	class Word
 		attr_reader :text, :gram_props, :frequency
 
-		def initialize(text,gram_props=[],frequency=100)
+		def initialize(text,gram_props=[],general_props={},frequency=100)
 			gram_props ||= []
-			@text,@frequency,@gram_props=text,frequency,gram_props
+			@text,@frequency,@gram_props,@general_props=text,frequency,gram_props,general_props
 			unless gram_props.respond_to?(:each) && gram_props.respond_to?(:size):
 				raise "expect gram_props to behave like an array but got #{gram_props.inspect}"
+			end
+			unless general_props.respond_to?(:keys)
+				raise "expect general props to behave like a hash but got #{general_props.inspect}"
 			end
 			if !gram_props.empty? && !gram_props[0].kind_of?(String):
 				raise "gram_props should be an array of strings"
@@ -36,14 +39,21 @@ module Grammar
 		def inflect(grammar,form)
 			return @text
 		end
+
+		def get_property(prop_name)
+			@general_props[prop_name]
+		end
+
+		protected
+		attr_reader :general_props
 	end
 
 	class Noun < Word
 		attr_reader :gender, :number, :person
 		STRING2GENDER = {'m'=>MASCULINE,'n'=>NEUTER,'f'=>FEMININE}
 
-		def initialize(text,gram_props,frequency,gender,number=SINGULAR,person=3)
-			super(text,gram_props,frequency)
+		def initialize(text,gram_props,general_props,frequency,gender,number=SINGULAR,person=3)
+			super(text,gram_props,general_props,frequency)
 			raise "invalid gender #{gender}" unless(GENDERS.include?(gender))
 			raise "invalid number #{number}" unless(NUMBERS.include?(number))
 			raise "invalid person #{person}" unless([1,2,3].include?(person))
@@ -54,6 +64,7 @@ module Grammar
 			begin
 				gender,number,person = MASCULINE,SINGULAR,3
 				line.strip! if line
+				general_props = {}
 				if line && !line.empty?
 					line.split(/\s+/).each do |part|
 						case part
@@ -61,10 +72,18 @@ module Grammar
 							when 'Pl' then number = PLURAL
 							when /^PERSON\(([^)]*)\)/
 								person = Integer($1.strip)
+							when 'ONLY_SUBJ' then general_props[:only_subj] = true
+							when 'ONLY_OBJ' then general_props[:only_obj] = true
+							when /^OBJ_FREQ/
+								unless part =~ /^OBJ_FREQ\((\d+)\)$/
+									raise "illegal format of OBJ_FREQ in #{line}"
+								end
+								general_props[:obj_freq] = $1.to_i
+							else puts "warn: unknown option #{part}"
 						end
 					end
 				end
-				Noun.new(text,gram_props,frequency,gender,number,person)
+				Noun.new(text,gram_props,general_props,frequency,gender,number,person)
 			rescue RuntimeError, ArgumentError
 				raise ParseError, "cannot parse '#{line}': #{$!.message}"
 			end
@@ -91,7 +110,7 @@ module Grammar
 		attr_reader :reflexive, :preposition, :object_case
 
 		def initialize(text,gram_props,frequency,reflexive=false,preposition=nil,object_case=nil)
-			super(text,gram_props,frequency)
+			super(text,gram_props,{},frequency)
 			raise VerbError, "invalid case: #{object_case}" if object_case && !CASES.include?(object_case)
 			@reflexive,@preposition,@object_case = reflexive,preposition,object_case
 		end
@@ -148,7 +167,7 @@ module Grammar
 
 	class Adverb < Word
 		def initialize(text,gram_props,frequency)
-			super(text,gram_props,frequency)
+			super(text,gram_props,{},frequency)
 		end
 
 		def self.parse(text,gram_props,frequency,line)
@@ -158,7 +177,7 @@ module Grammar
 
 	class Other < Word
 		def initialize(text,gram_props,frequency)
-			super(text,gram_props,frequency)
+			super(text,gram_props,{},frequency)
 		end
 
 		def self.parse(text,gram_props,frequency,line)
@@ -170,7 +189,7 @@ module Grammar
 
 	class Adjective < Word
 		def initialize(text,gram_props,frequency)
-			super(text,gram_props,frequency)
+			super(text,gram_props,{},frequency)
 		end
 
 		def Adjective.parse(text,gram_props,frequency,line)
@@ -227,9 +246,44 @@ module Grammar
 			retval
 		end
 
-		def get_random(speech_part)
-			index = get_random_index(speech_part)
+		def get_random(speech_part, &freq_counter)
+			return nil unless(@words.has_key?(speech_part))
+			if block_given?
+				freq_array = @words[speech_part].collect do |word|
+					frequency = freq_counter.call(word)
+					FrequencyHolder.new(frequency)
+				end
+			else
+				freq_array = @words[speech_part]
+			end
+			index = get_random_index(freq_array,speech_part)
 			index == -1 ? nil : @words[speech_part][index]
+		end
+
+		def get_random_subject(&freq_counter)
+			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
+			get_random(NOUN) do |word|
+				if word.get_property(:only_obj)
+					frequency = 0
+				else
+					frequency = word.frequency
+				end
+				counter.call(frequency,word)
+			end
+		end
+
+		def get_random_object(&freq_counter)
+			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
+			get_random(NOUN) do |word|
+				if word.get_property(:only_subj)
+					frequency = 0
+				elsif word.get_property(:obj_freq)
+					frequency = word.get_property(:obj_freq)
+				else
+					 frequency = word.frequency
+				end
+				counter.call(frequency,word)
+			end
 		end
 
 		def read(source)
@@ -263,14 +317,19 @@ module Grammar
 		protected
 
 		# returns index of random word or -1 if none can be selected
-		def get_random_index(speech_part)
-			return -1 unless(@words.has_key?(speech_part))
-			index = ByFrequencyChoser.choose_random_index(@words[speech_part])
+		def get_random_index(freq_array,speech_part)
+			index = ByFrequencyChoser.choose_random_index(freq_array)
 # 			puts "random #{speech_part}: #{index}"
 			index
 		end
 
 		private
+		class FrequencyHolder
+			attr_reader :frequency
+			def initialize(freq)
+				@frequency = freq
+			end
+		end
 
 		def read_speech_part(line)
 			unless line =~ /^(\w)\s+/:
@@ -323,12 +382,12 @@ module Grammar
 		DEFAULT_MAX_SIZE = 2
 
 		# returns index of random word or -1 if none can be selected
-		def get_random_index(speech_part)
+		def get_random_index(freq_array,speech_part)
 			@remembered_indices ||= {}
 			@remembered_indices[speech_part] ||= []
 			index = nil
 			DEFAULT_MAX_TRIES.times do
-				index = super(speech_part)
+				index = super(freq_array,speech_part)
 				break unless @remembered_indices[speech_part].include?(index)
 			end
 			@remembered_indices[speech_part].push(index)
