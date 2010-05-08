@@ -1,9 +1,16 @@
 # f ręka, apteka, pustka
-N a  2   a  i  ka
-N a  3,6 ka ce ka
-N a  4   a  ę  ka
-N a  5   a  ą  ką
-N a  7   a  o  ka
+N a  2   a   i  ka
+N a  3,6 ka  ce ka
+N a  4   a   ę  ka
+N a  5   a   ą  ką
+N a  7   a   o  ka
+N a 11,14,17 a   i  ka
+N a 12   ęka ąk ęka
+N a 12   a   0  eka
+N a 12   ka  ek ka
+N a 13   a   om ka
+N a 15   0   mi ka
+N a 16   0   ch ka
 
 # 139 f, miotła, kołdra, panna, igła, gra, wiara
 N b 2        a   y a
@@ -71,7 +78,7 @@ N e 3         0 owi .
 N e 5         0 em  .
 N e 6,7       0 zie d
 N e 6,7       0 ze  r
-N e 6,7       0 ie  b
+N e 6,7       0 ie  [bps]
 N e 6,7       t cie t
 N e 11,14,17  0 y   .
 N e 12        0 ów .
@@ -219,17 +226,20 @@ N p 3        o    u     o
 N p 5        o    em    o
 N p 6        o    zie   do
 N p 6        o    ze    ro
+N p 6        sło  śle   sło
 N p 6        ło   le    ło
 N p 6        asto eście iasto
 N p 6        to   cie   to
 N p 6        o    ie    o
 N p 11,14,17 o    a     o
 N p 12       oło  ół    oło
+N p 12       ło   eł    sło
 N p 12       owo  ów    owo
 N p 12       o    0     o
 N p 13       0    m     o
 N p 15       o    ami   o
 N p 16       o    ach   o
+
 
 A a 102,202     y  ego y
 A a 103,203     y  emu y
@@ -365,6 +375,7 @@ V 6 11 ć   my  ć
 V 6 12 ć   cie ć
 
 # koniugacja VIIa, widzieć i VIIb, leżeć, milczeć
+V 7  1 ieć zę   sieć/m
 V 7  1 ieć ę    ieć
 V 7  1 eć  ę    eć
 V 7  2 eć  sz   ieć
@@ -375,6 +386,7 @@ V 7 11 eć  my   ieć
 V 7 11 eć  ymy  eć
 V 7 12 eć  cie  ieć
 V 7 12 eć  ycie eć
+V 7 13 ieć zą   sieć/m
 V 7 13 ieć ą    ieć
 V 7 13 eć  ą    eć
 
