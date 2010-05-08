@@ -1,4 +1,4 @@
-N  50 bit/e m
+N  50 bit/m m
 N 100 buch/i m ONLY_OBJ
 N  10 dzielnica/l f OBJ_FREQ(100)
 N 100 dzień/o1 m
@@ -6,6 +6,7 @@ N  50 dziwka/a f
 N 150 ekipa/b f
 N 100 głos/e m
 N  50 hasło/p n
+N  50 honor/e m
 N  50 impreza/b f OBJ_FREQ(100)
 N  10 kasa/b f OBJ_FREQ(100)
 N  50 komercha/b f
@@ -15,12 +16,15 @@ N 100 małolat/j1 m
 N 100 miasto/p n
 N 100 pięść/n f
 N 100 policja/h f
+N  50 prawo/p n
 N 100 rap/e m
 N 100 skręt/m m
+N  10 szansa/b f OBJ_FREQ(50)
 N  10 szmal/c m OBJ_FREQ(100)
 N 100 temat/e ONLY_OBJ
 N 100 ulica/l f
 N  50 wojna/b f
+N  10 zasada/b f Pl OBJ_FREQ(100)
 N 200 "" m PERSON(1) ONLY_SUBJ
 N 150 "" m PERSON(2) ONLY_SUBJ
 N 200 "" m Pl PERSON(1) ONLY_SUBJ
@@ -33,18 +37,25 @@ V 100 brać/b OBJ(4)
 V 100 iść/c
 V  50 iść/c INF
 V 100 lecieć/7
+V 100 mieć/1 OBJ(4)
 V 100 milczeć/7
 V  80 musieć/7m INF
-V  60 napierdalać/1
-V  70 napierdalać/1 REFL OBJ(z,5)
+V  40 nakręcać/1 OBJ(4)
+V  50 napierdalać/1
+V  60 napierdalać/1 REFL OBJ(z,5)
 V  50 nawijać/1
+V 100 pierdolić/6b OBJ(4)
 V 100 popierdalać/1
 V 100 rozpierdalać/1 OBJ(4)
+V  40 rozkminiać/1 OBJ(4)
 V  50 rymować/4
 V  50 słuchać/1 OBJ(2)
+V  50 trzymać/1 OBJ(4)
+V  10 trzymać/1 OBJ(2) REFL
 V  50 uderzać/1 OBJ(na,4)
+V  50 widzieć/7 OBJ(4)
 V 100 wpadać/1 OBJ(na,4)
-V  50 wznosić/6 OBJ(4)
+V  40 wznosić/6 OBJ(4)
 V  50 zaczynać/1 INF
 V  10 zaczynać/1 REFL
 V 100 zapierdalać/1
@@ -63,6 +74,7 @@ A 200 kolejny/a
 A 100 krótki/b
 A 100 kurewski/b
 A  50 luksusowy/a
+A  40 marny/a
 A  50 mistrzowski/b
 A 100 mocny/a
 A 200 mój/e
@@ -80,7 +92,7 @@ A 100 prawdziwy/a
 A 100 prosty/a
 A  50 sprzedajny/a
 A 100 ten/c
-A 100 uliczny/a
+A 200 uliczny/a
 A 100 zajebisty/a
 
 D  50 "bez pierdolenia"
@@ -94,6 +106,7 @@ D 100 mocno
 D 100 "od razu"
 D 250 ostro
 D 100 pewnie
+D  50 razem
 D  50 szybko
 D 100 tam
 D 100 tutaj

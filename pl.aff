@@ -2,7 +2,7 @@
 N a  2   a   i  ka
 N a  3,6 ka  ce ka
 N a  4   a   ę  ka
-N a  5   a   ą  ką
+N a  5   a   ą  ka
 N a  7   a   o  ka
 N a 11,14,17 a   i  ka
 N a 12   ęka ąk ęka
@@ -28,7 +28,7 @@ N b 12       ra  ier  ra/1  # gra -> gier
 N b 12       a   0    ra/2  # kara -> kar
 N b 12       ra  er   ra    # kołdra -> kołder
 N b 12       a   0    na/1  # wina -> win
-N b 12       a   0    [pshz]a
+N b 12       a   0    [dpshz]a
 N b 12       na  en   jna   # wojna -> wojen
 N b 12       na  ien  na
 N b 13       a   om   a
@@ -345,6 +345,12 @@ V 1  3 ć 0   ać
 V 1 11 ć my  ać
 V 1 12 ć cie ać
 V 1 13 ć ją  ać
+V 1  1 ieć am   ieć
+V 1  2 ieć asz  ieć
+V 1  3 ieć a    ieć
+V 1 11 ieć amy  ieć
+V 1 12 ieć acie ieć
+V 1 13 ieć ają  ieć
 
 # koniugacja IV, malować
 V 4  1 ować uję    ować
@@ -365,9 +371,11 @@ V 5 13 ć  0     nąć
 # koniugacja VIa, VIb robić, wierzyć, prosić
 V 6  1 sić szę sić
 V 6  1 yć  ę   yć
+V 6  1 ić  ę   ić/b
 V 6  1 ć   ę   ć
 V 6 13 sić szą sić
 V 6 13 yć  ą   yć
+V 6 13 ić  ą   ić/b
 V 6 13 ć   ą   ć
 V 6  2 ć   sz  ć
 V 6  3 ć   0   ć
