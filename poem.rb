@@ -25,7 +25,9 @@ class Verse
 	private
 	def find_subject(sentences)
 		subjects = []
-		sentences.each { |sentence| subjects << sentence.subject if sentence.subject }
+		sentences.each do |sentence|
+			subjects << sentence.subject if sentence.subject && sentence.subject.text != ''
+		end
 		return nil if subjects.empty?
 		subjects[rand(subjects.size)]
 	end
@@ -44,7 +46,9 @@ class Poem
 		title_sentences_defs = <<-END
 60 ${SUBJ(NE,IG_ONLY)}
 40 ${ADJ} ${SUBJ(NE,IG_ONLY)}
- 2 ${SUBJ(NE,IG_ONLY)} ${ADJ}
+ 5 ${SUBJ(NE,IG_ONLY)} ${ADJ}
+10 ${VERB(1)} ${OBJ}
+ 5 ${VERB(11)} ${OBJ}
 10 ***
  		END
 		title_sentence_mgr.read(title_sentences_defs)
