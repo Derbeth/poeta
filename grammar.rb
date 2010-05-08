@@ -173,6 +173,11 @@ module Grammar
 		end
 
 		def inflect_verb(text,form,reflexive=false,*gram_props)
+			if form[:infinitive]
+				inflected = text
+				inflected = 'się ' + inflected if (reflexive)
+				return inflected
+			end
 			raise ":person has to be passed '#{form[:person]}'" unless form[:person]
 			raise "invalid person: #{form[:person]}" unless (1..3) === form[:person]
 			raise "invalid number: #{form[:number]}" if form[:number] && !((1..2) === form[:number])
@@ -208,8 +213,9 @@ module Grammar
 			parts << format_number(form[:number]) if (form[:number])
 			parts << format_case(form[:case]) if (form[:case])
 			parts << format_person(form[:person]) if (form[:person])
+			parts << 'Inf' if (form[:infinitive])
 			form.keys.sort_by{|s| s.to_s}.each do |key|
-				if ![:gender,:number,:case,:person].include?(key)
+				if ![:gender,:number,:case,:person,:infinitive].include?(key)
 					parts << "#{key}=#{form[key]}"
 				end
 			end

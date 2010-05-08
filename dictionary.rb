@@ -28,7 +28,11 @@ module Grammar
 		end
 
 		def <=>(other)
-			@text <=> other.text
+			res = @text <=> other.text
+			res = self.class.to_s <=> other.class.to_s if (res == 0)
+			res = @gram_props <=> other.gram_props if (res == 0)
+			res = @frequency <=> other.frequency if (res == 0)
+			res
 		end
 
 		# returns an Enumerable collection of all applicable grammar forms
@@ -107,22 +111,23 @@ module Grammar
 	end
 
 	class Verb < Word
-		attr_reader :reflexive, :preposition, :object_case
+		attr_reader :infinitive_object, :reflexive, :preposition, :object_case
 
-		def initialize(text,gram_props,frequency,reflexive=false,preposition=nil,object_case=nil)
+		def initialize(text,gram_props,frequency,reflexive=false,preposition=nil,object_case=nil,infinitive_object=false)
 			super(text,gram_props,{},frequency)
 			raise VerbError, "invalid case: #{object_case}" if object_case && !CASES.include?(object_case)
-			@reflexive,@preposition,@object_case = reflexive,preposition,object_case
+			@reflexive,@preposition,@object_case,@infinitive_object = reflexive,preposition,object_case,infinitive_object
 		end
 
 		def Verb.parse(text,gram_props,frequency,line)
 			reflexive = false
-			preposition,object_case = nil,nil
+			preposition,object_case,infinitive_object = nil,nil,false
 			line.strip! if line
 			if line && !line.empty?
 				line.split(/\s+/).each do |part|
 					case part
 						when /^REFL(?:EXIVE|EX)?$/ then reflexive = true
+						when /^INF$/ then infinitive_object = true
 						when /^OBJ\(([^)]+)\)$/
 							opts = $1
 							case opts
@@ -139,7 +144,7 @@ module Grammar
 				end
 			end
 			begin
-				Verb.new(text,gram_props,frequency,reflexive,preposition,object_case)
+				Verb.new(text,gram_props,frequency,reflexive,preposition,object_case,infinitive_object)
 			rescue VerbError => e
 				raise ParseError, e.message
 			end
@@ -157,6 +162,7 @@ module Grammar
 					retval << {:person => person, :number => number}
 				end
 			end
+			retval << {:infinitive =>1 }
 			retval
 		end
 
@@ -235,6 +241,7 @@ module Grammar
 			@words = {}
 		end
 
+		# returns summary of number of each word type in the dictionary
 		def to_s
 			retval = 'Dictionary'
 			word_stats = []

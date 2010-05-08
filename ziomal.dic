@@ -27,9 +27,11 @@ N 200 "" m Pl PERSON(1) ONLY_SUBJ
 # chce + imiesł.
 V 100 brać/b OBJ(4)
 V 100 iść/c
+V  50 iść/c INF
 V 100 lecieć/7
 V 100 milczeć/7
-V 100 napierdalać/1
+V  60 napierdalać/1
+V  70 napierdalać/1 REFL OBJ(z,5)
 V  50 nawijać/1
 V 100 popierdalać/1
 V 100 rozpierdalać/1 OBJ(4)
@@ -38,11 +40,13 @@ V  50 słuchać/1 OBJ(2)
 V  50 uderzać/1 OBJ(na,4)
 V 100 wpadać/1 OBJ(na,4)
 V  50 wznosić/6 OBJ(4)
+V  50 zaczynać/1 INF
+V  10 zaczynać/1 REFL
 V 100 zapierdalać/1
 V 100 zapalać/1 OBJ(4)
 V 100 zwijać/1 OBJ(4)
+# musieć
 # napierdalam (kamieniem) (w policję)
-# zaczyna/idzie napierdalać
 
 A 150 cały/a
 A 100 chujowy/a

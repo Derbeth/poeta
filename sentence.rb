@@ -239,15 +239,40 @@ class Sentence
 		noun_index = self.class.read_index(full_match,index)
 		verb = @verbs[noun_index]
 		raise "no verb for #{full_match}" unless verb
-		return '' unless verb.object_case
+		if verb.object_case
+			handle_noun_object(noun_index,verb)
+		elsif verb.infinitive_object
+			handle_infinitive_object(verb)
+		else
+			''
+		end
+	end
 
-		object = @dictionary.get_random_object
-		@nouns[noun_index] = object
+	def handle_noun_object(noun_index,verb)
+		object = nil
+		4.times do
+			object = @dictionary.get_random_object
+			next if (@subject && object.text == @subject.text)
+			@nouns[noun_index] = object
+			break
+		end
 		return '' unless object
 
 		preposition_part = verb.preposition ? verb.preposition + ' ' : ''
 		form = {:case=>verb.object_case}
 		preposition_part + object.inflect(@grammar,form)
+	end
+
+	def handle_infinitive_object(verb)
+		object_verb = nil
+		4.times do
+			object_verb = @dictionary.get_random(Grammar::VERB)
+			next if (verb.text == object_verb.text)
+			break
+		end
+		return '' unless object_verb
+
+		object_verb.inflect(@grammar,{:infinitive=>1})
 	end
 
 	def handle_other(full_match,index,options)

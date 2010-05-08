@@ -181,6 +181,10 @@ V a 12 ć cie ać
 		assert_equal('latać', grammar.inflect_verb('latać', {:person=>1, :number=>2}, false, 'a'))
 		assert_equal('latacie', grammar.inflect_verb('latać', {:person=>2, :number=>2}, false, 'a'))
 		assert_equal('latam się', grammar.inflect_verb('latać', {:person=>1}, true, 'a'))
+
+		assert_equal('zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>1}, false, 'a'))
+		assert_equal('się zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>1}, true, 'a'))
+		assert_equal('zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>1, :person=>1}, false, 'a'))
 	end
 end
 
@@ -200,6 +204,9 @@ class GrammarFormTest < Test::Unit::TestCase
 
 		form = {:number=>PLURAL, :person=>2}
 		assert_equal('Pl 2', GrammarForm.pretty_print(form))
+
+		form = {:infinitive=>1}
+		assert_equal('Inf', GrammarForm.pretty_print(form))
 	end
 
 	# makes sure that no exceptions are thrown for any legal combination of forms

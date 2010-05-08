@@ -181,6 +181,35 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('pies goni za kotami', sentence.write)
 	end
 
+	def test_object_wont_equal_subject
+		dictionary = Dictionary.new
+		dictionary.read("N 100 pies\nN 30 kota/a\nV 100 goni OBJ(4)")
+		srand 2
+		assert_equal('pies', dictionary.get_random_subject.text)
+		assert_equal('pies', dictionary.get_random_object.text)
+		srand 2
+		grammar = PolishGrammar.new
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies goni kota', sentence.write)
+	end
+
+	def test_handle_infinitive_object
+		dictionary = Dictionary.new
+		dictionary.read("N 100 pies\nV 100 chce INF\nV 30 jeść")
+		srand 1
+		assert_equal('chce', dictionary.get_random(VERB).text)
+		assert_equal('chce', dictionary.get_random(VERB).text)
+		srand 1
+
+		grammar = PolishGrammar.new
+		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+		assert_equal('pies chce jeść', sentence.write)
+
+		dictionary.read("N 100 pies\nV 100 chce INF\nV 30 przejść REFL")
+		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+		assert_equal('pies chce się przejść', sentence.write)
+	end
+
 	def test_handle_other
 		dictionary = Dictionary.new
 		dictionary.read('O 100 "some other"')

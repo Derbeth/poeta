@@ -6,23 +6,6 @@ require 'dictionary'
 include Grammar
 
 class DictionaryTest < Test::Unit::TestCase
-	def test_word
-		assert_raise(RuntimeError) { Word.new('foo',[],{},-1) }  # wrong freq
-		assert_raise(RuntimeError) { Word.new('foo',[1, 2]) } # wrong props, not strings
-		assert_raise(ArgumentError) { Word.new() }            # no args
-		Word.new('')
-		Word.new('foo')
-		Word.new('foo',[])
-		Word.new('foo',[],{})
-		Word.new('foo',[],{},1)
-		assert_equal([], Word.new('foo',nil).gram_props)
-		Word.new('foo',%w{A B})
-		word = Word.new('foo',%w{A B}, {}, 1000)
-		assert_equal('foo', word.text)
-		assert_equal(['A', 'B'], word.gram_props)
-		assert_equal(1000, word.frequency)
-	end
-
 	def test_read
 		input = <<-END
 # some test dict
@@ -142,6 +125,11 @@ D 100 czasem
 		assert verb.reflexive
 		assert_equal('na', verb.preposition)
 		assert_equal(4, verb.object_case)
+
+		dict_text = "V 100 foo INF"
+		dict.read(dict_text)
+		verb = dict.get_random(VERB)
+		assert verb.infinitive_object
 	end
 
 	def test_inline_comments
@@ -149,37 +137,6 @@ D 100 czasem
 		dict.read("V 100 foo # REFLEX")
 		verb = dict.get_random(VERB)
 		assert !verb.reflexive
-	end
-end
-
-class WordTest < Test::Unit::TestCase
-	def test_inflect
-		grammar_text = <<-END
-N A   2 0 Foo .
-N B   2 0 Wrong .
-N A  12 0 PlFoo .
-N B  12 0 WrongPlFoo .
-A C 102 0 Bar .
-A D 102 0 TooWrong .
-V v   3 0 s .
-V w   3 0 AlsoWrong .
-		END
-		grammar = PolishGrammar.new
-		grammar.read_rules(grammar_text)
-
-		noun = Noun.new('foo',%w{A},{},100,MASCULINE)
-		assert_equal('fooFoo', noun.inflect(grammar, {:case=>GENITIVE}))
-		noun = Noun.new('foo',%w{A},{},100,MASCULINE,SINGULAR)
-		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE, :number=>PLURAL}))
-		noun = Noun.new('foo',%w{A},{},100,MASCULINE,PLURAL)
-		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE}))
-
-		adjective = Adjective.new('bar',%w{C},100)
-		assert_equal('barBar', adjective.inflect(grammar,
-			{:case=>GENITIVE,:gender=>MASCULINE}))
-
-		verb = Verb.new('eat',%w{v},100)
-		assert_equal('eats', verb.inflect(grammar, {:person=>3}))
 	end
 
 	def test_only_obj_only_subj
@@ -214,6 +171,69 @@ N 10 MyObject3  ONLY_OBJ
 			assert_equal('MySubject3', dict.get_random_subject.text)
 			assert_equal('MyObject3', dict.get_random_object.text)
 		end
+	end
+end
+
+class WordTest < Test::Unit::TestCase
+	def test_word
+		assert_raise(RuntimeError) { Word.new('foo',[],{},-1) }  # wrong freq
+		assert_raise(RuntimeError) { Word.new('foo',[1, 2]) } # wrong props, not strings
+		assert_raise(ArgumentError) { Word.new() }            # no args
+		Word.new('')
+		Word.new('foo')
+		Word.new('foo',[])
+		Word.new('foo',[],{})
+		Word.new('foo',[],{},1)
+		assert_equal([], Word.new('foo',nil).gram_props)
+		Word.new('foo',%w{A B})
+		word = Word.new('foo',%w{A B}, {}, 1000)
+		assert_equal('foo', word.text)
+		assert_equal(['A', 'B'], word.gram_props)
+		assert_equal(1000, word.frequency)
+	end
+
+	def test_comparison
+		def_noun = [%w{A},{},100,MASCULINE]
+		assert_equal(-1, Noun.new('a',*def_noun) <=> Noun.new('b',*def_noun))
+		assert_equal(1, Noun.new('b',*def_noun) <=> Noun.new('a',*def_noun))
+		assert_equal(0, Noun.new('a',*def_noun) <=> Noun.new('a',*def_noun))
+		assert_equal(-1, Noun.new('a',[],{},100,MASCULINE) <=> Noun.new('a', %w{a},{},100,MASCULINE))
+		assert_equal(1, Noun.new('a', %w{a},{},100,MASCULINE) <=> Noun.new('a',[],{},100,MASCULINE))
+		assert_equal(0, Noun.new('a', %w{a},{},100,MASCULINE) <=> Noun.new('a', %w{a},{},100,MASCULINE))
+		assert_equal(-1, Noun.new('a',*def_noun) <=> Verb.new('a',[],100))
+		assert_equal(1, Verb.new('a',[],100) <=> Noun.new('a',*def_noun))
+		assert_equal(-1, Noun.new('a',%w{a},{},100,MASCULINE) <=> Verb.new('a',[],100))
+		assert_equal(1, Verb.new('a',[],100) <=> Noun.new('a',%w{a},{},100,MASCULINE))
+		assert_not_equal(0, Verb.new('a',[],50,false) <=> Verb.new('a',[],100,true))
+	end
+
+	def test_inflect
+		grammar_text = <<-END
+N A   2 0 Foo .
+N B   2 0 Wrong .
+N A  12 0 PlFoo .
+N B  12 0 WrongPlFoo .
+A C 102 0 Bar .
+A D 102 0 TooWrong .
+V v   3 0 s .
+V w   3 0 AlsoWrong .
+		END
+		grammar = PolishGrammar.new
+		grammar.read_rules(grammar_text)
+
+		noun = Noun.new('foo',%w{A},{},100,MASCULINE)
+		assert_equal('fooFoo', noun.inflect(grammar, {:case=>GENITIVE}))
+		noun = Noun.new('foo',%w{A},{},100,MASCULINE,SINGULAR)
+		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE, :number=>PLURAL}))
+		noun = Noun.new('foo',%w{A},{},100,MASCULINE,PLURAL)
+		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE}))
+
+		adjective = Adjective.new('bar',%w{C},100)
+		assert_equal('barBar', adjective.inflect(grammar,
+			{:case=>GENITIVE,:gender=>MASCULINE}))
+
+		verb = Verb.new('eat',%w{v},100)
+		assert_equal('eats', verb.inflect(grammar, {:person=>3}))
 	end
 end
 
