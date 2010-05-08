@@ -30,7 +30,7 @@ class VerseTest < Test::Unit::TestCase
 
 	class WithSubjectSentence
 		def initialize(subject)
-			@subject=subject
+			@subject=Noun.new(subject,[],{},100,MASCULINE)
 		end
 		def write
 			''
@@ -45,14 +45,17 @@ class VerseTest < Test::Unit::TestCase
 		no = NoSubjectSentence.new
 		some = WithSubjectSentence.new('some')
 		other = WithSubjectSentence.new('other')
+		empty = WithSubjectSentence.new('')
 
 		verse1 = Verse.new(StubSentenceManager.new(no,no,no,no))
 		assert_equal(nil, verse1.subject)
 		verse2 = Verse.new(StubSentenceManager.new(no,some,no,other))
-		assert_equal('some', verse2.subject)
+		assert_equal('some', verse2.subject.text)
 		verse3 = Verse.new(StubSentenceManager.new(some,no,no,no))
-		assert_equal('some', verse3.subject)
+		assert_equal('some', verse3.subject.text)
 		verse4 = Verse.new(StubSentenceManager.new(no,no,no,some))
-		assert_equal('some', verse4.subject)
+		assert_equal('some', verse4.subject.text)
+		verse5 = Verse.new(StubSentenceManager.new(empty,empty,empty,empty))
+		assert_equal(nil, verse5.subject)
 	end
 end
