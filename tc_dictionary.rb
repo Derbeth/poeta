@@ -259,6 +259,14 @@ class VerbTest < Test::Unit::TestCase
 		verb.all_forms.each { |form| verb.inflect(grammar,form) ; any = true }
 		assert any
 	end
+
+	def test_suffix
+		verb = Verb.parse('mieć',%w{a},100,"SUFFIX(na karku)")
+		grammar = PolishGrammar.new
+		grammar.read_rules("V a 1 ieć am ieć");
+		assert_equal('mieć na karku', verb.inflect(grammar,{:infinitive=>1}))
+		assert_equal('mam na karku', verb.inflect(grammar,{:person=>1}))
+	end
 end
 
 class NounTest < Test::Unit::TestCase

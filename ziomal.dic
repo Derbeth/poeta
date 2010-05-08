@@ -38,6 +38,7 @@ V 100 iść/c
 V  50 iść/c INF
 V 100 lecieć/7
 V 100 mieć/1 OBJ(4)
+V  70 mieć/1 OBJ(4) SUFFIX(w dupie)
 V 100 milczeć/7
 V  80 musieć/7m INF
 V  40 nakręcać/1 OBJ(4)

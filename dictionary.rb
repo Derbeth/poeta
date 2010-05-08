@@ -113,21 +113,27 @@ module Grammar
 	class Verb < Word
 		attr_reader :infinitive_object, :reflexive, :preposition, :object_case
 
-		def initialize(text,gram_props,frequency,reflexive=false,preposition=nil,object_case=nil,infinitive_object=false)
+		def initialize(text,gram_props,frequency,reflexive=false,preposition=nil,object_case=nil,infinitive_object=false,suffix=nil)
 			super(text,gram_props,{},frequency)
 			raise VerbError, "invalid case: #{object_case}" if object_case && !CASES.include?(object_case)
-			@reflexive,@preposition,@object_case,@infinitive_object = reflexive,preposition,object_case,infinitive_object
+			@reflexive,@preposition,@object_case,@infinitive_object,@suffix = reflexive,preposition,object_case,infinitive_object,suffix
 		end
 
 		def Verb.parse(text,gram_props,frequency,line)
 			reflexive = false
-			preposition,object_case,infinitive_object = nil,nil,false
+			preposition,object_case,infinitive_object,suffix = nil,nil,false,nil
 			line.strip! if line
 			if line && !line.empty?
+				escaped = []
+				last_e = -1
+				line.gsub!(/\([^)]+\)/) { |match| last_e +=1; escaped[last_e] = match; "$#{last_e}" }
 				line.split(/\s+/).each do |part|
+					part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
 					case part
 						when /^REFL(?:EXIVE|EX)?$/ then reflexive = true
 						when /^INF$/ then infinitive_object = true
+						when /^SUFFIX\(([^)]+)\)$/
+							suffix = $1
 						when /^OBJ\(([^)]+)\)$/
 							opts = $1
 							case opts
@@ -144,14 +150,16 @@ module Grammar
 				end
 			end
 			begin
-				Verb.new(text,gram_props,frequency,reflexive,preposition,object_case,infinitive_object)
+				Verb.new(text,gram_props,frequency,reflexive,preposition,object_case,infinitive_object,suffix)
 			rescue VerbError => e
 				raise ParseError, e.message
 			end
 		end
 
 		def inflect(grammar,form)
-			grammar.inflect_verb(text,form,@reflexive,*gram_props)
+			inflected = grammar.inflect_verb(text,form,@reflexive,*gram_props)
+			inflected += ' ' + @suffix if (@suffix)
+			inflected
 		end
 
 		# returns an Enumerable collection of all applicable grammar forms
