@@ -258,9 +258,19 @@ class Sentence
 		end
 		return '' unless object
 
-		preposition_part = verb.preposition ? verb.preposition + ' ' : ''
 		form = {:case=>verb.object_case}
-		preposition_part + object.inflect(@grammar,form)
+		inflected_object = object.inflect(@grammar,form)
+		verb.preposition ? join_preposition_object(verb.preposition,inflected_object) : inflected_object
+	end
+
+	def join_preposition_object(preposition,object)
+		prep = preposition.clone
+		consonants = '[bcdfghjklłmnprstwz]'
+		case
+			when prep == 'z' && object =~ /^[sz]#{consonants}/ then prep = 'ze'
+			when prep == 'w' && object =~ /^w#{consonants}/ then prep = 'we'
+		end
+		prep + ' ' + object
 	end
 
 	def handle_infinitive_object(verb)

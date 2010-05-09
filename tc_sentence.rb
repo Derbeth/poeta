@@ -193,6 +193,31 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('pies goni kota', sentence.write)
 	end
 
+	def test_object_preposition_letter_change
+		grammar = PolishGrammar.new
+		dictionary = Dictionary.new
+		srand 1
+		dictionary.read("N 100 pies\nN 30 zebrą\nV 100 idzie OBJ(z,5)")
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies idzie z zebrą', sentence.write)
+		srand 1
+		dictionary.read("N 100 pies\nN 30 zdradą\nV 100 idzie OBJ(z,5)")
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies idzie ze zdradą', sentence.write)
+		srand 1
+		dictionary.read("N 100 pies\nN 30 skrętem\nV 100 idzie OBJ(z,5)")
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies idzie ze skrętem', sentence.write)
+		srand 1
+		dictionary.read("N 100 pies\nN 30 walce\nV 100 idzie OBJ(w,6)")
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies idzie w walce', sentence.write)
+		dictionary.read("N 100 pies\nN 30 wronie\nV 100 idzie OBJ(w,6)")
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies idzie we wronie', sentence.write)
+		# TODO ode mnie?
+	end
+
 	def test_handle_infinitive_object
 		dictionary = Dictionary.new
 		dictionary.read("N 100 pies\nV 100 chce INF\nV 30 jeść")
