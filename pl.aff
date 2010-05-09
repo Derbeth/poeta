@@ -242,6 +242,7 @@ N p 16       o    ach   o
 
 
 A a 102,202     y  ego y
+A a 104         y  ego y/A
 A a 103,203     y  emu y
 A a 105,205     0  m   y
 A a 106,206     0  m   y
@@ -270,15 +271,16 @@ A a 217,317     y  e   y
 
 A b 102,202          0  ego i
 A b 103,203          0  emu i
-A b 104              0  ego i
+A b 104              0  ego i/A
 A b 105,205          0  m   i
 A b 106,206          0  m   i
-A b 201              0  e   i
+A b 201,204          0  e   i
 A b 207              0  e   i
-A b 301              i  a   i
+A b 301,307          0  a   ni
+A b 301,307          i  a   i
 A b 302,303,306      0  ej  i
+A b 304,305          0  ą   ni
 A b 304,305          i  ą   i
-A b 307              i  a   i
 A b 111,117          ki cy ki
 A b 211,311,214,314  0  e   i
 A b 217,317          0  e   i
@@ -288,7 +290,8 @@ A b 115,215,315      0  mi  i
 A b 116,216,316      0  ch  i
 
 # ten
-A c 102,202,104      n  go en
+A c 102,202          n  go en
+A c 104              n  go en/A
 A c 103,203          n  mu en
 A c 105,205,106,206  en ym en
 A c 107,207,307      en y  en
@@ -307,7 +310,8 @@ A c 214,314          n  0   en
 A c 115,215,315      en ymi en
 
 # nasz
-A d 102,202,104      0 ego .
+A d 102,202          0 ego .
+A d 104              0 ego ./A
 A d 103,203          0 emu .
 A d 105,205,106,206  0 ym  .
 A d 201,204          0 e   .
@@ -323,8 +327,9 @@ A d 115,215,315      0 ymi .
 A d 116,216,316      0 ych .
 
 # mój, twój
-A e 102,202,104              ój ojego ój
-A e 103,203                  ój ojemu ój
+A e 102,202          ój ojego ój
+A e 104              ój ojego ój/A
+A e 103,203          ój ojemu ój
 A e 105,205,106,206  ój oim   ój
 A e 201,204          ój oje ój
 A e 301,307          ój oja ój

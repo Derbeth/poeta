@@ -6,6 +6,7 @@ require 'randomized_choice'
 module Grammar
 	OBJECT_ONLY = 'OO'
 	NO_NOUN_NOUN = 'NO_NOUN_NOUN'
+	ANIMATE_PROP = 'A'
 
 	class Word
 		attr_reader :text, :gram_props, :frequency
@@ -53,20 +54,20 @@ module Grammar
 	end
 
 	class Noun < Word
-		attr_reader :gender, :number, :person
+		attr_reader :animate,:gender, :number, :person
 		STRING2GENDER = {'m'=>MASCULINE,'n'=>NEUTER,'f'=>FEMININE}
 
-		def initialize(text,gram_props,general_props,frequency,gender,number=SINGULAR,person=3)
+		def initialize(text,gram_props,general_props,frequency,gender,number=SINGULAR,person=3,animate=true)
 			super(text,gram_props,general_props,frequency)
 			raise "invalid gender #{gender}" unless(GENDERS.include?(gender))
 			raise "invalid number #{number}" unless(NUMBERS.include?(number))
 			raise "invalid person #{person}" unless([1,2,3].include?(person))
-			@gender,@number,@person = gender,number,person
+			@gender,@number,@person,@animate = gender,number,person,animate
 		end
 
 		def Noun.parse(text,gram_props,frequency,line)
 			begin
-				gender,number,person = MASCULINE,SINGULAR,3
+				gender,number,person,animate = MASCULINE,SINGULAR,3,true
 				line.strip! if line
 				general_props = {}
 				if line && !line.empty?
@@ -74,6 +75,7 @@ module Grammar
 						case part
 							when /^([mfn])$/ then gender = STRING2GENDER[$1]
 							when 'Pl' then number = PLURAL
+							when 'nan' then animate = false
 							when /^PERSON\(([^)]*)\)/
 								person = Integer($1.strip)
 							when 'ONLY_SUBJ' then general_props[:only_subj] = true
@@ -87,7 +89,7 @@ module Grammar
 						end
 					end
 				end
-				Noun.new(text,gram_props,general_props,frequency,gender,number,person)
+				Noun.new(text,gram_props,general_props,frequency,gender,number,person,animate)
 			rescue RuntimeError, ArgumentError
 				raise ParseError, "cannot parse '#{line}': #{$!.message}"
 			end
@@ -203,11 +205,16 @@ module Grammar
 
 	class Adjective < Word
 		def initialize(text,gram_props,frequency)
+			if gram_props.include?(ANIMATE_PROP)
+				raise AdjectiveError, "grammar property #{ANIMATE_PROP} is reserved as animated mark"
+			end
 			super(text,gram_props,{},frequency)
 		end
 
 		def Adjective.parse(text,gram_props,frequency,line)
 			Adjective.new(text,gram_props,frequency) # TODO TEMP
+		rescue AdjectiveError => e
+			raise ParseError, e.message
 		end
 
 		# returns an Enumerable collection of all applicable grammar forms
@@ -223,8 +230,14 @@ module Grammar
 			retval
 		end
 
-		def inflect(grammar,form)
-			return grammar.inflect_adjective(text,form,*gram_props)
+		def inflect(grammar,form,animate=true)
+			temp_gram_props = gram_props.clone
+			temp_gram_props << ANIMATE_PROP if animate
+			return grammar.inflect_adjective(text,form,*temp_gram_props)
+		end
+
+		private
+		class AdjectiveError < RuntimeError
 		end
 	end
 

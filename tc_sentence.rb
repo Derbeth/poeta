@@ -128,6 +128,19 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('rozumiesz', sentence.write)
 	end
 
+	def test_handle_animate_inanimate
+		dictionary = Dictionary.new
+		grammar = PolishGrammar.new
+		grammar.read_rules("A a 104 y ego y/A")
+		dictionary.read("A 100 dobry/a\nN 100 czas m nan")
+		sentence = Sentence.new(dictionary,grammar,'widzę ${ADJ(4)} ${NOUN(4)}')
+		assert_equal('widzę dobry czas', sentence.write)
+
+		dictionary.read("A 100 dobry/a\nN 100 psa m")
+		sentence = Sentence.new(dictionary,grammar,'widzę ${ADJ(4)} ${NOUN(4)}')
+		assert_equal('widzę dobrego psa', sentence.write)
+	end
+
 	def test_handle_verb
 		dictionary = Dictionary.new
 		dictionary.read("N 100 lipy f Pl\nV 100 rosnąć/a")

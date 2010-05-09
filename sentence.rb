@@ -215,7 +215,7 @@ class Sentence
 		return '' if noun.person != 3
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number}
-		adjective.inflect(@grammar,form)
+		adjective.inflect(@grammar,form,noun.animate)
 	end
 
 	def handle_verb(full_match,index,options)

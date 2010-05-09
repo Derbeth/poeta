@@ -1,12 +1,12 @@
 N  50 bit/m m
 N 100 buch/i m ONLY_OBJ
 N  10 dzielnica/l f OBJ_FREQ(100)
-N 100 dzień/o1 m
+N 100 dzień/o1 m nan
 N  50 dziwka/a f
 N 150 ekipa/b f
-N 100 głos/e m
+N 100 głos/e m nan
 N  50 hasło/p n
-N  50 honor/e m
+N  50 honor/e m nan
 N  50 impreza/b f OBJ_FREQ(100)
 N  10 kasa/b f OBJ_FREQ(100)
 N  50 komercha/b f
@@ -17,11 +17,11 @@ N 100 miasto/p n
 N 100 pięść/n f
 N 100 policja/h f
 N  50 prawo/p n
-N 100 rap/e m
+N 100 rap/e m nan
 N 100 skręt/m m
 N  10 szansa/b f OBJ_FREQ(50)
-N  10 szmal/c m OBJ_FREQ(100)
-N 100 temat/e ONLY_OBJ
+N  10 szmal/c m nan OBJ_FREQ(100)
+N 100 temat/e m nan ONLY_OBJ
 N 100 ulica/l f
 N  50 wojna/b f
 N  10 zasada/b f Pl OBJ_FREQ(100)
