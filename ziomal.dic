@@ -34,6 +34,7 @@ N 200 "" m Pl PERSON(1) ONLY_SUBJ
 
 # chce + imiesł.
 V 100 brać/b OBJ(4)
+V  80 chcieć/7c INF
 V 100 iść/c
 V  50 iść/c INF
 V 100 lecieć/7
