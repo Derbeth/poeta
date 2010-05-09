@@ -51,13 +51,37 @@ module Grammar
 
 		protected
 		attr_reader :general_props
+
+		# global_props - hash where read options will be stored
+		# block - will receive split params to parse
+		def self.parse(line,global_props,&block)
+			line.strip! if line
+			if line && !line.empty?
+				escaped = []
+				last_e = -1
+				line.gsub!(/\([^)]+\)/) { |match| last_e +=1; escaped[last_e] = match; "$#{last_e}" }
+				line.split(/\s+/).each do |part|
+					part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
+					case part
+						when /^SEMANTIC\(([^)]+)\)$/
+							global_props[:semantic] = $1.split(/, */)
+						when /^ONLY_WITH\(([^)]+)\)$/
+							global_props[:only_with] = $1.split(/, */)
+						when /^NOT_WITH\(([^)]+)\)$/
+							global_props[:not_with] = $1.split(/, */)
+						else
+							block.call(part)
+					end
+				end
+			end
+		end
 	end
 
 	class Noun < Word
 		attr_reader :animate,:gender, :number, :person
 		STRING2GENDER = {'m'=>MASCULINE,'n'=>NEUTER,'f'=>FEMININE}
 
-		def initialize(text,gram_props,general_props,frequency,gender,number=SINGULAR,person=3,animate=true)
+		def initialize(text,gram_props,frequency,gender,general_props={},number=SINGULAR,person=3,animate=true)
 			super(text,gram_props,general_props,frequency)
 			raise "invalid gender #{gender}" unless(GENDERS.include?(gender))
 			raise "invalid number #{number}" unless(NUMBERS.include?(number))
@@ -68,28 +92,25 @@ module Grammar
 		def Noun.parse(text,gram_props,frequency,line)
 			begin
 				gender,number,person,animate = MASCULINE,SINGULAR,3,true
-				line.strip! if line
 				general_props = {}
-				if line && !line.empty?
-					line.split(/\s+/).each do |part|
-						case part
-							when /^([mfn])$/ then gender = STRING2GENDER[$1]
-							when 'Pl' then number = PLURAL
-							when 'nan' then animate = false
-							when /^PERSON\(([^)]*)\)/
-								person = Integer($1.strip)
-							when 'ONLY_SUBJ' then general_props[:only_subj] = true
-							when 'ONLY_OBJ' then general_props[:only_obj] = true
-							when /^OBJ_FREQ/
-								unless part =~ /^OBJ_FREQ\((\d+)\)$/
-									raise "illegal format of OBJ_FREQ in #{line}"
-								end
-								general_props[:obj_freq] = $1.to_i
-							else puts "warn: unknown option #{part}"
-						end
+				Word.parse(line,general_props) do |part|
+					case part
+						when /^([mfn])$/ then gender = STRING2GENDER[$1]
+						when 'Pl' then number = PLURAL
+						when 'nan' then animate = false
+						when /^PERSON\(([^)]*)\)/
+							person = Integer($1.strip)
+						when 'ONLY_SUBJ' then general_props[:only_subj] = true
+						when 'ONLY_OBJ' then general_props[:only_obj] = true
+						when /^OBJ_FREQ/
+							unless part =~ /^OBJ_FREQ\((\d+)\)$/
+								raise "illegal format of OBJ_FREQ in #{line}"
+							end
+							general_props[:obj_freq] = $1.to_i
+						else puts "warn: unknown option #{part}"
 					end
 				end
-				Noun.new(text,gram_props,general_props,frequency,gender,number,person,animate)
+				Noun.new(text,gram_props,frequency,gender,general_props,number,person,animate)
 			rescue RuntimeError, ArgumentError
 				raise ParseError, "cannot parse '#{line}': #{$!.message}"
 			end
@@ -115,8 +136,8 @@ module Grammar
 	class Verb < Word
 		attr_reader :infinitive_object, :reflexive, :preposition, :object_case
 
-		def initialize(text,gram_props,frequency,reflexive=false,preposition=nil,object_case=nil,infinitive_object=false,suffix=nil)
-			super(text,gram_props,{},frequency)
+		def initialize(text,gram_props,frequency,general_props={},reflexive=false,preposition=nil,object_case=nil,infinitive_object=false,suffix=nil)
+			super(text,gram_props,general_props,frequency)
 			raise VerbError, "invalid case: #{object_case}" if object_case && !CASES.include?(object_case)
 			@reflexive,@preposition,@object_case,@infinitive_object,@suffix = reflexive,preposition,object_case,infinitive_object,suffix
 		end
@@ -124,35 +145,30 @@ module Grammar
 		def Verb.parse(text,gram_props,frequency,line)
 			reflexive = false
 			preposition,object_case,infinitive_object,suffix = nil,nil,false,nil
-			line.strip! if line
-			if line && !line.empty?
-				escaped = []
-				last_e = -1
-				line.gsub!(/\([^)]+\)/) { |match| last_e +=1; escaped[last_e] = match; "$#{last_e}" }
-				line.split(/\s+/).each do |part|
-					part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
-					case part
-						when /^REFL(?:EXIVE|EX)?$/ then reflexive = true
-						when /^INF$/ then infinitive_object = true
-						when /^SUFFIX\(([^)]+)\)$/
-							suffix = $1
-						when /^OBJ\(([^)]+)\)$/
-							opts = $1
-							case opts
-								when /^([^,]+),(\d+)$/
-									preposition,object_case = $1.strip,Integer($2)
-								when /^\d+$/
-									preposition,object_case = nil,Integer(opts)
-								else
-									raise ParseError, "wrong option format for #{text}: '#{part}'"
-							end
-						else
-							puts "warn: unknown option '#{part}' for '#{text}'"
-					end
+			general_props = {}
+			Word.parse(line,general_props) do |part|
+				part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
+				case part
+					when /^REFL(?:EXIVE|EX)?$/ then reflexive = true
+					when /^INF$/ then infinitive_object = true
+					when /^SUFFIX\(([^)]+)\)$/
+						suffix = $1
+					when /^OBJ\(([^)]+)\)$/
+						opts = $1
+						case opts
+							when /^([^,]+),(\d+)$/
+								preposition,object_case = $1.strip,Integer($2)
+							when /^\d+$/
+								preposition,object_case = nil,Integer(opts)
+							else
+								raise ParseError, "wrong option format for #{text}: '#{part}'"
+						end
+					else
+						puts "warn: unknown option '#{part}' for '#{text}'"
 				end
 			end
 			begin
-				Verb.new(text,gram_props,frequency,reflexive,preposition,object_case,infinitive_object,suffix)
+				Verb.new(text,gram_props,frequency,general_props,reflexive,preposition,object_case,infinitive_object,suffix)
 			rescue VerbError => e
 				raise ParseError, e.message
 			end
@@ -182,12 +198,14 @@ module Grammar
 	end
 
 	class Adverb < Word
-		def initialize(text,gram_props,frequency)
-			super(text,gram_props,{},frequency)
+		def initialize(text,gram_props,frequency,general_props={})
+			super(text,gram_props,general_props,frequency)
 		end
 
 		def self.parse(text,gram_props,frequency,line)
-			Adverb.new(text,gram_props,frequency)
+			general_props = {}
+			Word.parse(line,general_props)
+			Adverb.new(text,gram_props,frequency,general_props)
 		end
 	end
 
@@ -204,15 +222,17 @@ module Grammar
 	end
 
 	class Adjective < Word
-		def initialize(text,gram_props,frequency)
+		def initialize(text,gram_props,frequency,general_props={})
 			if gram_props.include?(ANIMATE_PROP)
 				raise AdjectiveError, "grammar property #{ANIMATE_PROP} is reserved as animated mark"
 			end
-			super(text,gram_props,{},frequency)
+			super(text,gram_props,general_props,frequency)
 		end
 
 		def Adjective.parse(text,gram_props,frequency,line)
-			Adjective.new(text,gram_props,frequency) # TODO TEMP
+			general_props = {}
+			Word.parse(line,general_props)
+			Adjective.new(text,gram_props,frequency,general_props) # TODO TEMP
 		rescue AdjectiveError => e
 			raise ParseError, e.message
 		end
@@ -286,6 +306,20 @@ module Grammar
 			end
 			index = get_random_index(freq_array,speech_part)
 			index == -1 ? nil : @words[speech_part][index]
+		end
+
+		def semantic_chooser(context_semantics)
+			raise "context semantics should behave like an array" unless context_semantics.respond_to? :include?
+			lambda do |word|
+				frequency = word.frequency
+				if word.get_property(:only_with) && (context_semantics & word.get_property(:only_with)).empty?
+					frequency = 0
+				end
+				if word.get_property(:not_with) && !(context_semantics & word.get_property(:not_with)).empty?
+					frequency = 0
+				end
+				frequency
+			end
 		end
 
 		def get_random_subject(&freq_counter)

@@ -141,6 +141,30 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('widzę dobrego psa', sentence.write)
 	end
 
+	def test_handle_semantic
+		grammar = PolishGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good ONLY_WITH(GOOD)\n")
+		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
+		assert_equal('good work', sentence.write)
+
+		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good\nA 100 bad NOT_WITH(GOOD)")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${ADJ} ${SUBJ}')
+			assert_equal('good work', sentence.write)
+		end
+
+		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good NOT_WITH(BAD)\n")
+		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${SUBJ}')
+		assert_equal('good work', sentence.write)
+
+		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good\nA 100 bad ONLY_WITH(BAD)")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
+			assert_equal('good work', sentence.write)
+		end
+	end
+
 	def test_handle_verb
 		dictionary = Dictionary.new
 		dictionary.read("N 100 lipy f Pl\nV 100 rosnąć/a")
@@ -305,7 +329,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary_text = "N 100 foo\nA 100 cool"
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
-		subject = Noun.new('bar',[],{},0,1)
+		subject = Noun.new('bar',[],0,1)
 		grammar = PolishGrammar.new
 
 		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${SUBJ2} ${SUBJ3}')

@@ -173,6 +173,17 @@ N 10 MyObject3  ONLY_OBJ
 			assert_equal('MyObject3', dict.get_random_object.text)
 		end
 	end
+
+	def test_semantic
+		dictionary = Dictionary.new
+		dictionary.read("N 100 angel ONLY_WITH(GOOD)\nN 100 devil NOT_WITH(GOOD)")
+		10.times do
+			assert_equal('devil', dictionary.get_random(NOUN, &dictionary.semantic_chooser(['BAD'])).text)
+		end
+		10.times do
+			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser(['GOOD'])).text)
+		end
+	end
 end
 
 class WordTest < Test::Unit::TestCase
@@ -194,18 +205,18 @@ class WordTest < Test::Unit::TestCase
 	end
 
 	def test_comparison
-		def_noun = [%w{A},{},100,MASCULINE]
+		def_noun = [%w{A},100,MASCULINE]
 		assert_equal(-1, Noun.new('a',*def_noun) <=> Noun.new('b',*def_noun))
 		assert_equal(1, Noun.new('b',*def_noun) <=> Noun.new('a',*def_noun))
 		assert_equal(0, Noun.new('a',*def_noun) <=> Noun.new('a',*def_noun))
-		assert_equal(-1, Noun.new('a',[],{},100,MASCULINE) <=> Noun.new('a', %w{a},{},100,MASCULINE))
-		assert_equal(1, Noun.new('a', %w{a},{},100,MASCULINE) <=> Noun.new('a',[],{},100,MASCULINE))
-		assert_equal(0, Noun.new('a', %w{a},{},100,MASCULINE) <=> Noun.new('a', %w{a},{},100,MASCULINE))
+		assert_equal(-1, Noun.new('a',[],100,MASCULINE) <=> Noun.new('a', %w{a},100,MASCULINE))
+		assert_equal(1, Noun.new('a', %w{a},100,MASCULINE) <=> Noun.new('a',[],100,MASCULINE))
+		assert_equal(0, Noun.new('a', %w{a},100,MASCULINE) <=> Noun.new('a', %w{a},100,MASCULINE))
 		assert_equal(-1, Noun.new('a',*def_noun) <=> Verb.new('a',[],100))
 		assert_equal(1, Verb.new('a',[],100) <=> Noun.new('a',*def_noun))
-		assert_equal(-1, Noun.new('a',%w{a},{},100,MASCULINE) <=> Verb.new('a',[],100))
-		assert_equal(1, Verb.new('a',[],100) <=> Noun.new('a',%w{a},{},100,MASCULINE))
-		assert_not_equal(0, Verb.new('a',[],50,false) <=> Verb.new('a',[],100,true))
+		assert_equal(-1, Noun.new('a',%w{a},100,MASCULINE) <=> Verb.new('a',[],100))
+		assert_equal(1, Verb.new('a',[],100) <=> Noun.new('a',%w{a},100,MASCULINE))
+		assert_not_equal(0, Verb.new('a',[],50,{},false) <=> Verb.new('a',[],100,{},true))
 	end
 
 	def test_inflect
@@ -222,11 +233,11 @@ V w   3 0 AlsoWrong .
 		grammar = PolishGrammar.new
 		grammar.read_rules(grammar_text)
 
-		noun = Noun.new('foo',%w{A},{},100,MASCULINE)
+		noun = Noun.new('foo',%w{A},100,MASCULINE)
 		assert_equal('fooFoo', noun.inflect(grammar, {:case=>GENITIVE}))
-		noun = Noun.new('foo',%w{A},{},100,MASCULINE,SINGULAR)
+		noun = Noun.new('foo',%w{A},100,MASCULINE,{},SINGULAR)
 		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE, :number=>PLURAL}))
-		noun = Noun.new('foo',%w{A},{},100,MASCULINE,PLURAL)
+		noun = Noun.new('foo',%w{A},100,MASCULINE,{},PLURAL)
 		assert_equal('fooPlFoo', noun.inflect(grammar, {:case=>GENITIVE}))
 
 		adjective = Adjective.new('bar',%w{C},100)
@@ -235,6 +246,20 @@ V w   3 0 AlsoWrong .
 
 		verb = Verb.new('eat',%w{v},100)
 		assert_equal('eats', verb.inflect(grammar, {:person=>3}))
+	end
+
+	def test_protected_parse
+		read_opts = []
+		global_opts = {:foo=>'bar'}
+		Word.send(:parse,'A FOO(one two) SEMANTIC(good) B',global_opts) do |part|
+			read_opts << part
+		end
+		assert_equal(['A','FOO(one two)','B'], read_opts) # does not include handled by WORD
+		assert_equal({:foo=>'bar',:semantic=>['good']}, global_opts)
+
+		global_opts = {}
+		Word.send(:parse,'SEMANTIC(good,great) ONLY_WITH(good) NOT_WITH(bad,awful)',global_opts)
+		assert_equal({:semantic=>['good','great'],:only_with=>['good'],:not_with=>['bad','awful']}, global_opts)
 	end
 end
 
@@ -310,11 +335,11 @@ class NounTest < Test::Unit::TestCase
 	end
 
 	def test_validation
-		noun = Noun.new('bar',[],{},100,MASCULINE)
+		noun = Noun.new('bar',[],100,MASCULINE)
 		assert_equal(3, noun.person)
 		assert_equal(SINGULAR, noun.number)
 
-		noun = Noun.new('bar',[],{},100,FEMININE,PLURAL,2)
+		noun = Noun.new('bar',[],100,FEMININE,{},PLURAL,2)
 		assert_equal(2,noun.person)
 		assert_equal(PLURAL,noun.number)
 
@@ -323,7 +348,7 @@ class NounTest < Test::Unit::TestCase
 
 	def test_all_forms
 		grammar = PolishGrammar.new
-		noun = Noun.new('foo',[],{},100,MASCULINE)
+		noun = Noun.new('foo',[],100,MASCULINE)
 		any = false
 		noun.all_forms.each { |form| noun.inflect(grammar,form) ; any = true }
 		assert any

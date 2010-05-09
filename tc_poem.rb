@@ -30,7 +30,7 @@ class VerseTest < Test::Unit::TestCase
 
 	class WithSubjectSentence
 		def initialize(subject)
-			@subject=Noun.new(subject,[],{},100,MASCULINE)
+			@subject=Noun.new(subject,[],100,MASCULINE)
 		end
 		def write
 			''

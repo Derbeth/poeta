@@ -209,10 +209,13 @@ class Sentence
 		noun_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_adjective_options(options)
 		raise "no noun for #{full_match}" unless @nouns.include? noun_index
-		adjective = @dictionary.get_random(Grammar::ADJECTIVE)
-		return '' unless adjective
 		noun = @nouns[noun_index]
-		return '' if noun.person != 3
+		return '' if noun == nil || noun.person != 3
+
+		freq_counter = noun.get_property(:semantic) && !noun.get_property(:semantic).empty? ?
+			@dictionary.semantic_chooser(noun.get_property(:semantic)) : nil
+		adjective = @dictionary.get_random(Grammar::ADJECTIVE, &freq_counter)
+		return '' unless adjective
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number}
 		adjective.inflect(@grammar,form,noun.animate)
