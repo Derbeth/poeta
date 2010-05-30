@@ -176,12 +176,15 @@ N 10 MyObject3  ONLY_OBJ
 
 	def test_semantic
 		dictionary = Dictionary.new
-		dictionary.read("N 100 angel ONLY_WITH(GOOD)\nN 100 devil NOT_WITH(GOOD)")
+		dictionary.read("N 100 angel ONLY_WITH(GOOD)\nN 100 devil NOT_WITH(HEAVEN,GOOD)")
 		10.times do
 			assert_equal('devil', dictionary.get_random(NOUN, &dictionary.semantic_chooser(['BAD'])).text)
 		end
 		10.times do
 			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser(['GOOD'])).text)
+		end
+		10.times do
+			assert_nil(dictionary.get_random(NOUN, &dictionary.semantic_chooser(['HEAVEN'])))
 		end
 	end
 end
