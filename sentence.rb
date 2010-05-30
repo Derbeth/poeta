@@ -212,8 +212,7 @@ class Sentence
 		noun = @nouns[noun_index]
 		return '' if noun == nil || noun.person != 3
 
-		freq_counter = noun.get_property(:semantic) && !noun.get_property(:semantic).empty? ?
-			@dictionary.semantic_chooser(noun.get_property(:semantic)) : nil
+		freq_counter =@dictionary.semantic_chooser(noun.text, noun.get_property(:semantic) || [])
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE, &freq_counter)
 		return '' unless adjective
 		gram_case = parsed_opts[:case] || NOMINATIVE

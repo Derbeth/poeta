@@ -176,15 +176,26 @@ N 10 MyObject3  ONLY_OBJ
 
 	def test_semantic
 		dictionary = Dictionary.new
-		dictionary.read("N 100 angel ONLY_WITH(GOOD)\nN 100 devil NOT_WITH(HEAVEN,GOOD)")
+		dictionary.read("N 100 angel ONLY_WITH(GOOD,HEAVEN)\nN 100 devil NOT_WITH(HEAVEN,GOOD)")
+		# ONLY_WITH is 'or', NOT_WITH is 'and'
 		10.times do
-			assert_equal('devil', dictionary.get_random(NOUN, &dictionary.semantic_chooser(['BAD'])).text)
+			assert_equal('devil', dictionary.get_random(NOUN, &dictionary.semantic_chooser('', ['BAD'])).text)
 		end
 		10.times do
-			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser(['GOOD'])).text)
+			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser('', ['HEAVEN'])).text)
+			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser('', ['GOOD'])).text)
+			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser('', ['GOOD','HEAVEN'])).text)
+		end
+
+		dictionary.read("A 100 holy ONLY_WITH_W(angel)\nA 100 evil NOT_WITH_W(angel,saint)")
+		10.times do
+			assert_equal('evil', dictionary.get_random(ADJECTIVE, &dictionary.semantic_chooser('devil', [])).text)
 		end
 		10.times do
-			assert_nil(dictionary.get_random(NOUN, &dictionary.semantic_chooser(['HEAVEN'])))
+			assert_equal('holy', dictionary.get_random(ADJECTIVE, &dictionary.semantic_chooser('angel', [])).text)
+		end
+		10.times do
+			assert_nil(dictionary.get_random(ADJECTIVE, &dictionary.semantic_chooser('saint', [])))
 		end
 	end
 end
@@ -261,8 +272,19 @@ V w   3 0 AlsoWrong .
 		assert_equal({:foo=>'bar',:semantic=>['good']}, global_opts)
 
 		global_opts = {}
-		Word.send(:parse,'SEMANTIC(good,great) ONLY_WITH(good) NOT_WITH(bad,awful)',global_opts)
-		assert_equal({:semantic=>['good','great'],:only_with=>['good'],:not_with=>['bad','awful']}, global_opts)
+		Word.send(:parse,'SEMANTIC(good,great) ONLY_WITH(good) NOT_WITH(bad,awful)
+		ONLY_WITH_W(angel,saint) NOT_WITH_W(devil,demon)',global_opts)
+		assert_equal({:semantic=>['good','great'],
+			:only_with=>['good'],:not_with=>['bad','awful'],
+			:only_with_word=>['angel','saint'],:not_with_word=>['devil','demon']}, global_opts)
+
+		# double semantic
+		global_opts = {}
+		Word.send(:parse,'SEMANTIC(a) ONLY_WITH(b) NOT_WITH(c) ONLY_WITH_W(d) NOT_WITH_W(e)
+		SEMANTIC(A) ONLY_WITH(B) NOT_WITH(C) ONLY_WITH_W(D) NOT_WITH_W(E)',global_opts)
+		assert_equal({:semantic=>['a','A'],
+			:only_with=>['b','B'],:not_with=>['c','C'],
+			:only_with_word=>['d','D'], :not_with_word=>['e','E']}, global_opts)
 	end
 end
 
@@ -361,6 +383,13 @@ end
 class AdjectiveTest < Test::Unit::TestCase
 	include Grammar::TestHelper
 
+	def test_parse
+		Adjective.parse('good',[],100,'')
+		adjective = Adjective.parse('good',['F'],100,'ONLY_WITH(GOOD)')
+		assert_equal 'good', adjective.text
+		Adjective.parse('good',[],100,'NOTEXIST')
+	end
+
 	def test_reserved_gram_props
 		assert_raise_kind(RuntimeError) { Adjective.new('dobry',%w{A},100) }
 		assert_raise_kind(RuntimeError) { Adjective.new('dobry',%w{a A c},100) }
@@ -392,7 +421,9 @@ class OtherWordTest < Test::Unit::TestCase
 		word = Other.parse('some other',[],100,'')
 		assert_equal 'some other', word.text
 
+		# we don't expect any grammar properties
 		assert_raise(ParseError) { Other.parse('some other',['A'],100,'') }
+		# we don't expect any properties
 		assert_raise(ParseError) { Other.parse('some other',[],100,'word') }
 	end
 end
@@ -401,6 +432,9 @@ class AdverbTest < Test::Unit::TestCase
 	def test_parse
 		word = Adverb.parse('an adverb',[],100,'')
 		assert_equal 'an adverb', word.text
+		Adverb.parse('adverb', ['A'],100,'')
+		Adverb.parse('adverb', [],100,'ONLY_WITH(GOOD)')
+		Adverb.parse('adverb', [],100,'NOTEXIST')
 	end
 end
 

@@ -147,8 +147,16 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good ONLY_WITH(GOOD)\n")
 		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
 		assert_equal('good work', sentence.write)
+		dictionary.read("N 100 work\nA 100 good ONLY_WITH_W(work)\n")
+		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
+		assert_equal('good work', sentence.write)
 
 		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good\nA 100 bad NOT_WITH(GOOD)")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${ADJ} ${SUBJ}')
+			assert_equal('good work', sentence.write)
+		end
+		dictionary.read("N 100 work\nA 100 good\nA 100 bad NOT_WITH_W(work)")
 		10.times do
 			sentence = Sentence.new(dictionary,grammar,'${ADJ} ${SUBJ}')
 			assert_equal('good work', sentence.write)
@@ -159,6 +167,11 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('good work', sentence.write)
 
 		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good\nA 100 bad ONLY_WITH(BAD)")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
+			assert_equal('good work', sentence.write)
+		end
+		dictionary.read("N 100 work\nA 100 good\nA 100 bad ONLY_WITH_W(idea)")
 		10.times do
 			sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
 			assert_equal('good work', sentence.write)

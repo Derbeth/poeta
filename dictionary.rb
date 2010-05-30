@@ -57,20 +57,27 @@ module Grammar
 		def self.parse(line,global_props,&block)
 			line.strip! if line
 			if line && !line.empty?
+				semantic_opts = {'SEMANTIC'=>:semantic,
+					'ONLY_WITH'=>:only_with, 'NOT_WITH'=>:not_with,
+					'ONLY_WITH_W'=>:only_with_word, 'NOT_WITH_W'=>:not_with_word}
 				escaped = []
 				last_e = -1
 				line.gsub!(/\([^)]+\)/) { |match| last_e +=1; escaped[last_e] = match; "$#{last_e}" }
 				line.split(/\s+/).each do |part|
-					part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
-					case part
-						when /^SEMANTIC\(([^)]+)\)$/
-							global_props[:semantic] = $1.split(/, */)
-						when /^ONLY_WITH\(([^)]+)\)$/
-							global_props[:only_with] = $1.split(/, */)
-						when /^NOT_WITH\(([^)]+)\)$/
-							global_props[:not_with] = $1.split(/, */)
-						else
+					catch(:part_processing) do
+						part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
+						semantic_opts.each_pair do |string,name|
+							if part =~ /^#{string}\(([^)]+)\)$/
+								global_props[name] ||= []
+								global_props[name] += $1.split(/, */)
+								throw :part_processing
+							end
+						end
+						if block_given?
 							block.call(part)
+						else
+							puts "warn: unknown option #{part}"
+						end
 					end
 				end
 			end
@@ -294,6 +301,13 @@ module Grammar
 			retval
 		end
 
+		# gets random speech part of nil in no suitable can be found
+		# you can optionally pass a block changing the way frequency of each word is counted
+		#
+		# like:
+		#   get_ranom(NOUN) { |word| word.frequency/2 }
+		#
+		# a ready block is returned by semantic_chooser() method
 		def get_random(speech_part, &freq_counter)
 			return nil unless(@words.has_key?(speech_part))
 			if block_given?
@@ -308,7 +322,13 @@ module Grammar
 			index == -1 ? nil : @words[speech_part][index]
 		end
 
-		def semantic_chooser(context_semantics)
+		# returns a block to be passed to get_random() method.
+		# It implements choosing words depending on their semantics.
+		# ===Parameters
+		# * context_text - text of the context (like text of the word being the context)
+		# * context_semantics - an array of semantic properties of the context (like ['GOOD','COOL])
+		def semantic_chooser(context_text, context_semantics)
+			raise "context text should be a string" unless context_text.kind_of?(String)
 			raise "context semantics should behave like an array" unless context_semantics.respond_to? :include?
 			lambda do |word|
 				frequency = word.frequency
@@ -316,6 +336,12 @@ module Grammar
 					frequency = 0
 				end
 				if word.get_property(:not_with) && !(context_semantics & word.get_property(:not_with)).empty?
+					frequency = 0
+				end
+				if context_text && word.get_property(:only_with_word) && !word.get_property(:only_with_word).include?(context_text)
+					frequency = 0
+				end
+				if context_text && word.get_property(:not_with_word) && word.get_property(:not_with_word).include?(context_text)
 					frequency = 0
 				end
 				frequency
