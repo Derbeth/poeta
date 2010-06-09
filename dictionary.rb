@@ -59,13 +59,15 @@ module Grammar
 			if line && !line.empty?
 				semantic_opts = {'SEMANTIC'=>:semantic,
 					'ONLY_WITH'=>:only_with, 'NOT_WITH'=>:not_with,
-					'ONLY_WITH_W'=>:only_with_word, 'NOT_WITH_W'=>:not_with_word}
+					'ONLY_WITH_W'=>:only_with_word, 'NOT_WITH_W'=>:not_with_word,
+					'TAKES_ONLY'=>:takes_only, 'TAKES_NO'=>:takes_no,
+					'TAKES_ONLY_W'=>:takes_only_word, 'TAKES_NO_W'=>:takes_no_word}
 				escaped = []
 				last_e = -1
 				line.gsub!(/\([^)]+\)/) { |match| last_e +=1; escaped[last_e] = match; "$#{last_e}" }
 				line.split(/\s+/).each do |part|
 					catch(:part_processing) do
-						part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
+						part.gsub!(/\$(\d+)/) { escaped[$1.to_i] }
 						semantic_opts.each_pair do |string,name|
 							if part =~ /^#{string}\(([^)]+)\)$/
 								global_props[name] ||= []
@@ -312,7 +314,7 @@ module Grammar
 			return nil unless(@words.has_key?(speech_part))
 			if block_given?
 				freq_array = @words[speech_part].collect do |word|
-					frequency = freq_counter.call(word)
+					frequency = freq_counter.call(word.frequency, word)
 					FrequencyHolder.new(frequency)
 				end
 			else
@@ -325,36 +327,37 @@ module Grammar
 		# returns a block to be passed to get_random() method.
 		# It implements choosing words depending on their semantics.
 		# ===Parameters
-		# * context_text - text of the context (like text of the word being the context)
-		# * context_semantics - an array of semantic properties of the context (like ['GOOD','COOL])
-		def semantic_chooser(context_text, context_semantics)
-			raise "context text should be a string" unless context_text.kind_of?(String)
-			raise "context semantics should behave like an array" unless context_semantics.respond_to? :include?
-			lambda do |word|
-				frequency = word.frequency
+		# * context_word - word determining the semantic choice with its properties
+		def semantic_chooser(context_word)
+			context_semantics = context_word.get_property(:semantic) || []
+			lambda do |frequency, word|
 				if word.get_property(:only_with) && (context_semantics & word.get_property(:only_with)).empty?
 					frequency = 0
-				end
-				if word.get_property(:not_with) && !(context_semantics & word.get_property(:not_with)).empty?
+				elsif word.get_property(:not_with) && !(context_semantics & word.get_property(:not_with)).empty?
+					frequency = 0
+				elsif word.get_property(:only_with_word) && !word.get_property(:only_with_word).include?(context_word.text)
+					frequency = 0
+				elsif word.get_property(:not_with_word) && word.get_property(:not_with_word).include?(context_word.text)
+					frequency = 0
+				elsif context_word.get_property(:takes_only) && ((word.get_property(:semantic) || []) & context_word.get_property(:takes_only)).empty?
+					frequency = 0
+				elsif context_word.get_property(:takes_no) && !((word.get_property(:semantic) || []) & context_word.get_property(:takes_no)).empty?
+					frequency = 0
+				elsif context_word.get_property(:takes_only_word) && !context_word.get_property(:takes_only_word).include?(word.text)
+					frequency = 0
+				elsif context_word.get_property(:takes_no_word) && context_word.get_property(:takes_no_word).include?(word.text)
 					frequency = 0
 				end
-				if context_text && word.get_property(:only_with_word) && !word.get_property(:only_with_word).include?(context_text)
-					frequency = 0
-				end
-				if context_text && word.get_property(:not_with_word) && word.get_property(:not_with_word).include?(context_text)
-					frequency = 0
-				end
+
 				frequency
 			end
 		end
 
 		def get_random_subject(&freq_counter)
 			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
-			get_random(NOUN) do |word|
+			get_random(NOUN) do |frequency, word|
 				if word.get_property(:only_obj)
 					frequency = 0
-				else
-					frequency = word.frequency
 				end
 				counter.call(frequency,word)
 			end
@@ -362,13 +365,11 @@ module Grammar
 
 		def get_random_object(&freq_counter)
 			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
-			get_random(NOUN) do |word|
+			get_random(NOUN) do |frequency, word|
 				if word.get_property(:only_subj)
 					frequency = 0
 				elsif word.get_property(:obj_freq)
 					frequency = word.get_property(:obj_freq)
-				else
-					 frequency = word.frequency
 				end
 				counter.call(frequency,word)
 			end

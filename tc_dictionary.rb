@@ -179,24 +179,49 @@ N 10 MyObject3  ONLY_OBJ
 		dictionary.read("N 100 angel ONLY_WITH(GOOD,HEAVEN)\nN 100 devil NOT_WITH(HEAVEN,GOOD)")
 		# ONLY_WITH is 'or', NOT_WITH is 'and'
 		10.times do
-			assert_equal('devil', dictionary.get_random(NOUN, &dictionary.semantic_chooser('', ['BAD'])).text)
+			assert_equal('devil', dictionary.get_random(NOUN, &dictionary.semantic_chooser(
+				word_semantic('', ['BAD']))).text)
 		end
 		10.times do
-			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser('', ['HEAVEN'])).text)
-			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser('', ['GOOD'])).text)
-			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser('', ['GOOD','HEAVEN'])).text)
+			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser(
+				word_semantic('', ['HEAVEN']))).text)
+			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser(
+				word_semantic('', ['GOOD']))).text)
+			assert_equal('angel', dictionary.get_random(NOUN, &dictionary.semantic_chooser(
+				word_semantic('', ['GOOD','HEAVEN']))).text)
 		end
 
 		dictionary.read("A 100 holy ONLY_WITH_W(angel)\nA 100 evil NOT_WITH_W(angel,saint)")
 		10.times do
-			assert_equal('evil', dictionary.get_random(ADJECTIVE, &dictionary.semantic_chooser('devil', [])).text)
+			assert_equal('evil', dictionary.get_random(ADJECTIVE, &dictionary.semantic_chooser(
+				word_semantic('devil', []))).text)
 		end
 		10.times do
-			assert_equal('holy', dictionary.get_random(ADJECTIVE, &dictionary.semantic_chooser('angel', [])).text)
+			assert_equal('holy', dictionary.get_random(ADJECTIVE, &dictionary.semantic_chooser(
+				word_semantic('angel', []))).text)
 		end
 		10.times do
-			assert_nil(dictionary.get_random(ADJECTIVE, &dictionary.semantic_chooser('saint', [])))
+			assert_nil(dictionary.get_random(ADJECTIVE, &dictionary.semantic_chooser(
+				word_semantic('saint', []))))
 		end
+
+		dictionary.read("N 100 evil SEMANTIC(EVIL)\nN 100 good SEMANTIC(GOOD)")
+		10.times do
+			assert_equal('evil', dictionary.get_random(NOUN, &dictionary.semantic_chooser(
+				Word.new('purge', [], {:takes_only=>['EVIL']}))).text)
+			assert_equal('evil', dictionary.get_random(NOUN, &dictionary.semantic_chooser(
+				Word.new('purge', [], {:takes_only_word=>['evil']}))).text)
+			assert_equal('good', dictionary.get_random(NOUN, &dictionary.semantic_chooser(
+				Word.new('spread', [], {:takes_no=>['EVIL']}))).text)
+			assert_equal('good', dictionary.get_random(NOUN, &dictionary.semantic_chooser(
+				Word.new('spread', [], {:takes_no_word=>['evil']}))).text)
+		end
+	end
+
+	private
+
+	def word_semantic(text, semantic)
+		Word.new(text, {}, {:semantic => semantic})
 	end
 end
 
@@ -273,18 +298,26 @@ V w   3 0 AlsoWrong .
 
 		global_opts = {}
 		Word.send(:parse,'SEMANTIC(good,great) ONLY_WITH(good) NOT_WITH(bad,awful)
-		ONLY_WITH_W(angel,saint) NOT_WITH_W(devil,demon)',global_opts)
+		ONLY_WITH_W(angel,saint) NOT_WITH_W(devil,demon)
+		TAKES_ONLY(cool) TAKES_NO(boring)
+		TAKES_ONLY_W(easy) TAKES_NO_W(old)',global_opts)
 		assert_equal({:semantic=>['good','great'],
 			:only_with=>['good'],:not_with=>['bad','awful'],
-			:only_with_word=>['angel','saint'],:not_with_word=>['devil','demon']}, global_opts)
+			:only_with_word=>['angel','saint'],:not_with_word=>['devil','demon'],
+			:takes_only=>['cool'], :takes_no=>['boring'],
+			:takes_only_word=>['easy'], :takes_no_word=>['old']}, global_opts)
 
 		# double semantic
 		global_opts = {}
 		Word.send(:parse,'SEMANTIC(a) ONLY_WITH(b) NOT_WITH(c) ONLY_WITH_W(d) NOT_WITH_W(e)
-		SEMANTIC(A) ONLY_WITH(B) NOT_WITH(C) ONLY_WITH_W(D) NOT_WITH_W(E)',global_opts)
+		TAKES_ONLY(f) TAKES_NO(g) TAKES_ONLY_W(h) TAKES_NO_W(i)
+		SEMANTIC(A) ONLY_WITH(B) NOT_WITH(C) ONLY_WITH_W(D) NOT_WITH_W(E)
+		TAKES_ONLY(F) TAKES_NO(G) TAKES_ONLY_W(H) TAKES_NO_W(I)'.gsub(/\s+/,' '),global_opts)
 		assert_equal({:semantic=>['a','A'],
 			:only_with=>['b','B'],:not_with=>['c','C'],
-			:only_with_word=>['d','D'], :not_with_word=>['e','E']}, global_opts)
+			:only_with_word=>['d','D'], :not_with_word=>['e','E'],
+			:takes_only=>['f','F'], :takes_no=>['g','G'],
+			:takes_only_word=>['h','H'], :takes_no_word=>['i','I']}, global_opts)
 	end
 end
 

@@ -194,8 +194,8 @@ class Sentence
 		noun_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_common_noun_options(options)
 
-		noun = @dictionary.get_random(Grammar::NOUN) do |word|
-			word.text.empty? ? 0 : word.frequency
+		noun = @dictionary.get_random(Grammar::NOUN) do |frequency, word|
+			word.text.empty? ? 0 : frequency
 		end
 
 		@nouns[noun_index] = noun
@@ -212,7 +212,7 @@ class Sentence
 		noun = @nouns[noun_index]
 		return '' if noun == nil || noun.person != 3
 
-		freq_counter =@dictionary.semantic_chooser(noun.text, noun.get_property(:semantic) || [])
+		freq_counter = @dictionary.semantic_chooser(noun)
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE, &freq_counter)
 		return '' unless adjective
 		gram_case = parsed_opts[:case] || NOMINATIVE
@@ -253,7 +253,8 @@ class Sentence
 	def handle_noun_object(noun_index,verb)
 		object = nil
 		4.times do
-			object = @dictionary.get_random_object
+			freq_counter = @dictionary.semantic_chooser(verb)
+			object = @dictionary.get_random_object(&freq_counter)
 			next if (@subject && object.text == @subject.text)
 			@nouns[noun_index] = object
 			break

@@ -176,6 +176,28 @@ class SentenceTest < Test::Unit::TestCase
 			sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
 			assert_equal('good work', sentence.write)
 		end
+
+		dictionary.read("V 100 purge OBJ(1) TAKES_ONLY(EVIL)\nN 100 evil SEMANTIC(EVIL)\nN 100 good SEMANTIC(GOOD)")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			assert_equal('purge evil', sentence.write)
+		end
+		dictionary.read("V 100 purge OBJ(1) TAKES_NO(GOOD)\nN 100 evil SEMANTIC(EVIL)\nN 100 good SEMANTIC(GOOD)")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			assert_equal('purge evil', sentence.write)
+		end
+
+		dictionary.read("V 100 spread OBJ(1) TAKES_ONLY_W(good)\nN 100 evil\nN 100 good")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			assert_equal('spread good', sentence.write)
+		end
+		dictionary.read("V 100 spread OBJ(1) TAKES_NO_W(evil)\nN 100 evil\nN 100 good")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			assert_equal('spread good', sentence.write)
+		end
 	end
 
 	def test_handle_verb
