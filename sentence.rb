@@ -221,6 +221,7 @@ class Sentence
 	end
 
 	def handle_verb(full_match,index,options)
+		noun = nil
 		noun_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_verb_options(options)
 		if parsed_opts[:form]
@@ -231,7 +232,8 @@ class Sentence
 			return '' unless noun
 			form = {:number=>noun.number,:person=>noun.person}
 		end
-		verb = @dictionary.get_random(Grammar::VERB)
+		freq_counter = noun ? @dictionary.semantic_chooser(noun) : nil
+		verb = @dictionary.get_random(Grammar::VERB, &freq_counter)
 		return '' unless verb
 		@verbs[noun_index] = verb
 		verb.inflect(@grammar,form)

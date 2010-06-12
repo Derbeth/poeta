@@ -210,6 +210,16 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary.read("V 1000 muszę INF TAKES_NO(MODAL)\nV 100 chcieć SEMANTIC(MODAL)\nV 30 lecieć SEMANTIC(MOVE)")
 		sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
 		assert_equal('muszę lecieć', sentence.write)
+
+		# subject -> verb
+		srand 2
+		dictionary.read("N 100 policja\nV 100 rymuje\nV 10 idzie") # no semantic - expect wrong result
+		sentence = Sentence.new(dictionary, grammar, '${SUBJ} ${VERB}');
+		assert_equal('policja rymuje', sentence.write)
+		srand 2
+		dictionary.read("N 100 policja SEMANTIC(NOT_COOL)\nV 100 rymuje NOT_WITH(NOT_COOL)\nV 10 idzie")
+		sentence = Sentence.new(dictionary, grammar, '${SUBJ} ${VERB}');
+		assert_equal('policja idzie', sentence.write)
 	end
 
 	def test_handle_verb
