@@ -277,6 +277,14 @@ class SentenceTest < Test::Unit::TestCase
 		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze zdradą', sentence.write)
 		srand 1
+		dictionary.read("N 100 pies\nN 30 szkołą\nV 100 idzie OBJ(z,5)")
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies idzie ze szkołą', sentence.write)
+		srand 1
+		dictionary.read("N 100 pies\nN 30 szansą\nV 100 idzie OBJ(z,5)")
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies idzie z szansą', sentence.write)
+		srand 1
 		dictionary.read("N 100 pies\nN 30 skrętem\nV 100 idzie OBJ(z,5)")
 		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze skrętem', sentence.write)

@@ -263,15 +263,19 @@ class Sentence
 
 		form = {:case=>verb.object_case}
 		inflected_object = object.inflect(@grammar,form)
-		verb.preposition ? join_preposition_object(verb.preposition,inflected_object) : inflected_object
+		verb.preposition ?
+			join_preposition_object(verb.preposition,inflected_object) :
+			inflected_object
 	end
 
 	def join_preposition_object(preposition,object)
 		prep = preposition.clone
-		consonants = '[bcdfghjklłmnprstwz]'
+		consonants = %w{b c d f g h j k l ł m n p r s t w z}
+		cons_match = "[#{consonants.join}]"
 		case
-			when prep == 'z' && object =~ /^[sz]#{consonants}/ then prep = 'ze'
-			when prep == 'w' && object =~ /^w#{consonants}/ then prep = 'we'
+			when prep == 'z' &&
+				object =~ /^(z#{cons_match}|s[#{consonants-['z']}]|sz#{cons_match})/ then prep = 'ze'
+			when prep == 'w' && object =~ /^w#{cons_match}/ then prep = 'we'
 		end
 		prep + ' ' + object
 	end
