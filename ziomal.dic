@@ -1,30 +1,37 @@
-N  50 bit/m m
+# semantic: (---) POLICJA < neutral < OK < ZIOM (+++)
+
+N  50 bit/m m SEMANTIC(OK)
 N 100 buch/i m ONLY_OBJ
-N  10 dzielnica/l f OBJ_FREQ(100)
+N  10 dzielnica/l f OBJ_FREQ(100) SEMANTIC(OK,RZADZIC)
 N 100 dzień/o1 m nan
-N  50 dziwka/a f
-N 150 ekipa/b f
+N  50 dziwka/a f SEMANTIC(POLICJA)
+N 150 ekipa/b f SEMANTIC(ZIOM,RZADZIC)
 N 100 głos/e m nan
 N  50 hasło/p n
-N  50 honor/e m nan
-N  50 impreza/b f OBJ_FREQ(100)
+N  50 honor/e m nan SEMANTIC(ZIOM)
+N  50 impreza/b f OBJ_FREQ(100) SEMANTIC(OK,RZADZIC)
 N  10 kasa/b f OBJ_FREQ(100)
-N  50 komercha/b f
-N  10 konfident/j m
-N  10 konfident/j m Pl OBJ_FREQ(100)
-N 100 małolat/j1 m
-N 100 miasto/p n
-N 100 pięść/n f
-N 100 policja/h f
+N  50 komercha/b f SEMANTIC(POLICJA,RZADZIC)
+N  10 konfident/j m SEMANTIC(POLICJA)
+N  10 konfident/j m Pl OBJ_FREQ(100) SEMANTIC(POLICJA)
+N 100 małolat/j1 m SEMANTIC(OK)
+N 100 miasto/p n SEMANTIC(RZADZIC)
+N 100 miejsce/d n
+N  10 numer/e m nan OBJ_FREQ(50)
+N 100 pięść/n f SEMANTIC(ZIOM)
+N 100 policja/h f SEMANTIC(POLICJA)
 N  50 prawo/p n
-N 100 rap/e m nan
-N 100 skręt/m m
+N 100 rap/e m nan SEMANTIC(ZIOM)
+N 100 skręt/m m SEMANTIC(OK)
+N  10 styl/c m nan OBJ_FREQ(50)
 N  10 szansa/b f OBJ_FREQ(50)
 N  10 szmal/c m nan OBJ_FREQ(100)
 N 100 temat/e m nan ONLY_OBJ
-N 100 ulica/l f
+N  10 teren/e OBJ_FREQ(100)
+N 100 ulica/l f SEMANTIC(RZADZIC)
 N  50 wojna/b f
 N  10 zasada/b f Pl OBJ_FREQ(100)
+N  20 zmiana/b2 f OBJ_FREQ(100)
 N 200 "" m PERSON(1) ONLY_SUBJ
 N 150 "" m PERSON(2) ONLY_SUBJ
 N 200 "" m Pl PERSON(1) ONLY_SUBJ
@@ -34,23 +41,25 @@ N 200 "" m Pl PERSON(1) ONLY_SUBJ
 
 # chce + imiesł.
 V 100 brać/b OBJ(4)
-V  80 chcieć/7c INF
+V  80 chcieć/7c INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V 100 iść/c
-V  50 iść/c INF
+V  50 iść/c INF TAKES_NO(MODAL)
 V 100 lecieć/7
 V 100 mieć/1 OBJ(4)
 V  70 mieć/1 OBJ(4) SUFFIX(w dupie)
 V 100 milczeć/7
-V  80 musieć/7m INF
+V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  40 nakręcać/1 OBJ(4)
 V  50 napierdalać/1
 V  60 napierdalać/1 REFL OBJ(z,5)
 V  50 nawijać/1
 V 100 pierdolić/6b OBJ(4)
 V 100 popierdalać/1
-V 100 rozpierdalać/1 OBJ(4)
+V  20 przybijać/1 OBJ(4)
+V 100 rozpierdalać/1 OBJ(4) TAKES_NO(ZIOM)
 V  40 rozkminiać/1 OBJ(4)
-V  50 rymować/4
+V  50 rymować/4 NOT_WITH(POLICJA)
+V  50 rządzić/6b OBJ(5) TAKES_ONLY(RZADZIC)
 V  50 słuchać/1 OBJ(2)
 V  50 trzymać/1 OBJ(4)
 V  10 trzymać/1 OBJ(2) REFL
@@ -58,44 +67,50 @@ V  50 uderzać/1 OBJ(na,4)
 V  50 widzieć/7 OBJ(4)
 V 100 wpadać/1 OBJ(na,4)
 V  40 wznosić/6 OBJ(4)
-V  50 zaczynać/1 INF
+V  50 zaczynać/1 INF TAKES_NO(MODAL)
 V  10 zaczynać/1 REFL
 V 100 zapierdalać/1
 V 100 zapalać/1 OBJ(4)
 V 100 zwijać/1 OBJ(4)
 # napierdalam (kamieniem) (w policję)
 
+A  70 autentyczny/a NOT_WITH(POLICJA)
 A 150 cały/a
-A 100 chujowy/a
+A 100 chujowy/a NOT_WITH(OK)
 A 100 ciężki/b
 A 100 codzienny/a
 A 100 hardkorowy/a
-A 100 hiphopowy/a
+A 100 hiphopowy/a NOT_WITH(POLICJA)
 A 100 jebany/a
+A  40 killer NOT_WITH(POLICJA)
 A 200 kolejny/a
 A 100 krótki/b
-A 100 kurewski/b
-A  50 luksusowy/a
+A 100 kurewski/b NOT_WITH(OK)
+A  50 luksusowy/a NOT_WITH(POLICJA)
 A  40 marny/a
-A  50 mistrzowski/b
-A 100 mocny/a
+A  70 miejski/b
+A  50 mistrzowski/b NOT_WITH(POLICJA)
+A 100 mocny/a NOT_WITH(POLICJA)
 A 200 mój/e
-A 100 najlepszy/a
-A 200 nasz/d
+A 100 najlepszy/a NOT_WITH(POLICJA)
+A 200 nasz/d NOT_WITH(POLICJA)
 A 100 nocny/a
 A 100 nowy/a
 A  50 obcy/a
 A 100 ostatni/b
-A 100 pierdolony/a
+A 100 pierdolony/a NOT_WITH(OK)
 A 100 pierwszy/a
-A 100 policyjny/a
-A 100 pozytywny/a
+A 100 policyjny/a NOT_WITH(ZIOM) NOT_WITH_W(policja)
+A 100 pozytywny/a NOT_WITH(POLICJA)
 A 100 prawdziwy/a
 A 100 prosty/a
-A  50 sprzedajny/a
+A 100 radykalny/a NOT_WITH(POLICJA)
+A  50 sprzedajny/a NOT_WITH(OK)
+A 120 szczery/a NOT_WITH(POLICJA)
+A 100 taki/b
 A 100 ten/c
-A 200 uliczny/a
-A 100 zajebisty/a
+A 200 uliczny/a NOT_WITH(POLICJA) NOT_WITH_W(ulica)
+A 100 zajebisty/a NOT_WITH(POLICJA)
 
 D  50 "bez pierdolenia"
 D 100 ciągle
@@ -105,6 +120,7 @@ D 100 dookoła
 D  50 już
 D 150 "kolejny raz"
 D 100 mocno
+D  25 "na lajcie"
 D 100 "od razu"
 D 250 ostro
 D 100 pewnie
@@ -117,6 +133,7 @@ D 100 zawsze
 
 O 100 ale
 O 100 człowieku
+O  50 "czujesz to"
 O  50 dawaj
 O 100 "dlatego że"
 O 100 jazda

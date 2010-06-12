@@ -30,6 +30,7 @@ N b 12       ra  er   ra    # kołdra -> kołder
 N b 12       a   0    na/1  # wina -> win
 N b 12       a   0    [dpshz]a
 N b 12       na  en   jna   # wojna -> wojen
+N b 12       a   0    na/2  # zmiana -> zmian, kraina -> krain
 N b 12       na  ien  na
 N b 13       a   om   a
 N b 15       0   mi   a
@@ -78,7 +79,7 @@ N e 3         0 owi .
 N e 5         0 em  .
 N e 6,7       0 zie d
 N e 6,7       0 ze  r
-N e 6,7       0 ie  [bps]
+N e 6,7       0 ie  [bnps]
 N e 6,7       t cie t
 N e 11,14,17  0 y   .
 N e 12        0 ów .
