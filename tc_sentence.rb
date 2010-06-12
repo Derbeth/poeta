@@ -151,6 +151,7 @@ class SentenceTest < Test::Unit::TestCase
 		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
 		assert_equal('good work', sentence.write)
 
+		# noun -> adjective
 		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good\nA 100 bad NOT_WITH(GOOD)")
 		10.times do
 			sentence = Sentence.new(dictionary,grammar,'${ADJ} ${SUBJ}')
@@ -177,6 +178,7 @@ class SentenceTest < Test::Unit::TestCase
 			assert_equal('good work', sentence.write)
 		end
 
+		# verb -> noun object
 		dictionary.read("V 100 purge OBJ(1) TAKES_ONLY(EVIL)\nN 100 evil SEMANTIC(EVIL)\nN 100 good SEMANTIC(GOOD)")
 		10.times do
 			sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
@@ -198,6 +200,16 @@ class SentenceTest < Test::Unit::TestCase
 			sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
 			assert_equal('spread good', sentence.write)
 		end
+
+		# verb -> verb object
+		srand 2
+		dictionary.read("V 1000 muszę INF\nV 100 chcieć\nV 30 lecieć") # no semantic - expect wrong result
+		sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+		assert_equal('muszę chcieć', sentence.write)
+		srand 2
+		dictionary.read("V 1000 muszę INF TAKES_NO(MODAL)\nV 100 chcieć SEMANTIC(MODAL)\nV 30 lecieć SEMANTIC(MOVE)")
+		sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+		assert_equal('muszę lecieć', sentence.write)
 	end
 
 	def test_handle_verb

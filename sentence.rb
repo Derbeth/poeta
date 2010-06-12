@@ -283,7 +283,11 @@ class Sentence
 	def handle_infinitive_object(verb)
 		object_verb = nil
 		4.times do
-			object_verb = @dictionary.get_random(Grammar::VERB)
+			semantic_counter = @dictionary.semantic_chooser(verb)
+			freq_counter = lambda do |freq,word|
+				verb.text == word.text ? 0 : semantic_counter.call(freq,word)
+			end
+			object_verb = @dictionary.get_random(Grammar::VERB, &freq_counter)
 			next if (verb.text == object_verb.text)
 			break
 		end
