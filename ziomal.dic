@@ -9,7 +9,7 @@ N  50 dziwka/a f SEMANTIC(POLICJA)
 N 150 ekipa/b f SEMANTIC(ZIOM,RZADZIC)
 N 100 głos/e m nan
 N  50 hasło/p n
-N  50 honor/e m nan SEMANTIC(ZIOM)
+N  50 honor/e m nan SEMANTIC(OK,ZIOM)
 N  50 impreza/b f OBJ_FREQ(100) SEMANTIC(OK,RZADZIC)
 N  10 kasa/b f OBJ_FREQ(100)
 N  50 komercha/b f SEMANTIC(POLICJA,RZADZIC)
@@ -19,10 +19,10 @@ N 100 małolat/j1 m SEMANTIC(OK)
 N 100 miasto/p n SEMANTIC(RZADZIC)
 N 100 miejsce/d n
 N  10 numer/e m nan OBJ_FREQ(50)
-N 100 pięść/n f SEMANTIC(ZIOM)
+N 100 pięść/n f SEMANTIC(OK,ZIOM)
 N 100 policja/h f SEMANTIC(POLICJA)
 N  50 prawo/p n
-N 100 rap/e m nan SEMANTIC(ZIOM)
+N 100 rap/e m nan SEMANTIC(OK,ZIOM)
 N 100 skręt/m m SEMANTIC(OK)
 N  10 styl/c m nan OBJ_FREQ(50)
 N  10 szansa/b f OBJ_FREQ(50)
@@ -33,9 +33,9 @@ N 100 ulica/l f SEMANTIC(RZADZIC)
 N  50 wojna/b f
 N  10 zasada/b f Pl OBJ_FREQ(100)
 N  20 zmiana/b2 f OBJ_FREQ(100)
-N 200 "" m PERSON(1) ONLY_SUBJ SEMANTIC(ZIOM)
-N 150 "" m PERSON(2) ONLY_SUBJ SEMANTIC(ZIOM)
-N 200 "" m Pl PERSON(1) ONLY_SUBJ SEMANTIC(ZIOM)
+N 200 "" m PERSON(1) ONLY_SUBJ SEMANTIC(OK,ZIOM)
+N 150 "" m PERSON(2) ONLY_SUBJ SEMANTIC(OK,ZIOM)
+N 200 "" m Pl PERSON(1) ONLY_SUBJ SEMANTIC(OK,ZIOM)
 # ludzie
 # jazda
 # blok, krew
