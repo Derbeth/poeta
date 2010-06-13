@@ -1,5 +1,6 @@
 # semantic: (---) POLICJA < neutral < OK < ZIOM (+++)
 
+N  50 agresja/h f
 N  50 bit/m m SEMANTIC(OK)
 N 100 buch/i m ONLY_OBJ
 N  10 dzielnica/l f OBJ_FREQ(100) SEMANTIC(OK,RZADZIC)
@@ -32,9 +33,9 @@ N 100 ulica/l f SEMANTIC(RZADZIC)
 N  50 wojna/b f
 N  10 zasada/b f Pl OBJ_FREQ(100)
 N  20 zmiana/b2 f OBJ_FREQ(100)
-N 200 "" m PERSON(1) ONLY_SUBJ
-N 150 "" m PERSON(2) ONLY_SUBJ
-N 200 "" m Pl PERSON(1) ONLY_SUBJ
+N 200 "" m PERSON(1) ONLY_SUBJ SEMANTIC(ZIOM)
+N 150 "" m PERSON(2) ONLY_SUBJ SEMANTIC(ZIOM)
+N 200 "" m Pl PERSON(1) ONLY_SUBJ SEMANTIC(ZIOM)
 # ludzie
 # jazda
 # blok, krew
@@ -42,8 +43,10 @@ N 200 "" m Pl PERSON(1) ONLY_SUBJ
 # chce + imiesł.
 V 100 brać/b OBJ(4)
 V  80 chcieć/7c INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  30 donosić/6b NOT_WITH(ZIOM)
 V 100 iść/c
 V  50 iść/c INF TAKES_NO(MODAL)
+V  20 kablować/4 NOT_WITH(ZIOM)
 V 100 lecieć/7
 V 100 mieć/1 OBJ(4)
 V  70 mieć/1 OBJ(4) SUFFIX(w dupie)
@@ -53,7 +56,8 @@ V  40 nakręcać/1 OBJ(4)
 V  50 napierdalać/1
 V  60 napierdalać/1 REFL OBJ(z,5)
 V  50 nawijać/1
-V 100 pierdolić/6b OBJ(4)
+V 100 nienawidzić/6b OBJ(2) TAKES_NO(ZIOM)
+V 100 pierdolić/6b OBJ(4) TAKES_NO(ZIOM)
 V 100 popierdalać/1
 V  20 przybijać/1 OBJ(4)
 V 100 rozpierdalać/1 OBJ(4) TAKES_NO(ZIOM)
@@ -79,6 +83,7 @@ A 150 cały/a
 A 100 chujowy/a NOT_WITH(OK)
 A 100 ciężki/b
 A 100 codzienny/a
+A 100 dobry/a NOT_WITH(POLICJA)
 A 100 hardkorowy/a
 A 100 hiphopowy/a NOT_WITH(POLICJA)
 A 100 jebany/a
@@ -107,8 +112,8 @@ A 100 prosty/a
 A 100 radykalny/a NOT_WITH(POLICJA)
 A  50 sprzedajny/a NOT_WITH(OK)
 A 120 szczery/a NOT_WITH(POLICJA)
-A 100 taki/b
-A 100 ten/c
+A 200 taki/b
+A 200 ten/c
 A 200 uliczny/a NOT_WITH(POLICJA) NOT_WITH_W(ulica)
 A 100 zajebisty/a NOT_WITH(POLICJA)
 
@@ -143,7 +148,9 @@ O 100 kurwa
 O 100 nieważne
 O 100 normalka
 O 100 pamiętaj
+O 100 ponieważ
 O 100 posłuchaj
+O 100 przecież
 O  75 słowo
 O  25 "słowo ziomek"
 O  50 szacunek
