@@ -49,6 +49,7 @@ N 200 "" m Pl PERSON(1) ONLY_SUBJ SEMANTIC(OK,ZIOM)
 # blok, krew
 
 V 100 brać/b OBJ(4)
+V 100 być/c OBJ(5) SEMANTIC(MODAL)
 V  80 chcieć/7c INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  30 donosić/6b NOT_WITH(ZIOM)
 V 100 iść/c
@@ -116,6 +117,7 @@ A  50 obcy/a
 A 100 ostatni/b
 A 100 pierdolony/a NOT_WITH(OK)
 A 100 pierwszy/a
+A  50 pojebany/a NOT_WITH(OK)
 A 100 policyjny/a NOT_WITH(ZIOM) NOT_WITH_W(policja)
 A 100 pozytywny/a NOT_WITH(POLICJA)
 A 100 prawdziwy/a

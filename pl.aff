@@ -497,3 +497,11 @@ V c  3 ść dzie    iść
 V c 11 ść dziemy  iść
 V c 12 ść dziecie iść
 V c 13 ść dą      iść
+
+# niereg - być
+V c  1 być jestem    być
+V c  2 być jesteś    być
+V c  3 być jest      być
+V c 11 być jesteśmy  być
+V c 12 być jesteście być
+V c 13 być są        być
