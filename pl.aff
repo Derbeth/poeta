@@ -1,16 +1,17 @@
-# f ręka, apteka, pustka
-N a  2   a   i  ka
-N a  3,6 ka  ce ka
-N a  4   a   ę  ka
-N a  5   a   ą  ka
-N a  7   a   o  ka
-N a 11,14,17 a   i  ka
-N a 12   ęka ąk ęka
-N a 12   a   0  eka
-N a 12   ka  ek ka
-N a 13   a   om ka
-N a 15   0   mi ka
-N a 16   0   ch ka
+# 9 m, gość, ludzie
+N a 2,4   ć   cia   ć
+N a 3     ć   ciowi ć
+N a 5     ć   ciem  ć
+N a 6,7   ć   ciu   ć
+N a 11,17 ć   cie   ć
+N a 12,14 ć   ci    ć
+N a 12,14 e   0     ie
+N a 13    ć   ciom  ć
+N a 13    e   om    ie
+N a 15    ć   ciami ć
+N a 15    zie źmi   dzie
+N a 16    ć   ciach ć
+N a 16    e   ach   ie
 
 # 139 f, miotła, kołdra, panna, igła, gra, wiara
 N b 2        a   y a
@@ -241,6 +242,41 @@ N p 13       0    m     o
 N p 15       o    ami   o
 N p 16       o    ach   o
 
+# n, 115, wojsko, boisko, echo, jajo, dobro, zło
+N q 2        o a   o
+N q 3,6      o u   o
+N q 5        o iem ko
+N q 5        o em  o
+N q 11,14,17 o a   o
+N q 12       o 0   o
+N q 13       0 m   o
+N q 15       o ami o
+N q 16       o ach o
+
+# f, 130, 131, ręka, droga, apteka, matka
+N r 2,11,14,17 a  i  a
+N r 3,6        ka ce ka
+N r 4          a   ę  a
+N r 5          a   ą  a
+N r 7          a   o  a
+N r 12         oga óg oga
+N r 12         ęka ąk ęka
+N r 12         a   0  eka
+N r 12         ka  ek ka
+N r 13         a   om a
+N r 15         0   mi a
+N r 16         0   ch a
+
+# f, 141, nuda, zdrada
+N s 2,11,14,17 a y   a
+N s 3,6        a zie da
+N s 4          a ę   a
+N s 5          a ą   a
+N s 7          a o   a
+N s 12         a ów  a
+N s 13         a om  a
+N s 15         0 mi  a
+N s 16         0 ch  a
 
 A a 102,202     y  ego y
 A a 104         y  ego y/A
@@ -258,6 +294,7 @@ A a 306         y  ej  y
 A a 111         dy dzi dy
 A a 111         ry rzy ry
 A a 111         ty ci  ty
+A a 111         zy i   szy
 A a 111         y  i   [bnsw]y
 A a 112,212,312 0  ch  y
 A a 113,213,313 0  m   y
@@ -301,6 +338,7 @@ A c 301              en a  en
 A c 302,303,306      n  j  en
 A c 304              en ę  en
 A c 305              en ą  en
+A c 111,117          ten ci ten/A
 A c 111,211,311      n  0  en
 A c 117,217,317      n  0  en
 A c 112,212,312      en ych en
@@ -428,6 +466,13 @@ V 9  3 kać cze    kać
 V 9 11 kać czemy  kać
 V 9 12 kać czecie kać
 V 9 13 kać czą    kać
+# jechać
+V 9  1 echać adę      echać
+V 9  2 echać edziesz  echać
+V 9  3 echać edzie    echać
+V 9 11 echać edziemy  echać
+V 9 12 echać edziecie echać
+V 9 13 echać adą      echać
 
 # koniugacja Xa -ć bez zmiany tematu, pić, pnuć
 V A  1 ć ję    ć
