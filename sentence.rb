@@ -338,14 +338,18 @@ class Sentence
 	def self.parse_verb_options(opts)
 		parsed = {}
 		if opts && !opts.empty?
-			form_i = Integer(opts)
-			raise "nonsense form: #{form_i}" if form_i <= 0
-			number_i,person = form_i.divmod(10)
-			raise "unsupported number: #{number_i}" if number_i > 1
-			raise "unsupported person: #{person}" if !([1,2,3].include?(person))
-			form = {:person => person}
-			form[:number] = (number_i == 1) ? PLURAL : SINGULAR
-			parsed[:form] = form
+			if opts == 'INF'
+				parsed[:form] = {:infinitive => 1}
+			else
+				form_i = Integer(opts)
+				raise "nonsense form: #{form_i}" if form_i <= 0
+				number_i,person = form_i.divmod(10)
+				raise "unsupported number: #{number_i}" if number_i > 1
+				raise "unsupported person: #{person}" if !([1,2,3].include?(person))
+				form = {:person => person}
+				form[:number] = (number_i == 1) ? PLURAL : SINGULAR
+				parsed[:form] = form
+			end
 		end
 		parsed
 	end

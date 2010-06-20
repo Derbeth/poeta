@@ -252,6 +252,8 @@ class SentenceTest < Test::Unit::TestCase
 		grammar.read_rules("N b 4 a ę a\nV a 1 ć m ć")
 		sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
 		assert_equal('uderzam lipę', sentence.write)
+		sentence = Sentence.new(dictionary,grammar,'trzeba ${VERB(INF)} ${OBJ}')
+		assert_equal('trzeba uderzać lipę', sentence.write)
 	end
 
 	def test_handle_object
