@@ -339,6 +339,27 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('pies chce się przejść', sentence.write)
 	end
 
+	def test_handle_adjective_object
+		grammar = PolishGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read("N 100 flower\nV 100 is ADJ\nA 100 beautiful")
+
+		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+		assert_equal('flower is beautiful', sentence.write)
+
+		dictionary.read("N 100 flower\nV 100 is ADJ TAKES_NO(BAD)\nA 100 beautiful SEMANTIC(GOOD)\nA 100 ugly SEMANTIC(BAD)")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+			assert_equal('flower is beautiful', sentence.write)
+		end
+
+		# what if we implicitly set noun
+		dictionary.read("V 100 jesteśmy ADJ\nA 100 dobry/a")
+		grammar.read_rules("A a 111 y zy y")
+		sentence = Sentence.new(dictionary,grammar,'${VERB(11)} ${OBJ}')
+		assert_equal('jesteśmy dobrzy', sentence.write)
+	end
+
 	def test_handle_other
 		dictionary = Dictionary.new
 		dictionary.read('O 100 "some other"')

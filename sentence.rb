@@ -103,6 +103,7 @@ class Sentence
 	def initialize(dictionary,grammar,pattern,better=false,debug=false)
 		@dictionary,@grammar,@pattern,@better,@debug = dictionary,grammar,pattern.strip,better,debug
 		@subject = nil
+		@forced_subject_number = nil
 		@nouns,@verbs = {},{}
 		self.other_word_chance = DEFAULT_OTHER_CHANCE
 	end
@@ -226,6 +227,7 @@ class Sentence
 		parsed_opts = self.class.parse_verb_options(options)
 		if parsed_opts[:form]
 			form = parsed_opts[:form]
+			@forced_subject_number = form[:number] if form[:number]
 		else
 			raise "no noun for #{full_match}" unless @nouns.include? noun_index
 			noun = @nouns[noun_index]
@@ -247,6 +249,8 @@ class Sentence
 			handle_noun_object(noun_index,verb)
 		elsif verb.infinitive_object
 			handle_infinitive_object(verb)
+		elsif verb.adjective_object
+			handle_adjective_object(noun_index,verb)
 		else
 			''
 		end
@@ -296,6 +300,24 @@ class Sentence
 		return '' unless object_verb
 
 		object_verb.inflect(@grammar,{:infinitive=>1})
+	end
+
+	def handle_adjective_object(noun_index,verb)
+		noun = @nouns[noun_index]
+		if noun
+			gender = noun.gender
+			number = noun.number
+		else
+			gender = MASCULINE
+			number = @forced_subject_number || SINGULAR
+		end
+
+		freq_counter = @dictionary.semantic_chooser(verb)
+		adjective = @dictionary.get_random(Dictionary::ADJECTIVE, &freq_counter)
+		return '' unless adjective
+
+		form = {:case=>NOMINATIVE, :gender=>gender, :number=>number}
+		adjective.inflect(@grammar,form)
 	end
 
 	def handle_other(full_match,index,options)

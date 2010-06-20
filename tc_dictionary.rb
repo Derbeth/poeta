@@ -131,6 +131,11 @@ D 100 czasem
 		dict.read(dict_text)
 		verb = dict.get_random(VERB)
 		assert verb.infinitive_object
+
+		dict_text = "V 100 foo ADJ"
+		dict.read(dict_text)
+		verb = dict.get_random(VERB)
+		assert verb.adjective_object
 	end
 
 	def test_inline_comments

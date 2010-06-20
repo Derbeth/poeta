@@ -143,23 +143,27 @@ module Grammar
 	end
 
 	class Verb < Word
-		attr_reader :infinitive_object, :reflexive, :preposition, :object_case
+		attr_reader :adjective_object, :infinitive_object, :reflexive, :preposition, :object_case
 
-		def initialize(text,gram_props,frequency,general_props={},reflexive=false,preposition=nil,object_case=nil,infinitive_object=false,suffix=nil)
+		def initialize(text,gram_props,frequency,general_props={},reflexive=false,
+			preposition=nil,object_case=nil,adjective_object=false,infinitive_object=false,suffix=nil)
+
 			super(text,gram_props,general_props,frequency)
 			raise VerbError, "invalid case: #{object_case}" if object_case && !CASES.include?(object_case)
-			@reflexive,@preposition,@object_case,@infinitive_object,@suffix = reflexive,preposition,object_case,infinitive_object,suffix
+			@reflexive,@preposition,@object_case,@adjective_object,@infinitive_object,@suffix =
+				reflexive,preposition,object_case,adjective_object,infinitive_object,suffix
 		end
 
 		def Verb.parse(text,gram_props,frequency,line)
 			reflexive = false
-			preposition,object_case,infinitive_object,suffix = nil,nil,false,nil
+			preposition,object_case,adjective_object,infinitive_object,suffix = nil,nil,false,nil
 			general_props = {}
 			Word.parse(line,general_props) do |part|
 				part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
 				case part
 					when /^REFL(?:EXIVE|EX)?$/ then reflexive = true
 					when /^INF$/ then infinitive_object = true
+					when /^ADJ/ then adjective_object = true
 					when /^SUFFIX\(([^)]+)\)$/
 						suffix = $1
 					when /^OBJ\(([^)]+)\)$/
@@ -177,7 +181,8 @@ module Grammar
 				end
 			end
 			begin
-				Verb.new(text,gram_props,frequency,general_props,reflexive,preposition,object_case,infinitive_object,suffix)
+				Verb.new(text,gram_props,frequency,general_props,reflexive,
+					preposition,object_case,adjective_object,infinitive_object,suffix)
 			rescue VerbError => e
 				raise ParseError, e.message
 			end
