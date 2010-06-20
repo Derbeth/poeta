@@ -220,6 +220,18 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary.read("N 100 policja SEMANTIC(NOT_COOL)\nV 100 rymuje NOT_WITH(NOT_COOL)\nV 10 idzie")
 		sentence = Sentence.new(dictionary, grammar, '${SUBJ} ${VERB}');
 		assert_equal('policja idzie', sentence.write)
+
+		dictionary.read("N 100 ziomy\nN 100 policja SEMANTIC(POLICJA)\nV 100 idziesz\nV 100 donosisz NOT_WITH(ZIOM)")
+		10.times do
+			sentence = Sentence.new(dictionary, grammar, 'spoko jak ${SUBJ(TAKES_NO POLICJA)}')
+			assert_equal('spoko jak ziomy', sentence.write)
+			sentence = Sentence.new(dictionary, grammar, 'spoko jak ${SUBJ(IG_ONLY,TAKES_NO POLICJA)}')
+			assert_equal('spoko jak ziomy', sentence.write)
+			sentence = Sentence.new(dictionary, grammar, 'spoko jak ${NOUN(TAKES_NO POLICJA)}')
+			assert_equal('spoko jak ziomy', sentence.write)
+			sentence = Sentence.new(dictionary, grammar, '${VERB(2,SEMANTIC ZIOM)}')
+			assert_equal('idziesz', sentence.write)
+		end
 	end
 
 	def test_handle_verb

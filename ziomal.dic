@@ -8,7 +8,7 @@ N 100 buch/i m ONLY_OBJ SEMANTIC(OK)
 N  10 dzielnica/l f OBJ_FREQ(100) SEMANTIC(OK,RZADZIC)
 N 100 dzień/o1 m nan
 N  50 dziwka/r f SEMANTIC(POLICJA)
-N 150 ekipa/b f SEMANTIC(ZIOM,RZADZIC)
+N 150 ekipa/b f SEMANTIC(OK,ZIOM,RZADZIC)
 N 100 głos/e m nan
 N  50 hasło/p n
 N  50 hip-hop/e m SEMANTIC(OK,ZIOM)
@@ -26,7 +26,7 @@ N 100 miejsce/d n
 N  10 numer/e m nan OBJ_FREQ(50)
 N 100 pięść/n f SEMANTIC(OK,ZIOM)
 N 100 policja/h f SEMANTIC(POLICJA)
-N  10 polityka/r f OBJ_FREQ(50)
+N  10 polityka/r f OBJ_FREQ(50) SEMANTIC(POLITYKA)
 N  50 prawo/p n
 N 100 rap/e m nan SEMANTIC(OK,ZIOM)
 N 100 skręt/m m SEMANTIC(OK)
@@ -44,7 +44,6 @@ N  20 zmiana/b2 f OBJ_FREQ(100)
 N 200 "" m PERSON(1) ONLY_SUBJ SEMANTIC(OK,ZIOM)
 N 150 "" m PERSON(2) ONLY_SUBJ SEMANTIC(OK,ZIOM)
 N 200 "" m Pl PERSON(1) ONLY_SUBJ SEMANTIC(OK,ZIOM)
-# ludzie
 # jazda
 # blok, krew
 
@@ -62,7 +61,7 @@ V 100 jechać/9 OBJ(po,6)
 V  20 kablować/4 NOT_WITH(ZIOM)
 V 100 lecieć/7
 V 100 mieć/1 OBJ(4)
-V  70 mieć/1 OBJ(4) SUFFIX(w dupie) NOT_WITH(MODAL)
+V  70 mieć/1 OBJ(4) SUFFIX(w dupie) NOT_WITH(MODAL) NOT_WITH_W(buch,dziwka,pięść)
 V 100 milczeć/7
 V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  40 nakręcać/1 OBJ(4)
@@ -100,7 +99,7 @@ A 100 codzienny/a
 A 100 dobry/a NOT_WITH(POLICJA)
 A 100 hardkorowy/a NOT_WITH(POLICJA)
 A 100 hiphopowy/a NOT_WITH(POLICJA) NOT_WITH_W(hip-hop)
-A 100 jebany/a
+A 100 jebany/a NOT_WITH(ZIOM)
 A  40 killer NOT_WITH(POLICJA)
 A 200 kolejny/a
 A 100 krótki/b
@@ -131,6 +130,7 @@ A 200 taki/b
 A 200 ten/c
 A 200 uliczny/a NOT_WITH(POLICJA) NOT_WITH_W(ulica)
 A 100 zajebisty/a NOT_WITH(POLICJA)
+A  50 zwyczajny/a
 
 D  50 "bez pierdolenia"
 D 100 ciągle

@@ -312,7 +312,7 @@ module Grammar
 		# you can optionally pass a block changing the way frequency of each word is counted
 		#
 		# like:
-		#   get_ranom(NOUN) { |word| word.frequency/2 }
+		#   get_ranom(NOUN) { |frequency, word| word.text.empty? ? 0 : frequency }
 		#
 		# a ready block is returned by semantic_chooser() method
 		def get_random(speech_part, &freq_counter)

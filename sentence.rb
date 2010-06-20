@@ -172,13 +172,21 @@ class Sentence
 		if subject_index == 1 && @subject
 			noun = @subject
 		else
+			semantic_chooser = parsed_opts[:context_props] ?
+				@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props])) :
+				nil
 			noun = @dictionary.get_random_subject do |counted_frequency,word|
-				if parsed_opts[:not_empty] && word.text.empty?
+				new_frequency = if parsed_opts[:not_empty] && word.text.empty?
 					0
 				elsif parsed_opts[:ignore_only]
 					word.frequency
 				else
 					counted_frequency
+				end
+				if semantic_chooser
+					semantic_chooser.call(new_frequency,word)
+				else
+					new_frequency
 				end
 			end
 			noun_index = self.class.read_index(full_match,index)
@@ -195,8 +203,18 @@ class Sentence
 		noun_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_common_noun_options(options)
 
+		semantic_chooser = parsed_opts[:context_props] ?
+			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props])) :
+			nil
+
 		noun = @dictionary.get_random(Grammar::NOUN) do |frequency, word|
-			word.text.empty? ? 0 : frequency
+			if word.text.empty?
+				0
+			elsif semantic_chooser
+				semantic_chooser.call(frequency,word)
+			else
+				frequency
+			end
 		end
 
 		@nouns[noun_index] = noun
@@ -234,7 +252,15 @@ class Sentence
 			return '' unless noun
 			form = {:number=>noun.number,:person=>noun.person}
 		end
-		freq_counter = noun ? @dictionary.semantic_chooser(noun) : nil
+
+		freq_counter = if noun
+			@dictionary.semantic_chooser(noun)
+		elsif parsed_opts[:context_props]
+			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props]))
+		else
+			nil
+		end
+
 		verb = @dictionary.get_random(Grammar::VERB, &freq_counter)
 		return '' unless verb
 		@verbs[noun_index] = verb
@@ -355,15 +381,39 @@ class Sentence
 		Sentence.match_token(part)
 	end
 
+	# given block will receive single unparsed opt and parsed opts hash
+	def self.option_parsing(opts, &block)
+		parsed = {}
+		context_props = {}
+		semantic_opts = {'SEMANTIC'=>:semantic, 'NOT_WITH'=>:not_with, 'ONLY_WITH'=>:only_with,
+			'TAKES_NO'=>:takes_no, 'TAKES_ONLY'=>:takes_only}
+		if opts && !opts.empty?
+			opts.split(/, */).each do |opt|
+				catch :next_opt do
+					semantic_opts.each do |string,name|
+						if opt =~ /#{string} +(.+)/
+							context_props[name] ||= []
+							context_props[name] << $1
+							throw :next_opt
+						end
+					end
+
+					block.call(opt, parsed)
+				end
+			end
+		end
+		parsed[:context_props] = context_props unless context_props.empty?
+		parsed
+	end
+
 	# parses verb options and returns a hash with parsed elements
 	# hash keys: :form => hash with verb form
 	def self.parse_verb_options(opts)
-		parsed = {}
-		if opts && !opts.empty?
-			if opts == 'INF'
+		self.option_parsing(opts) do |opt, parsed|
+			if opt == 'INF'
 				parsed[:form] = {:infinitive => 1}
 			else
-				form_i = Integer(opts)
+				form_i = Integer(opt)
 				raise "nonsense form: #{form_i}" if form_i <= 0
 				number_i,person = form_i.divmod(10)
 				raise "unsupported number: #{number_i}" if number_i > 1
@@ -373,34 +423,27 @@ class Sentence
 				parsed[:form] = form
 			end
 		end
-		parsed
 	end
 
 	def self.parse_adjective_options(opts)
-		parsed = {}
-		if opts && !opts.empty?
-			gram_case = Integer(opts)
+		self.option_parsing(opts) do |opt, parsed|
+			gram_case = Integer(opt)
 			raise "invalid case: #{gram_case}" unless CASES.include?(gram_case)
 			parsed[:case]=gram_case
 		end
-		parsed
 	end
 
 	def self.parse_common_noun_options(opts)
-		parsed = {}
-		if opts && !opts.empty?
-			opts.split(/, */).each do |opt|
-				case opt
-					when /^\d+$/ then
-						parsed[:case] = Integer(opt)
-						raise "invalid case: #{parsed[:case]}" unless CASES.include?(parsed[:case])
-					when 'NE' then parsed[:not_empty] = true
-					when 'IG_ONLY' then parsed[:ignore_only] = true
-					else puts "warn: unknown noun option #{opt}"
-				end
+		self.option_parsing(opts) do |opt, parsed|
+			case opt
+				when /^\d+$/ then
+					parsed[:case] = Integer(opt)
+					raise "invalid case: #{parsed[:case]}" unless CASES.include?(parsed[:case])
+				when 'NE' then parsed[:not_empty] = true
+				when 'IG_ONLY' then parsed[:ignore_only] = true
+				else puts "warn: unknown noun option #{opt}"
 			end
 		end
-		parsed
 	end
 end
 
