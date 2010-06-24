@@ -48,7 +48,8 @@ N 200 "" m Pl PERSON(1) ONLY_SUBJ SEMANTIC(OK,ZIOM)
 # blok, krew
 
 V 100 brać/b OBJ(4)
-V 100 być/c OBJ(5) SEMANTIC(MODAL)
+V 50 być/c OBJ(5) SEMANTIC(MODAL) NOT_WITH(MODAL,POLICJA) TAKES_NO(POLICJA)
+V 50 być/c OBJ(5) SEMANTIC(MODAL) NOT_WITH(MODAL,ZIOM) TAKES_NO(ZIOM)
 V  25 być/c ADJ NOT_WITH(POLICJA) TAKES_NO(POLICJA)  # ekipa jest zajebista
 V  25 być/c ADJ NOT_WITH(ZIOM) TAKES_NO(ZIOM)        # komercha jest chujowa
 V  80 chcieć/7c INF TAKES_NO(MODAL) SEMANTIC(MODAL)
@@ -60,7 +61,7 @@ V  30 iść/c OBJ(na,4)
 V 100 jechać/9 OBJ(po,6)
 V  20 kablować/4 NOT_WITH(ZIOM)
 V 100 lecieć/7
-V 100 mieć/1 OBJ(4)
+V 100 mieć/1 OBJ(4) NOT_WITH(MODAL)
 V  70 mieć/1 OBJ(4) SUFFIX(w dupie) NOT_WITH(MODAL) NOT_WITH_W(buch,dziwka,pięść)
 V 100 milczeć/7
 V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
@@ -135,6 +136,7 @@ A  50 zwyczajny/a
 D  50 "bez pierdolenia"
 D 100 ciągle
 D  25 ciężko
+D  50 codziennie
 D  50 dobrze
 D 100 dookoła
 D  50 już
@@ -156,6 +158,7 @@ O 120 człowieku
 O  50 "czujesz to"
 O  50 dawaj
 O 100 "dlatego że"
+O 100 gdy
 O 100 jazda
 O  10 JP
 O  25 "krótka piłka"
@@ -164,6 +167,7 @@ O 100 nieważne
 O 100 normalka
 O 100 pamiętaj
 O 100 ponieważ
+O 100 potem
 O 100 posłuchaj
 O 100 przecież
 O  75 słowo

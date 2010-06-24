@@ -33,6 +33,9 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('', sentence.write)
 		sentence = Sentence.new(dictionary,grammar,' ${VERB} ${SUBJ}   ${SUBJ} ')
 		assert_equal('foo foo', sentence.write)
+
+		assert_equal('foo?', Sentence.new(dictionary, grammar, '${NOUN} ${VERB}?').write)
+		assert_equal('foo.', Sentence.new(dictionary, grammar, '${NOUN} ${VERB}.').write)
 	end
 
 	def test_write

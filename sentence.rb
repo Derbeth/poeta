@@ -154,6 +154,7 @@ class Sentence
 # 		@text += ' END' if @debug
 		@text.strip!
 		@text.gsub!(/ {2,}/, ' ')
+		@text.gsub!(/ +([.?!,])/, '\1')
 		@text = @text.fixed_ljust(40) + "| #{@pattern}" if debug
 		@text
 	end
