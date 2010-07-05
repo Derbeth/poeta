@@ -62,7 +62,7 @@ V 100 jechać/9 OBJ(po,6)
 V  20 kablować/4 NOT_WITH(ZIOM)
 V 100 lecieć/7
 V 100 mieć/1 OBJ(4) NOT_WITH(MODAL)
-V  70 mieć/1 OBJ(4) SUFFIX(w dupie) NOT_WITH(MODAL) NOT_WITH_W(buch,dziwka,pięść)
+V  70 mieć/1 OBJ(4) SUFFIX(w dupie) NOT_WITH(MODAL) TAKES_NO(ZIOM) TAKES_NO_W(buch,dziwka,pięść)
 V 100 milczeć/7
 V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  40 nakręcać/1 OBJ(4)
@@ -99,7 +99,7 @@ A 100 ciężki/b
 A 100 codzienny/a
 A 100 dobry/a NOT_WITH(POLICJA)
 A 100 hardkorowy/a NOT_WITH(POLICJA)
-A 100 hiphopowy/a NOT_WITH(POLICJA) NOT_WITH_W(hip-hop)
+A 100 hiphopowy/a NOT_WITH(POLICJA) NOT_WITH_W(hip-hop,rap)
 A 100 jebany/a NOT_WITH(ZIOM)
 A  40 killer NOT_WITH(POLICJA)
 A 200 kolejny/a
@@ -110,7 +110,7 @@ A  40 marny/a
 A  70 miejski/b
 A  50 mistrzowski/b NOT_WITH(POLICJA)
 A 100 mocny/a NOT_WITH(POLICJA)
-A 200 mój/e
+A 200 mój/e NOT_WITH(POLICJA)
 A 100 najlepszy/a NOT_WITH(POLICJA)
 A 200 nasz/d NOT_WITH(POLICJA)
 A 100 nocny/a
