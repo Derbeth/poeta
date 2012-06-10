@@ -144,6 +144,32 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('widzę dobrego psa', sentence.write)
 	end
 
+	def test_handle_double_usage
+		grammar = PolishGrammar.new
+		dictionary = Dictionary.new
+		dictionary_text = <<-END
+N 100 "foo"
+N 100 "bar"
+N 100 "baz"
+
+V 100 goes OBJ(1)
+V 100 runs OBJ(1)
+V 100 kills OBJ(1)
+		END
+		dictionary.read(dictionary_text)
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB}, ${SUBJ} ${VERB}')
+
+		srand 2
+		assert_equal('bar goes, bar goes', sentence.write)
+		srand
+		10.times do
+			text = sentence.write
+			parts = text.split(/, /)
+			assert_equal(parts[0], parts[1], "sentence: #{text}")
+		end
+
+	end
+
 	def test_handle_semantic
 		grammar = PolishGrammar.new
 		dictionary = Dictionary.new
@@ -455,6 +481,7 @@ N  10 "foo"
 		10.times do
 			assert_equal('foo', Sentence.new(dictionary,grammar,'${NOUN}').write)
 			assert_equal('foo', Sentence.new(dictionary,grammar,'${SUBJ(NE)}').write)
+			assert_equal('', Sentence.new(dictionary,grammar,'${SUBJ(EMPTY)}').write)
 		end
 
 	end
@@ -554,12 +581,6 @@ class SentenceManagerTest < Test::Unit::TestCase
 		mgr = SentenceManager.new("dictionary",'grammar')
 
 		assert_raise(RuntimeError) { mgr.read('10 ${SUBJ ${VERB}') }
-
-		input = '10 ${SUBJ} ${VERB} ${SUBJ}' # double subject
-		assert_raise(RuntimeError) { mgr.read(input) }
-
-		input = '10 ${SUBJ} ${VERB} ${NOUN}' # double noun/subject
-		assert_raise(RuntimeError) { mgr.read(input) }
 
 		input = '10 ${SUBJ} ${VERB} ${SUBJ2}' # ok
 		mgr.read(input)

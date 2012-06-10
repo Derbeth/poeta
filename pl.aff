@@ -39,26 +39,27 @@ N b 16       0   ch   a
 
 # 95 m, ból, lokal, pokój, szczaw, dziegć, szmal
 N c 1,4       0 0     .
-N c 2,6,7     0 u     [^cćnńw]
-N c 2,6,7     0 iu    [cnw]
+N c 2,6,7     0 u     [^ćnńw]
+N c 2,6,7     0 iu    [nw]
 N c 2,6,7     ć ciu   ć
 N c 2,6,7     ń niu   ń
-N c 3         0 owi   [^cćnńw]
-N c 3         0 iowi  [cnw]
+N c 3         0 owi   [^ćnńw]
+N c 3         0 iowi  [nw]
 N c 2,6,7     ć ciowi ć
-N c 5         0 em    [^cćnńw]
+N c 5         0 em    [^ćnńw]
 N c 5         0 iem   [^cnw]
-N c 11,14,17  0 e     [^cćnńw]
+N c 11,14,17  0 e     [^ćnńw]
 N c 11,14,17  0 ie    [cnw]
-N c 12        0 i     [^ćń]
+N c 12        0 i     [^cćń]
+N c 12        0 y     c
 N c 12        ć ci    ć
 N c 12        ń ni    ń
-N c 13        0 om    [^cćnńw]
-N c 13        0 iom   [cnw]
-N c 15        0 ami   [^cćnńw]
-N c 15        0 iami  [cnw]
-N c 16        0 ach   [^cćnńw]
-N c 16        0 iach  [cnw]
+N c 13        0 om    [^ćnńw]
+N c 13        0 iom   [nw]
+N c 15        0 ami   [^ćnńw]
+N c 15        0 iami  [nw]
+N c 16        0 ach   [^ćnńw]
+N c 16        0 iach  [nw]
 
 # 103 n, danie, wesele, słońce, przysłowie, nasienie
 N d 1,4,7     0   0   e
@@ -121,7 +122,7 @@ N h 15        a ami a
 N h 16        a ach a
 
 # 72 m, duch
-N i 2,4       0 a .
+N i 2,4       0 a   .
 N i 3         0 owi .
 N i 5         0 em  .
 N i 6,7       0 u   .
@@ -132,7 +133,7 @@ N i 15        0 ami .
 N i 16        0 ach .
 
 # 3 m, facet, Hucuł, błazen, sąsiad
-N j 2,4    0 a .
+N j 2,4    0 a   .
 N j 3      0 owi .
 N j 5      0 em  .
 N j 6,7    t cie t
@@ -277,6 +278,16 @@ N s 12         a ów  a
 N s 13         a om  a
 N s 15         0 mi  a
 N s 16         0 ch  a
+
+# m, 99, wół
+N t 2,4,6,7    0 u   .
+N t 3          0 owi .
+N t 5          0 em  .
+N t 11,14,17   0 y   .
+N t 12         0 ów  .
+N t 13         0 om  .
+N t 15         0 ami .
+N t 16         0 ach .
 
 A a 102,202     y  ego y
 A a 104         y  ego y/A
@@ -474,13 +485,19 @@ V 9 11 echać edziemy  echać
 V 9 12 echać edziecie echać
 V 9 13 echać adą      echać
 
-# koniugacja Xa -ć bez zmiany tematu, pić, pnuć
-V A  1 ć ję    ć
-V A  2 ć jesz  ć
-V A  3 ć je    ć
-V A 11 ć jemy  ć
-V A 12 ć jecie ć
-V A 13 ć ją    ć
+# koniugacja Xa -ć bez zmiany tematu, pić, pnuć, stawać
+V A  1 wać ję    wać
+V A  1 ć   ję    ć
+V A  2 wać jesz  wać
+V A  2 ć   jesz  ć
+V A  3 wać je    wać
+V A  3 ć   je    ć
+V A 11 wać jemy  wać
+V A 11 ć   jemy  ć
+V A 12 wać jecie wać
+V A 12 ć   jecie ć
+V A 13 wać ją    wać
+V A 13 ć   ją    ć
 
 # niereg. - brać
 V b  1 rać iorę     brać

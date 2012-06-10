@@ -105,6 +105,7 @@ class Sentence
 		@subject = nil
 		@forced_subject_number = nil
 		@nouns,@verbs = {},{}
+		@verbs_text = {}
 		self.other_word_chance = DEFAULT_OTHER_CHANCE
 	end
 
@@ -122,7 +123,6 @@ class Sentence
 				noun_index = read_index(full_match,index)
 				noun_occurs[noun_index] ||= 0
 				noun_occurs[noun_index] += 1
-				raise "too many occurances of noun #{noun_index} in '#{pattern}'" if noun_occurs[noun_index] > 1
 			end
 		end
 		[Sentences::VERB, Sentences::ADJECTIVE, Sentences::OBJECT].each do |part|
@@ -178,6 +178,8 @@ class Sentence
 				nil
 			noun = @dictionary.get_random_subject do |counted_frequency,word|
 				new_frequency = if parsed_opts[:not_empty] && word.text.empty?
+					0
+				elsif parsed_opts[:empty] && !word.text.empty?
 					0
 				elsif parsed_opts[:ignore_only]
 					word.frequency
@@ -241,8 +243,12 @@ class Sentence
 	end
 
 	def handle_verb(full_match,index,options)
-		noun = nil
 		noun_index = self.class.read_index(full_match,index)
+		@verbs_text[noun_index] ||= _handle_verb(full_match,noun_index,options)
+	end
+
+	def _handle_verb(full_match,noun_index,options)
+		noun = nil
 		parsed_opts = self.class.parse_verb_options(options)
 		if parsed_opts[:form]
 			form = parsed_opts[:form]
@@ -365,8 +371,9 @@ class Sentence
 		if index_match && !index_match.empty?:
 			raise "invalid index in #{full_match}, should be number" if index_match !~ /^\d+$/
 			return index_match.to_i
+		else
+			return 1
 		end
-		return 1
 	end
 
 	# matches tokens for given speech part, for example for NOUN matches
@@ -435,16 +442,21 @@ class Sentence
 	end
 
 	def self.parse_common_noun_options(opts)
-		self.option_parsing(opts) do |opt, parsed|
+		result = self.option_parsing(opts) do |opt, parsed|
 			case opt
 				when /^\d+$/ then
 					parsed[:case] = Integer(opt)
 					raise "invalid case: #{parsed[:case]}" unless CASES.include?(parsed[:case])
 				when 'NE' then parsed[:not_empty] = true
+				when 'EMPTY' then parsed[:empty] = true
 				when 'IG_ONLY' then parsed[:ignore_only] = true
 				else puts "warn: unknown noun option #{opt}"
 			end
 		end
+		if result[:not_empty] && result[:empty]
+			puts "warn: nonsense combination: NE and EMPTY"
+		end
+		result
 	end
 end
 

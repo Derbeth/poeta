@@ -29,7 +29,7 @@ N 100 policja/h f SEMANTIC(POLICJA)
 N  10 polityka/r f OBJ_FREQ(50) SEMANTIC(POLITYKA)
 N  50 prawo/p n
 N 100 rap/e m nan SEMANTIC(OK,ZIOM)
-N 100 skręt/m m SEMANTIC(OK)
+N 100 skręt/m m SEMANTIC(OK,ZIOM)
 N  10 styl/c m nan OBJ_FREQ(50)
 N  10 szansa/b f OBJ_FREQ(50)
 N  10 szmal/c m nan OBJ_FREQ(100)
@@ -41,9 +41,9 @@ N  50 wojna/b f
 N 100 załoga/r f SEMANTIC(OK,ZIOM)
 N  10 zasada/b f Pl OBJ_FREQ(100)
 N  20 zmiana/b2 f OBJ_FREQ(100)
-N 200 "" m PERSON(1) ONLY_SUBJ SEMANTIC(OK,ZIOM)
-N 150 "" m PERSON(2) ONLY_SUBJ SEMANTIC(OK,ZIOM)
-N 200 "" m Pl PERSON(1) ONLY_SUBJ SEMANTIC(OK,ZIOM)
+N 200 "" m PERSON(1) ONLY_SUBJ SEMANTIC(OK,ZIOM)    # ja
+N 150 "" m PERSON(2) ONLY_SUBJ SEMANTIC(OK,ZIOM)    # ty
+N 200 "" m Pl PERSON(1) ONLY_SUBJ SEMANTIC(OK,ZIOM) # my
 # jazda
 # blok, krew
 
