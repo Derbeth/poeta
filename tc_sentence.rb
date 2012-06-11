@@ -129,12 +129,19 @@ class SentenceTest < Test::Unit::TestCase
 		grammar.read_rules("V a 2 ć sz ć")
 		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${SUBJ} ${VERB}')
 		assert_equal('rozumiesz', sentence.write)
+
+		# adjective with an object
+		srand 1
+		dictionary.read("N 100 kibic m\nN 100 szczęście/a f\nA 100 pijany/a OBJ(ze,2)")
+		grammar.read_rules("N a 2 e a e")
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${ADJ}')
+		assert_equal('kibic pijany ze szczęścia', sentence.write)
 	end
 
 	def test_handle_animate_inanimate
 		dictionary = Dictionary.new
 		grammar = PolishGrammar.new
-		grammar.read_rules("A a 104 y ego y/A")
+		grammar.read_rules("A a 104 y ego y")
 		dictionary.read("A 100 dobry/a\nN 100 czas m nan")
 		sentence = Sentence.new(dictionary,grammar,'widzę ${ADJ(4)} ${NOUN(4)}')
 		assert_equal('widzę dobry czas', sentence.write)

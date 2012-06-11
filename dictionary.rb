@@ -6,7 +6,6 @@ require 'randomized_choice'
 module Grammar
 	OBJECT_ONLY = 'OO'
 	NO_NOUN_NOUN = 'NO_NOUN_NOUN'
-	ANIMATE_PROP = 'A'
 
 	class Word
 		attr_reader :text, :gram_props, :frequency
@@ -53,8 +52,10 @@ module Grammar
 		attr_reader :general_props
 
 		# global_props - hash where read options will be stored
+		# parse_opts - instructions how to parse; key :parse_object instructs
+		#              to parse OBJ() option
 		# block - will receive split params to parse
-		def self.parse(line,global_props,&block)
+		def self.parse(line,global_props,parse_opts={},&block)
 			line.strip! if line
 			if line && !line.empty?
 				semantic_opts = {'SEMANTIC'=>:semantic,
@@ -66,16 +67,28 @@ module Grammar
 				last_e = -1
 				line.gsub!(/\([^)]+\)/) { |match| last_e +=1; escaped[last_e] = match; "$#{last_e}" }
 				line.split(/\s+/).each do |part|
-					catch(:part_processing) do
+					catch(:process_next_part) do
 						part.gsub!(/\$(\d+)/) { escaped[$1.to_i] }
 						semantic_opts.each_pair do |string,name|
 							if part =~ /^#{string}\(([^)]+)\)$/
 								global_props[name] ||= []
 								global_props[name] += $1.split(/, */)
-								throw :part_processing
+								throw :process_next_part
 							end
 						end
-						if block_given?
+
+						if parse_opts[:parse_object] && part =~ /^OBJ\(([^)]+)\)$/
+							opts = $1
+							case opts
+								when /^([^,]+),(\d+)$/
+									global_props[:preposition] = $1.strip
+									global_props[:object_case] = Integer($2)
+								when /^\d+$/
+									global_props[:object_case] = Integer(opts)
+								else
+									raise ParseError, "wrong option format for #{line}: '#{part}'"
+							end
+						elsif block_given?
 							block.call(part)
 						else
 							puts "warn: unknown option #{part}"
@@ -146,19 +159,19 @@ module Grammar
 		attr_reader :adjective_object, :infinitive_object, :reflexive, :preposition, :object_case
 
 		def initialize(text,gram_props,frequency,general_props={},reflexive=false,
-			preposition=nil,object_case=nil,adjective_object=false,infinitive_object=false,suffix=nil)
+			adjective_object=false,infinitive_object=false,suffix=nil)
 
 			super(text,gram_props,general_props,frequency)
-			raise VerbError, "invalid case: #{object_case}" if object_case && !CASES.include?(object_case)
+			raise VerbError, "invalid case: #{general_props[:object_case]}" if general_props[:object_case] && !CASES.include?(general_props[:object_case])
 			@reflexive,@preposition,@object_case,@adjective_object,@infinitive_object,@suffix =
-				reflexive,preposition,object_case,adjective_object,infinitive_object,suffix
+				reflexive,general_props[:preposition],general_props[:object_case],adjective_object,infinitive_object,suffix
 		end
 
 		def Verb.parse(text,gram_props,frequency,line)
 			reflexive = false
-			preposition,object_case,adjective_object,infinitive_object,suffix = nil,nil,false,nil
+			adjective_object,infinitive_object,suffix = false,nil,nil
 			general_props = {}
-			Word.parse(line,general_props) do |part|
+			Word.parse(line,general_props,{:parse_object=>true}) do |part|
 				part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
 				case part
 					when /^REFL(?:EXIVE|EX)?$/ then reflexive = true
@@ -166,23 +179,13 @@ module Grammar
 					when /^ADJ/ then adjective_object = true
 					when /^SUFFIX\(([^)]+)\)$/
 						suffix = $1
-					when /^OBJ\(([^)]+)\)$/
-						opts = $1
-						case opts
-							when /^([^,]+),(\d+)$/
-								preposition,object_case = $1.strip,Integer($2)
-							when /^\d+$/
-								preposition,object_case = nil,Integer(opts)
-							else
-								raise ParseError, "wrong option format for #{text}: '#{part}'"
-						end
 					else
 						puts "warn: unknown option '#{part}' for '#{text}'"
 				end
 			end
 			begin
 				Verb.new(text,gram_props,frequency,general_props,reflexive,
-					preposition,object_case,adjective_object,infinitive_object,suffix)
+					adjective_object,infinitive_object,suffix)
 			rescue VerbError => e
 				raise ParseError, e.message
 			end
@@ -236,16 +239,16 @@ module Grammar
 	end
 
 	class Adjective < Word
+		attr_reader :preposition, :object_case
+
 		def initialize(text,gram_props,frequency,general_props={})
-			if gram_props.include?(ANIMATE_PROP)
-				raise AdjectiveError, "grammar property #{ANIMATE_PROP} is reserved as animated mark"
-			end
 			super(text,gram_props,general_props,frequency)
+			@preposition,@object_case=general_props[:preposition],general_props[:object_case]
 		end
 
 		def Adjective.parse(text,gram_props,frequency,line)
 			general_props = {}
-			Word.parse(line,general_props)
+			Word.parse(line,general_props,{:parse_object=>true})
 			Adjective.new(text,gram_props,frequency,general_props) # TODO TEMP
 		rescue AdjectiveError => e
 			raise ParseError, e.message
@@ -256,18 +259,18 @@ module Grammar
 			retval = []
 			GENDERS.each do |gender|
 				[1,2].each do |number|
-					CASES.each do |gram_case|
-						retval << {:case => gram_case, :number => number, :gender=> gender}
+					[true,false].each do |animate|
+						CASES.each do |gram_case|
+							retval << {:case => gram_case, :number => number, :gender => gender, :animate => animate}
+						end
 					end
 				end
 			end
 			retval
 		end
 
-		def inflect(grammar,form,animate=true)
-			temp_gram_props = gram_props.clone
-			temp_gram_props << ANIMATE_PROP if animate
-			return grammar.inflect_adjective(text,form,*temp_gram_props)
+		def inflect(grammar,form)
+			return grammar.inflect_adjective(text,form,*gram_props)
 		end
 
 		private

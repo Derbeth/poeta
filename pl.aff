@@ -61,18 +61,25 @@ N c 15        0 iami  [nw]
 N c 16        0 ach   [^ćnńw]
 N c 16        0 iach  [nw]
 
-# 103 n, danie, wesele, słońce, przysłowie, nasienie
-N d 1,4,7     0   0   e
+# 103 n, danie, wesele, słońce, przysłowie, nasienie, piekło
 N d 2         e   a   e
+N d 2         o   a   o
 N d 3         e   u   e
 N d 5         0   m   e
+N d 5         o   em  o
 N d 6         e   u   e
+N d 6         o   u   o
 N d 11,14,17  e   a   e
+N d 11,14,17  o   a   o
 N d 12        nie ń   nie
+N d 12        ło  ieł ło
 N d 12        e   0   e
 N d 13        e   om  e
+N d 13        o   om  o
 N d 15        e   ami e
+N d 15        o   ami o
 N d 16        e   ach e
+N d 16        o   ach o
 
 # 93 m, sad, wał, mur, dąb, sen, chrzest, kwiat wiatr
 N e 1,4       0 0 .
@@ -263,6 +270,7 @@ N r 7          a   o  a
 N r 12         oga óg oga
 N r 12         ęka ąk ęka
 N r 12         a   0  eka
+N r 12         a   0  rga
 N r 12         ka  ek ka
 N r 13         a   om a
 N r 15         0   mi a
@@ -290,7 +298,7 @@ N t 15         0 ami .
 N t 16         0 ach .
 
 A a 102,202     y  ego y
-A a 104         y  ego y/A
+A a 104         y  ego y
 A a 103,203     y  emu y
 A a 105,205     0  m   y
 A a 106,206     0  m   y
@@ -320,7 +328,7 @@ A a 217,317     y  e   y
 
 A b 102,202          0  ego i
 A b 103,203          0  emu i
-A b 104              0  ego i/A
+A b 104              0  ego i
 A b 105,205          0  m   i
 A b 106,206          0  m   i
 A b 201,204          0  e   i
@@ -340,7 +348,7 @@ A b 116,216,316      0  ch  i
 
 # ten
 A c 102,202          n  go en
-A c 104              n  go en/A
+A c 104              n  go en
 A c 103,203          n  mu en
 A c 105,205,106,206  en ym en
 A c 107,207,307      en y  en
@@ -349,7 +357,7 @@ A c 301              en a  en
 A c 302,303,306      n  j  en
 A c 304              en ę  en
 A c 305              en ą  en
-A c 111,117          ten ci ten/A
+A c 111,117          ten ci ten
 A c 111,211,311      n  0  en
 A c 117,217,317      n  0  en
 A c 112,212,312      en ych en
@@ -361,7 +369,7 @@ A c 115,215,315      en ymi en
 
 # nasz
 A d 102,202          0 ego .
-A d 104              0 ego ./A
+A d 104              0 ego .
 A d 103,203          0 emu .
 A d 105,205,106,206  0 ym  .
 A d 201,204          0 e   .
@@ -378,7 +386,7 @@ A d 116,216,316      0 ych .
 
 # mój, twój
 A e 102,202          ój ojego ój
-A e 104              ój ojego ój/A
+A e 104              ój ojego ój
 A e 103,203          ój ojemu ój
 A e 105,205,106,206  ój oim   ój
 A e 201,204          ój oje ój

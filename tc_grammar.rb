@@ -1,6 +1,7 @@
 #!/usr/bin/ruby -w
 require 'test/unit'
 
+require 'dictionary'
 require 'grammar'
 
 include Grammar
@@ -130,8 +131,11 @@ N f 1 f f f
 	def test_adjective
 		grammar_text = <<-END
 A K 102     y ego y
+A K 104     y ego y
+A K 111     y zy  y
 A K 112,116 0 ch  y
 A K 302-303 y ej  y
+A K 211,311 y e   y
 		END
 		grammar = PolishGrammar.new
 		grammar.read_rules(grammar_text)
@@ -152,6 +156,16 @@ A K 302-303 y ej  y
 			{:gender=>FEMININE, :number=>1, :case=>GENITIVE}, 'K'))
 		assert_equal('dobrej', grammar.inflect_adjective('dobry',
 			{:gender=>FEMININE, :number=>1, :case=>DATIVE}, 'K'))
+
+		# animate
+		assert_equal('dobrego', grammar.inflect_adjective('dobry', # widzę dobrego chłopca
+			{:gender=>MASCULINE, :number=>1, :case=>ACCUSATIVE}, 'K'))
+		assert_equal('dobry', grammar.inflect_adjective('dobry',   # widzę dobry dzień
+			{:gender=>MASCULINE, :number=>1, :case=>ACCUSATIVE, :animate=>false}, 'K'))
+		assert_equal('dobrzy', grammar.inflect_adjective('dobry', # dobrzy chłopcy
+			{:gender=>MASCULINE, :number=>2, :case=>NOMINATIVE}, 'K'))
+		assert_equal('dobre', grammar.inflect_adjective('dobry',   # dobre dni
+			{:gender=>MASCULINE, :number=>2, :case=>NOMINATIVE, :animate=>false}, 'K'))
 	end
 
 	def test_verb

@@ -78,6 +78,17 @@ D 100 czasem
 		assert_equal(2, noun.person)
 	end
 
+	def test_parse_adjective
+		dict = Dictionary.new
+
+		dict_text = "A 100 foo/a OBJ(przed,5)"
+		dict.read(dict_text)
+		adj = dict.get_random(ADJECTIVE)
+		assert_equal('przed', adj.preposition)
+		assert_equal(5, adj.object_case)
+
+	end
+
 	def test_parse_verb
 		dict = Dictionary.new
 
@@ -428,12 +439,6 @@ class AdjectiveTest < Test::Unit::TestCase
 		Adjective.parse('good',[],100,'NOTEXIST')
 	end
 
-	def test_reserved_gram_props
-		assert_raise_kind(RuntimeError) { Adjective.new('dobry',%w{A},100) }
-		assert_raise_kind(RuntimeError) { Adjective.new('dobry',%w{a A c},100) }
-		assert_raise(ParseError) { Adjective.parse('dobry',%w{A},100,'') }
-	end
-
 	def test_all_forms
 		grammar = PolishGrammar.new
 		adj = Adjective.new('foo',[],100)
@@ -444,13 +449,12 @@ class AdjectiveTest < Test::Unit::TestCase
 
 	def test_inflect
 		grammar = PolishGrammar.new
-		grammar.read_rules("A a 104 y ego y/A")
+		grammar.read_rules("A a 104 y ego y")
 		adj = Adjective.new('dobry',%w{a},100)
-		form = {:gender=>MASCULINE, :case=>ACCUSATIVE}
 
-		assert_equal('dobrego', adj.inflect(grammar,form))
-		assert_equal('dobry', adj.inflect(grammar,form,false)) # inanimate
-		assert_equal('dobrego', adj.inflect(grammar,form,true)) # animate
+		assert_equal('dobrego', adj.inflect(grammar,{:gender=>MASCULINE, :case=>ACCUSATIVE}))
+		assert_equal('dobry', adj.inflect(grammar,{:gender=>MASCULINE, :case=>ACCUSATIVE, :animate=>false}))
+		assert_equal('dobrego', adj.inflect(grammar,{:gender=>MASCULINE, :case=>ACCUSATIVE, :animate=>true}))
 	end
 end
 

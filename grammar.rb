@@ -162,10 +162,21 @@ module Grammar
 			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
 			raise ":gender has to be passed '#{form[:gender]}'" unless form[:gender]
 			raise "wrong gender: #{form[:gender]}" unless GENDERS.include? form[:gender]
+
+			gram_case = form[:case]
 			number = form[:number] || 1
-			form_id = form[:case]
+			gender = form[:gender]
+			if form.include?(:animate) && form[:animate] == false && gender == MASCULINE
+				if number == 2
+					gender = NEUTER
+				elsif gram_case == ACCUSATIVE
+					gram_case = NOMINATIVE
+				end
+			end
+
+			form_id = gram_case
 			form_id += (number-1) * 10
-			form_id += form[:gender] * 100
+			form_id += gender * 100
 # 			puts "adj form id: #{form_id} #{@rules[ADJECTIVE].keys.sort.inspect}"
 
 			inflected = get_inflected_form(ADJECTIVE,form_id,adjective,*gram_props)

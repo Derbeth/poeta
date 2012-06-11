@@ -238,8 +238,14 @@ class Sentence
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE, &freq_counter)
 		return '' unless adjective
 		gram_case = parsed_opts[:case] || NOMINATIVE
-		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number}
-		adjective.inflect(@grammar,form,noun.animate)
+		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number, :animate => noun.animate}
+		text = adjective.inflect(@grammar,form)
+
+		if adjective.object_case
+			object_text = handle_noun_object(adjective)
+			text += ' ' + object_text unless object_text.empty?
+		end
+		text
 	end
 
 	def handle_verb(full_match,index,options)
@@ -279,20 +285,22 @@ class Sentence
 		verb = @verbs[noun_index]
 		raise "no verb for #{full_match}" unless verb
 		if verb.object_case
-			handle_noun_object(noun_index,verb)
+			handle_noun_object(verb,noun_index)
 		elsif verb.infinitive_object
 			handle_infinitive_object(verb)
 		elsif verb.adjective_object
-			handle_adjective_object(noun_index,verb)
+			handle_adjective_object(verb,noun_index)
 		else
 			''
 		end
 	end
 
-	def handle_noun_object(noun_index,verb)
+	# word - either adjective or verb
+	# noun_index - index for noun to be set, may be nil, nothing will be set then
+	def handle_noun_object(word,noun_index=nil)
 		object = nil
 		4.times do
-			freq_counter = @dictionary.semantic_chooser(verb)
+			freq_counter = @dictionary.semantic_chooser(word)
 			object = @dictionary.get_random_object(&freq_counter)
 			next if (@subject && object.text == @subject.text)
 			@nouns[noun_index] = object
@@ -300,10 +308,10 @@ class Sentence
 		end
 		return '' unless object
 
-		form = {:case=>verb.object_case}
+		form = {:case=>word.object_case}
 		inflected_object = object.inflect(@grammar,form)
-		verb.preposition ?
-			join_preposition_object(verb.preposition,inflected_object) :
+		word.preposition ?
+			join_preposition_object(word.preposition,inflected_object) :
 			inflected_object
 	end
 
@@ -335,7 +343,7 @@ class Sentence
 		object_verb.inflect(@grammar,{:infinitive=>1})
 	end
 
-	def handle_adjective_object(noun_index,verb)
+	def handle_adjective_object(verb,noun_index)
 		noun = @nouns[noun_index]
 		if noun
 			gender = noun.gender
