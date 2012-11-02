@@ -1,9 +1,9 @@
 #!/usr/bin/ruby -w
 # -*- encoding: utf-8 -*-
 
-require 'grammar'
-require 'dictionary'
-require 'randomized_choice'
+require './grammar'
+require './dictionary'
+require './randomized_choice'
 
 module Sentences
 	SUBJECT = 'SUBJ'
@@ -15,16 +15,20 @@ module Sentences
 	OTHER = 'OTHER'
 end
 
+# Ruby 1.8 had a broken handling of unicode, so ljust() did not work with accented characters
 class String
-	def fixed_ljust(width)
+	if "".respond_to? :force_encoding
+		# Ruby >= 1.9 - works just fine
+		alias_method :fixed_ljust, :ljust
+	else
+		# nasty hack for Ruby < 1.9
+		def fixed_ljust(width)
 		result = ljust(width)
-		two_byte_chars_count = 0;
-		scan(/[ąćęłóńśżź]/) { two_byte_chars_count += 1 }
+		two_byte_chars_count = 0
+		scan(/[ąćęłóńśżźßöäü]/) { two_byte_chars_count += 1 }
 		two_byte_chars_count /= 2
-# 		puts "fuck: '#{self}' #{self.size}>#{result.size} #{two_byte_chars_count}"
-# 		result
-# 		result[0..(result.size-two_byte_chars_count)]
 		result + ' ' * two_byte_chars_count
+		end
 	end
 end
 
@@ -116,8 +120,6 @@ class Sentence
 	end
 
 	def Sentence.validate_pattern(pattern)
-		pattern_copy = pattern.gsub(/\$\{[^{}]+\}/, '')
-
 		noun_occurs = {}
 		[Sentences::SUBJECT, Sentences::NOUN].each do |part|
 			pattern.scan(match_token(part)) do |full_match,index,options|
@@ -316,6 +318,7 @@ class Sentence
 			inflected_object
 	end
 
+	# TODO move to Polish grammar
 	def join_preposition_object(preposition,object)
 		prep = preposition.clone
 		consonants = %w{b c d f g h j k l ł m n p r s t w z}

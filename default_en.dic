@@ -1,0 +1,85 @@
+# TODO implement "no adjective" for nouns
+# TODO what about a/the ?
+
+N 100 abyss/a
+N  50 air/a
+N 100 darkness/a     TAKES_NO_W(dark)
+N 100 death/a
+N 100 flame/a
+N  50 fruit/a
+N 100 heart/a
+N 100 hope/a
+N 100 kiss/a # TODO deaths' kiss
+N   335 lady/a
+N 100 lie/a
+N 100 lie/a      Pl
+N 100 love/a
+N 100 madness/a      TAKES_NO_W(insane)
+N 100 pain/a         TAKES_NO(pain)
+N 100 silence/a      TAKES_NO_W(silent)
+N 100 sorrow/a
+N 100 thought/a
+N 100 thought/a  Pl
+N 100 truth/a
+
+N 100 I/0            PERSON(1)
+N 100 we/0       Pl  PERSON(1)
+N 100 they/0     Pl
+N 100 you/0          PERSON(2)
+N 100 you/0      Pl  PERSON(2)
+
+# TODO to + INF: try to, long for
+
+V  50 burn        OBJ(2)
+V 100 cannot      INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  10 could       INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V 100 die/a
+V 100 be/0        ADJ
+V 100 kill/a      OBJ(2)
+V  50 lie/a       NOT_WITH_W(lie)
+V 100 must        INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V 100 see/a       OBJ(2)
+V 100 shine/a
+V  10 take/a      OBJ(2)
+V 100 torture/a   OBJ(2)
+
+A 100 burning
+A 100 cold
+A 100 dark
+A  50 endless
+A 100 eternal
+A 100 forbidden
+A 100 forgotten
+A  50 her
+A  30 hideous
+A 100 impossible
+A 100 insane
+A 100 last
+A 100 lonely
+A 100 lost
+A  10 lost OBJ(in,2)
+A  50 my
+A  50 our
+A 100 painful
+A 100 relentless
+A 100 shining
+A 100 silent
+A 100 stolen
+A  50 their
+A  50 true
+A  50 your
+
+# TODO throughout ..., through + A + N, with + N
+D 100 always
+D 100 "forever more"
+D 100 furiously
+D 100 madly
+D 100 silently
+D 100 slowly
+
+O   5 alas
+O 100 although
+O 100 as
+O 100 even
+O  5 "can it be that"
+O 100 therefore

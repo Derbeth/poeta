@@ -1,0 +1,16 @@
+# I, we, you
+N 0 2  I    me    I
+N 0 12  we   us    we
+N 0 12  they them  they
+
+# regular nouns
+N a 11 0  s     .
+
+# special verbs
+V 0 1          be  am   be
+V 0 3          be  is   be
+V 0 2,11,12,13 be  are  be
+
+# regular verbs
+V a 3  y   ies  y
+V a 3  0   s    .

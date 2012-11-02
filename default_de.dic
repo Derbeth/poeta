@@ -1,0 +1,36 @@
+N 100 Blut       n
+N 100 Feuer      m
+N 100 Finsternis f
+N 100 Geheimnis  f
+N 100 niemand    m  # TODO no adj
+N  50 Schall     m
+N 100 Wahrheit   f
+
+N 100 ich/0          PERSON(1)
+N 100 du/0           PERSON(2)
+N 100 sie/0          PERSON(3)
+N 100 wir/0   Pl
+
+V 100 brennen/a
+V 100 hören/a        OBJ(4)
+V 100 kommen/a
+V 100 nehmen/a       OBJ(4)
+V 100 spielen/a      OBJ(mit,3)
+
+A 100 groß/a
+A 100 klein/a
+A 100 lang/a
+A 100 stumm/a
+
+D  50 gut
+D 100 "immer wieder"
+D 100 lang
+D 100 langsam
+D 100 leise
+D 100 plötzlich
+D  50 wirklich
+
+O 100 denn
+O  50 "kannst du glauben, "
+O 100 schade
+O 100 wie

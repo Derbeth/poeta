@@ -17,7 +17,7 @@ N 200 "" m PERSON(2) ONLY_SUBJ # ty
 N  50 ty/0 m ONLY_OBJ
 N  50 ty/0 f ONLY_OBJ
 N 200 "" m Pl PERSON(1) ONLY_SUBJ # my
-N  50 my/0 m Pl ONLY_OBJ
+N  50 my/0 m Pl ONLY_OBJ   # TODO set "no adjective"
 N  10 "" m Pl PERSON(2) ONLY_SUBJ # wy
 N  50 wy/0 m Pl ONLY_OBJ
 N  50 oni/0 m Pl
@@ -47,5 +47,23 @@ D 100 "po kres"
 D  50 szybko
 D 100 tam
 D 100 tutaj
+
+O  50 ależ
+O 100 ale
+O 200 choć
+O 300 gdy
+O 100 gdyż
+O  50 jakże
+O 100 jednak
+O  50 jeszcze
+O 100 kiedy
+O 100 oto
+O 100 skoro
+O  50 "spójrz tylko, jak"
+O 200 "widzę, jak"
+O  10 "wyobraź sobie, że"
+O 100 "w końcu"
+O 100 zanim
+O 100 znowu
 
 # http://www.youtube.com/watch?v=IcqPpPiOjMw

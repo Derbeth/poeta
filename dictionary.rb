@@ -1,8 +1,8 @@
 #!/usr/bin/ruby -w
 # -*- encoding: utf-8 -*-
 
-require 'grammar'
-require 'randomized_choice'
+require './grammar'
+require './randomized_choice'
 
 module Grammar
 	OBJECT_ONLY = 'OO'

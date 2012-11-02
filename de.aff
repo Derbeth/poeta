@@ -1,0 +1,21 @@
+# ich, du
+N 0 2     ich meiner ich
+N 0 3     ich mir    ich
+N 0 4     ich mich   ich
+N 0 2     du  deiner du
+N 0 3     du  dir    du
+N 0 4     du  dich   du
+N 0 12    wir unser  wir
+N 0 13,14 wir uns    wir
+
+A a 102,202  0 es .
+A a 103,203  0 em .
+A a 104      0 en .
+A a 301,304  0 e  .
+A a 302,303  0 er .
+
+# regular verbs
+V a 1 n  0 en
+V a 2 en st en
+V a 3 en t  en
+V a 12 en t en

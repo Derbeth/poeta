@@ -1,7 +1,7 @@
 #!/usr/bin/ruby -w
 # -*- encoding: utf-8 -*-
 
-require 'sentence'
+require './sentence'
 
 class Verse
 	def initialize(sentence_mgr,optimal_length=nil,rhyme=false)

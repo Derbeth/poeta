@@ -1,7 +1,10 @@
 #!/usr/bin/ruby -w
 require 'test/unit'
 
-require 'tc_grammar'
-require 'tc_dictionary'
-require 'tc_sentence'
-require 'tc_poem'
+# Currently tests do not work with jruby-1.6.8 because of the difference in behaviour of srand()
+# jruby-1.7.0 works fine
+
+require './tc_grammar'
+require './tc_dictionary'
+require './tc_sentence'
+require './tc_poem'

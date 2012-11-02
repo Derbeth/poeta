@@ -109,10 +109,10 @@ module Grammar
 					print "no such speed part: #{speech_part}"
 					next
 				end
-				forms.each do |form|
-					form = form.to_i
-					@rules[speech_part][form] ||= []
-					@rules[speech_part][form] << Rule.new(remove,add,find,*required_props)
+				forms.each do |f|
+					f = f.to_i
+					@rules[speech_part][f] ||= []
+					@rules[speech_part][f] << Rule.new(remove,add,find,*required_props)
 				end
 			end
 		end

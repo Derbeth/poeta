@@ -2,8 +2,8 @@
 # -*- encoding: utf-8 -*-
 require 'test/unit'
 
-require 'dictionary'
-require 'grammar'
+require './dictionary'
+require './grammar'
 
 include Grammar
 
