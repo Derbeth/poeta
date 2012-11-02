@@ -1,4 +1,5 @@
 #!/usr/bin/ruby -w
+# -*- encoding: utf-8 -*-
 
 module Grammar
 
@@ -46,7 +47,7 @@ module Grammar
 	class Rule
 		def initialize(remove,add,find,*required_props)
 			@remove,@add,@find,@required_props=remove,add,find,required_props
-			if !@required_props.empty? && !@required_props[0].kind_of?(String):
+			if !@required_props.empty? && !@required_props[0].kind_of?(String)
 				raise "required properties don't contain strings: #{@required_props.inspect}"
 			end
 			@required_props ||= []
@@ -54,12 +55,12 @@ module Grammar
 
 		def matches?(word,*word_props)
 			return false if word_props.nil?
-			if word_props.empty? && word_props[0].kind_of?(String):
+			if word_props.empty? && word_props[0].kind_of?(String)
 				raise "word properties don't contain strings: #{word_props.inspect}"
 			end
 
 			not_included = @required_props - word_props
-			if !not_included.empty?:
+			if !not_included.empty?
 # 				puts "#{word} does not have #{not_included.inspect} #{@required_props[0].class}"
 				return false
 			end
@@ -101,10 +102,10 @@ module Grammar
 				remove = '' if (remove == '0')
 				add = '' if (add == '0')
 				required_props = [pattern]
-				if required:
+				if required
 					required.split().each { |r| required_props << r }
 				end
-				unless (SPEECH_PARTS.include?(speech_part)):
+				unless SPEECH_PARTS.include?(speech_part)
 					print "no such speed part: #{speech_part}"
 					next
 				end
@@ -206,9 +207,9 @@ module Grammar
 		private
 		# returns inflected form or nil if not found
 		def get_inflected_form(speech_part,form_id,word,*gram_props)
-			if (@rules[speech_part].has_key?(form_id)):
+			if @rules[speech_part].has_key?(form_id)
 				@rules[speech_part][form_id].each() do |rule|
-					if rule.matches?(word,*gram_props):
+					if rule.matches?(word,*gram_props)
 						return rule.inflect(word,*gram_props)
 					end
 				end

@@ -1,4 +1,5 @@
 #!/usr/bin/ruby -w
+# -*- encoding: utf-8 -*-
 
 require 'sentence'
 
@@ -35,7 +36,7 @@ end
 
 class Poem
 	def initialize(dictionary,grammar,sentence_mgr,verses_number=4)
-		if (verses_number == 0):
+		if verses_number == 0
 			@text = ''
 			return
 		end

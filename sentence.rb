@@ -1,4 +1,5 @@
 #!/usr/bin/ruby -w
+# -*- encoding: utf-8 -*-
 
 require 'grammar'
 require 'dictionary'
@@ -72,7 +73,7 @@ class SentenceManager
 	end
 
 	def read_frequency(line)
-		unless line =~ /^\s*(\d+)\s+/:
+		unless line =~ /^\s*(\d+)\s+/
 			raise ParseError, "cannot read frequency from '#{line}'"
 		end
 		frequency,rest = $1.to_i,$'
@@ -376,7 +377,7 @@ class Sentence
 
 	def Sentence.read_index(full_match,index_match)
 		index_match.strip! if index_match
-		if index_match && !index_match.empty?:
+		if index_match && !index_match.empty?
 			raise "invalid index in #{full_match}, should be number" if index_match !~ /^\d+$/
 			return index_match.to_i
 		else

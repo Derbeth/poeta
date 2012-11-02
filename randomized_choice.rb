@@ -9,9 +9,9 @@ module ByFrequencyChoser
 		point = rand sum_freqs
 		cur_freq, index, found = 0, 0, -1
 		freqs_array.each do |elem|
-			if elem.frequency != 0:
+			if elem.frequency != 0
 				cur_freq += elem.frequency
-				if cur_freq > point:
+				if cur_freq > point
 					found = index
 					break
 				end

@@ -1,4 +1,5 @@
 #!/usr/bin/ruby -w
+# -*- encoding: utf-8 -*-
 
 require 'grammar'
 require 'randomized_choice'
@@ -13,16 +14,16 @@ module Grammar
 		def initialize(text,gram_props=[],general_props={},frequency=100)
 			gram_props ||= []
 			@text,@frequency,@gram_props,@general_props=text,frequency,gram_props,general_props
-			unless gram_props.respond_to?(:each) && gram_props.respond_to?(:size):
+			unless gram_props.respond_to?(:each) && gram_props.respond_to?(:size)
 				raise "expect gram_props to behave like an array but got #{gram_props.inspect}"
 			end
 			unless general_props.respond_to?(:keys)
 				raise "expect general props to behave like a hash but got #{general_props.inspect}"
 			end
-			if !gram_props.empty? && !gram_props[0].kind_of?(String):
+			if !gram_props.empty? && !gram_props[0].kind_of?(String)
 				raise "gram_props should be an array of strings"
 			end
-			if frequency < 0:
+			if frequency < 0
 				raise "invalid frequency for #{text}: #{frequency}"
 			end
 		end
@@ -429,18 +430,18 @@ module Grammar
 		end
 
 		def read_speech_part(line)
-			unless line =~ /^(\w)\s+/:
+			unless line =~ /^(\w)\s+/
 				raise ParseError, "cannot read speech part from line '#{line}'"
 			end
 			speech_part,rest = $1,$'
-			if !SPEECH_PARTS.include?(speech_part):
+			if !SPEECH_PARTS.include?(speech_part)
 				raise ParseError, "unknown speech part #{speech_part} in line '#{line}'"
 			end
 			[speech_part,rest]
 		end
 
 		def read_frequency(line)
-			unless line =~ /^\s*(\d+)\s+/:
+			unless line =~ /^\s*(\d+)\s+/
 				raise ParseError, "cannot read frequency from '#{line}'"
 			end
 			frequency,rest = $1.to_i,$'
@@ -449,16 +450,16 @@ module Grammar
 
 		def read_word(line)
 			word,gram_props,rest=nil,[],nil
-			if line =~ /^"([^"]*)"/:
+			if line =~ /^"([^"]*)"/
 				word,rest = $1,$'
-			elsif line =~ /^([^\s\/]+)/:
+			elsif line =~ /^([^\s\/]+)/
 				word,rest = $1,$'
 			else
 				raise ParseError, "cannot read word from '#{line}'"
 			end
 
-			if rest =~ %r{^/(\w*)}:
-				if $1.empty?:
+			if rest =~ %r{^/(\w*)}
+				if $1.empty?
 					raise ParseError, "cannot read word gram props from '#{line}'"
 				end
 				rest=$'

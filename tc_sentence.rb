@@ -1,4 +1,5 @@
 #!/usr/bin/ruby -w
+# -*- encoding: utf-8 -*-
 require 'test/unit'
 
 require 'sentence'
@@ -10,8 +11,8 @@ class StringTest < Test::Unit::TestCase
 		assert_equal("foo   ", "foo".ljust(6))
 		assert_equal("foo   ", "foo".fixed_ljust(6))
 		assert_equal("foó   ", "foó".fixed_ljust(6))
-		assert_equal("fóo   ", "fóo".fixed_ljust(6))
-		assert_equal("fóó   ", "fóó".fixed_ljust(6))
+		assert_equal("góo   ", "góo".fixed_ljust(6))
+		assert_equal("hóó   ", "hóó".fixed_ljust(6))
 	end
 end
 
