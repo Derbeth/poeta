@@ -1,3 +1,5 @@
+# http://grzegorj.w.interia.pl/gram/pl/deklin_stat.html
+
 # 9 m, gość, ludzie
 N a 2,4   ć   cia   ć
 N a 3     ć   ciowi ć
@@ -51,9 +53,11 @@ N c 5         0 iem   [^cnw]
 N c 11,14,17  0 e     [^ćnńw]
 N c 11,14,17  0 ie    [cnw]
 N c 12        0 i     [^cćń]
+N c 12        0 ów    c/1
 N c 12        0 y     c
 N c 12        ć ci    ć
 N c 12        ń ni    ń
+N c 12        0 ów    j       # raj
 N c 13        0 om    [^ćnńw]
 N c 13        0 iom   [nw]
 N c 15        0 ami   [^ćnńw]
@@ -90,6 +94,7 @@ N e 6,7       0 zie d
 N e 6,7       0 ze  r
 N e 6,7       0 ie  [bnps]
 N e 6,7       t cie t
+N e 6,7       0 u   ch # oddech
 N e 11,14,17  0 y   .
 N e 12        0 ów .
 N e 13        0 om .
@@ -106,16 +111,23 @@ N f 12,14  0 ów  .
 N f 15     0 ami .
 N f 16     0 ach .
 
-# 98 m, statek
-N g 1,4      0  0    .
+# 98 m, statek, brzeg, rok
 N g 2,6,7    ek ku   ek
+N g 2,6,7    0  u    .
 N g 3        ek kowi ek
+N g 3        0  owi  .
 N g 5        ek kiem ek
+N g 5        0  iem  [gk]
+N g 11,14,17 0  i    .
 N g 11,14,17 ek ki   ek
 N g 12       ek ków  ek
+N g 12       0  ów   .
 N g 13       ek kom  ek
+N g 13       0  om   .
 N g 15       ek kami ek
+N g 15       0  ami  .
 N g 16       ek kach ek
+N g 16       0  ach  .
 
 # 135 f, opcja, głębia, butla, idea, zbroja, lilia
 N h 2,3,6,12  a 0   ia
@@ -237,6 +249,7 @@ N p 5        o    em    o
 N p 6        o    zie   do
 N p 6        o    ze    ro
 N p 6        sło  śle   sło
+N p 6        ało  ele   iało
 N p 6        ło   le    ło
 N p 6        asto eście iasto
 N p 6        to   cie   to
@@ -296,6 +309,34 @@ N t 12         0 ów  .
 N t 13         0 om  .
 N t 15         0 ami .
 N t 16         0 ach .
+
+# ja, ty, on
+N 0 2,3,4,6  ja    mnie  ja
+N 0 5        ja    mną   ja
+N 0 2,4      ty    ciebie ty
+N 0 3,6      ty    tobie  ty
+N 0 4        ty    tobą   ty
+N 0 2,4      on    jego   on
+N 0 3        on    jemu   on
+N 0 5,6      on    nim    on
+N 0 2,3      ona   jej    ona
+N 0 4        ona   ją     ona
+N 0 5        ona   nią    ona
+N 0 6        ona   niej   ona
+N 0 12,14,16 my    nas    my
+N 0 13       my    nam    my
+N 0 15       my    nami   my
+N 0 12,14,16 wy    was    wy
+N 0 13       wy    wam    wy
+N 0 15       wy    wami   wy
+N 0 12,14    oni   ich    oni
+N 0 13       oni   im     oni
+N 0 15       oni   nimi   oni
+N 0 16       oni   nich   oni
+N 0 12,14    one   ich    one
+N 0 13       one   im     one
+N 0 15       one   nimi   one
+N 0 16       one   nich   one
 
 A a 102,202     y  ego y
 A a 104         y  ego y

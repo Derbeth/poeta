@@ -1,0 +1,51 @@
+N 100 ciało/p n nan
+N  50 ciało/p n Pl nan
+N  25 grzech/t m nan
+N 100 jedność/n f
+N 100 oddech/e m nan
+N 100 owoc/c1 m Pl nan
+N  50 piekło/d n Pl nan
+N 100 raj/c m nan
+N 100 ruch/t m nan
+N  50 smak/g m nan
+N  10 sumienie/d n nan
+N   5 sumienie/d n Pl nan
+N 100 warga/r f Pl
+N 200 "" m PERSON(1) ONLY_SUBJ # ja
+N 200 ja/0 m ONLY_OBJ
+N 200 "" m PERSON(2) ONLY_SUBJ # ty
+N  50 ty/0 m ONLY_OBJ
+N  50 ty/0 f ONLY_OBJ
+N 200 "" m Pl PERSON(1) ONLY_SUBJ # my
+N  50 my/0 m Pl ONLY_OBJ
+N  10 "" m Pl PERSON(2) ONLY_SUBJ # wy
+N  50 wy/0 m Pl ONLY_OBJ
+N  50 oni/0 m Pl
+
+# dodać: ja OBJ
+
+V 100 brać/b OBJ(4)
+V  25 być/c ADJ
+V  80 chcieć/7c INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  25 kłamać/9
+V 100 milczeć/7
+V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V 100 płonąć/5
+V 100 stawać/A REFL OBJ(5)
+
+A 100 brudny/a
+A 100 chory/a
+A  50 jego
+A  30 jej
+A  50 obcy/a
+A  50 odcięty/a OBJ(od,2)
+A 100 pęknięty/a
+A  50 przeklęty/a
+A  50 wygnany/a OBJ(z,2)
+
+D 100 "po kres"
+D  50 szybko
+D 100 tam
+D 100 tutaj
+
+# http://www.youtube.com/watch?v=IcqPpPiOjMw
