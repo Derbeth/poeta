@@ -159,6 +159,11 @@ module Grammar
 			inflected
 		end
 
+		# allows subclasses to modify preposition if certain letters meet
+		def join_preposition_object(preposition,object)
+			preposition + ' ' + object
+		end
+
 		protected
 		def read_forms(form_str)
 			forms = case form_str
@@ -219,6 +224,18 @@ module Grammar
 
 	class PolishGrammar < GenericGrammar
 		include SimpleReflexiveVerbsHandler
+
+		def join_preposition_object(preposition,object)
+			prep = preposition.clone
+			consonants = %w{b c d f g h j k l ł m n p r s t w z}
+			cons_match = "[#{consonants.join}]"
+			case
+				when prep == 'z' &&
+					object =~ /^(z#{cons_match}|s[#{consonants-['z']}]|sz#{cons_match})/ then prep = 'ze'
+				when prep == 'w' && object =~ /^w#{cons_match}/ then prep = 'we'
+			end
+			prep + ' ' + object
+		end
 
 		protected
 		def adjective_form_id(form)
