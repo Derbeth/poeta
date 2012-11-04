@@ -51,7 +51,7 @@ sentences_file += '.cfg' if sentences_file !~ /\.cfg$/
 raise "#{dictionary_file} does not exist" unless File.exists?(dictionary_file)
 raise "#{sentences_file} does not exist" unless File.exists?(sentences_file)
 
-GRAMMAR_FOR_LANGS = {'pl' => PolishGrammar}
+GRAMMAR_FOR_LANGS = {'de' => GermanGrammar, 'pl' => PolishGrammar}
 grammar_class = GRAMMAR_FOR_LANGS[language] || GenericGrammar
 grammar = grammar_class.new
 grammar_file = "#{language}.aff"

@@ -145,7 +145,8 @@ module Grammar
 		end
 
 		def inflect_verb(text,form,reflexive=false,*gram_props)
-			raise ":person has to be passed '#{form[:person]}'" unless form[:person]
+			return text if form[:infinitive]
+			raise ":person has to be passed '#{form.inspect}'" unless form[:person]
 			raise "invalid person: #{form[:person]}" unless (1..3) === form[:person]
 			raise "invalid number: #{form[:number]}" if form[:number] && !((1..2) === form[:number])
 			number = form[:number] || 1
@@ -201,19 +202,23 @@ module Grammar
 		end
 	end
 
-	class PolishGrammar < GenericGrammar
+	module SimpleReflexiveVerbsHandler
 		def inflect_verb(text,form,reflexive=false,*gram_props)
 			if form[:infinitive]
 				inflected = text
-				inflected = REFLEXIVE_WORD + ' ' + inflected if (reflexive)
+				inflected = reflexive_word + ' ' + inflected if (reflexive)
 				return inflected
 			end
 
 			inflected = super
 
-			inflected += ' ' + REFLEXIVE_WORD if (reflexive)
+			inflected += ' ' + reflexive_word if (reflexive)
 			inflected
 		end
+	end
+
+	class PolishGrammar < GenericGrammar
+		include SimpleReflexiveVerbsHandler
 
 		protected
 		def adjective_form_id(form)
@@ -235,7 +240,18 @@ module Grammar
 		end
 
 		private
-		REFLEXIVE_WORD = 'się'
+		def reflexive_word
+			'się'
+		end
+	end
+
+	class GermanGrammar < GenericGrammar
+		include SimpleReflexiveVerbsHandler
+
+		private
+		def reflexive_word
+			'such'
+		end
 	end
 
 	class GrammarForm
