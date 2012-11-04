@@ -8,14 +8,26 @@ N 0 4     du  dich   du
 N 0 12    wir unser  wir
 N 0 13,14 wir uns    wir
 
+# Hand
+N h 11,12,14 and ände  and
+N h 13       and änden and
+
 A a 102,202  0 es .
 A a 103,203  0 em .
 A a 104      0 en .
 A a 301,304  0 e  .
 A a 302,303  0 er .
+A a 111,114  0 e  .
+A a 112      0 er .
+A a 113      0 en .
 
 # regular verbs
 V a 1 n  0 en
 V a 2 en st en
 V a 3 en t  en
 V a 12 en t en
+
+# tun
+V b 1    n e n
+V b 2    n st n
+V b 3,12 n t  n

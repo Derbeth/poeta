@@ -51,11 +51,13 @@ sentences_file += '.cfg' if sentences_file !~ /\.cfg$/
 raise "#{dictionary_file} does not exist" unless File.exists?(dictionary_file)
 raise "#{sentences_file} does not exist" unless File.exists?(sentences_file)
 
-grammar = PolishGrammar.new
+GRAMMAR_FOR_LANGS = {'pl' => PolishGrammar}
+grammar_class = GRAMMAR_FOR_LANGS[language] || GenericGrammar
+grammar = grammar_class.new
 grammar_file = "#{language}.aff"
 raise "#{grammar_file} does not exist" unless File.exists?(grammar_file)
 File.open(grammar_file) { |f| grammar.read_rules(f) }
-dictionary = SmartRandomDictionary.new
+dictionary = SmartRandomDictionary.new(5)
 File.open(dictionary_file) { |f| dictionary.read(f) }
 sentence_mgr = SentenceManager.new(dictionary,grammar,true,debug)
 File.open(sentences_file) { |f| sentence_mgr.read(f) }

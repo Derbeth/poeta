@@ -10,17 +10,19 @@ N  50 fruit/a
 N 100 heart/a
 N 100 hope/a
 N 100 kiss/a # TODO deaths' kiss
-N   335 lady/a
+N  10 lady/a
 N 100 lie/a
 N 100 lie/a      Pl
 N 100 love/a
 N 100 madness/a      TAKES_NO_W(insane)
 N 100 pain/a         TAKES_NO(pain)
 N 100 silence/a      TAKES_NO_W(silent)
+N 100 sin/a
 N 100 sorrow/a
 N 100 thought/a
 N 100 thought/a  Pl
 N 100 truth/a
+N  50 war/a
 
 N 100 I/0            PERSON(1)
 N 100 we/0       Pl  PERSON(1)
@@ -30,14 +32,16 @@ N 100 you/0      Pl  PERSON(2)
 
 # TODO to + INF: try to, long for
 
-V  50 burn        OBJ(2)
+V  50 burn/a      OBJ(2)
 V 100 cannot      INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  10 could       INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V 100 die/a
 V 100 be/0        ADJ
 V 100 kill/a      OBJ(2)
 V  50 lie/a       NOT_WITH_W(lie)
+V  10 long/a      OBJ(2)
 V 100 must        INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  10 scream/a
 V 100 see/a       OBJ(2)
 V 100 shine/a
 V  10 take/a      OBJ(2)
@@ -65,11 +69,13 @@ A 100 relentless
 A 100 shining
 A 100 silent
 A 100 stolen
+A 100 sweet
 A  50 their
 A  50 true
 A  50 your
 
 # TODO throughout ..., through + A + N, with + N
+# TODO inside
 D 100 always
 D 100 "forever more"
 D 100 furiously

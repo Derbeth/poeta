@@ -477,7 +477,7 @@ module Grammar
 
 		protected
 		DEFAULT_MAX_TRIES = 5
-		DEFAULT_MAX_SIZE = 2
+		DEFAULT_MAX_SIZE = 3
 
 		# returns index of random word or -1 if none can be selected
 		def get_random_index(freq_array,speech_part)

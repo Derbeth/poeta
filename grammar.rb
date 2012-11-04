@@ -74,16 +74,24 @@ module Grammar
 		end
 	end
 
-	class AbstractGrammar
-	end
-
-	class PolishGrammar < AbstractGrammar
+	class GenericGrammar
 
 		def initialize
 			@rules={}
 			SPEECH_PARTS.each do |part|
 				@rules[part] = {}
 			end
+		end
+
+		# returns complete number of rules for all parts of speech
+		def size
+			retval = 0
+			@rules.values.each do |part_forms|
+				part_forms.values.each do |form_rules|
+					retval += form_rules.size
+				end
+			end
+			retval
 		end
 
 		def read_rules(source)
@@ -117,7 +125,40 @@ module Grammar
 			end
 		end
 
-		private
+		def inflect_noun(noun,form,*gram_props)
+			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
+			form_id = form[:case]
+			noun_number = form[:number] || 1
+			form_id += 10 if noun_number == 2
+
+			inflected = get_inflected_form(NOUN,form_id,noun,*gram_props)
+			inflected || noun
+		end
+
+		def inflect_adjective(adjective,form,*gram_props)
+			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
+			raise ":gender has to be passed '#{form[:gender]}'" unless form[:gender]
+			raise "wrong gender: #{form[:gender]}" unless GENDERS.include? form[:gender]
+
+			inflected = get_inflected_form(ADJECTIVE,adjective_form_id(form),adjective,*gram_props)
+			inflected || adjective
+		end
+
+		def inflect_verb(text,form,reflexive=false,*gram_props)
+			raise ":person has to be passed '#{form[:person]}'" unless form[:person]
+			raise "invalid person: #{form[:person]}" unless (1..3) === form[:person]
+			raise "invalid number: #{form[:number]}" if form[:number] && !((1..2) === form[:number])
+			number = form[:number] || 1
+			form_id = form[:person].to_int
+			form_id += (number.to_int-1) * 10
+# 			puts "verb form id: #{form_id} #{@rules[VERB].keys.sort.inspect}"
+
+			inflected = get_inflected_form(VERB,form_id,text,*gram_props)
+			inflected ||= text
+			inflected
+		end
+
+		protected
 		def read_forms(form_str)
 			forms = case form_str
 				when /^(\d+)-(\d+)$/
@@ -136,34 +177,46 @@ module Grammar
 			unique
 		end
 
-		public
-
-		# returns complete number of rules for all parts of speech
-		def size
-			retval = 0
-			@rules.values.each do |part_forms|
-				part_forms.values.each do |form_rules|
-					retval += form_rules.size
+		# returns inflected form or nil if not found
+		def get_inflected_form(speech_part,form_id,word,*gram_props)
+			if @rules[speech_part].has_key?(form_id)
+				@rules[speech_part][form_id].each() do |rule|
+					if rule.matches?(word,*gram_props)
+						return rule.inflect(word,*gram_props)
+					end
 				end
 			end
-			retval
+			nil
 		end
 
-		def inflect_noun(noun,form,*gram_props)
-			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
-			form_id = form[:case]
-			noun_number = form[:number] || 1
-			form_id += 10 if noun_number == 2
+		def adjective_form_id(form)
+			gram_case = form[:case]
+			number = form[:number] || 1
+			gender = number == 1 ? MASCULINE : form[:gender]
 
-			inflected = get_inflected_form(NOUN,form_id,noun,*gram_props)
-			inflected || noun
+			form_id = gram_case
+			form_id += (number-1) * 10
+			form_id += gender * 100
+			form_id
+		end
+	end
+
+	class PolishGrammar < GenericGrammar
+		def inflect_verb(text,form,reflexive=false,*gram_props)
+			if form[:infinitive]
+				inflected = text
+				inflected = REFLEXIVE_WORD + ' ' + inflected if (reflexive)
+				return inflected
+			end
+
+			inflected = super
+
+			inflected += ' ' + REFLEXIVE_WORD if (reflexive)
+			inflected
 		end
 
-		def inflect_adjective(adjective,form,*gram_props)
-			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
-			raise ":gender has to be passed '#{form[:gender]}'" unless form[:gender]
-			raise "wrong gender: #{form[:gender]}" unless GENDERS.include? form[:gender]
-
+		protected
+		def adjective_form_id(form)
 			gram_case = form[:case]
 			number = form[:number] || 1
 			gender = form[:gender]
@@ -178,44 +231,11 @@ module Grammar
 			form_id = gram_case
 			form_id += (number-1) * 10
 			form_id += gender * 100
-# 			puts "adj form id: #{form_id} #{@rules[ADJECTIVE].keys.sort.inspect}"
-
-			inflected = get_inflected_form(ADJECTIVE,form_id,adjective,*gram_props)
-			inflected || adjective
-		end
-
-		def inflect_verb(text,form,reflexive=false,*gram_props)
-			if form[:infinitive]
-				inflected = text
-				inflected = 'się ' + inflected if (reflexive)
-				return inflected
-			end
-			raise ":person has to be passed '#{form[:person]}'" unless form[:person]
-			raise "invalid person: #{form[:person]}" unless (1..3) === form[:person]
-			raise "invalid number: #{form[:number]}" if form[:number] && !((1..2) === form[:number])
-			number = form[:number] || 1
-			form_id = form[:person].to_int
-			form_id += (number.to_int-1) * 10
-# 			puts "verb form id: #{form_id} #{@rules[VERB].keys.sort.inspect}"
-
-			inflected = get_inflected_form(VERB,form_id,text,*gram_props)
-			inflected ||= text
-			inflected += ' się' if (reflexive)
-			inflected
+			form_id
 		end
 
 		private
-		# returns inflected form or nil if not found
-		def get_inflected_form(speech_part,form_id,word,*gram_props)
-			if @rules[speech_part].has_key?(form_id)
-				@rules[speech_part][form_id].each() do |rule|
-					if rule.matches?(word,*gram_props)
-						return rule.inflect(word,*gram_props)
-					end
-				end
-			end
-			nil
-		end
+		REFLEXIVE_WORD = 'się'
 	end
 
 	class GrammarForm

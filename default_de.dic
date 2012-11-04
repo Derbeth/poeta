@@ -2,9 +2,12 @@ N 100 Blut       n
 N 100 Feuer      m
 N 100 Finsternis f
 N 100 Geheimnis  f
+N  50 Hand/h     f
+N  50 Hand/h     Pl
 N 100 niemand    m  # TODO no adj
 N  50 Schall     m
 N 100 Wahrheit   f
+N  50 Weh        n
 
 N 100 ich/0          PERSON(1)
 N 100 du/0           PERSON(2)
@@ -15,7 +18,10 @@ V 100 brennen/a
 V 100 hören/a        OBJ(4)
 V 100 kommen/a
 V 100 nehmen/a       OBJ(4)
+V  50 schreien/a
 V 100 spielen/a      OBJ(mit,3)
+V 100 suchen/a       OBJ(nach,3)
+V  10 tun/b          OBJ(4) TAKES_ONLY_W(Weh) # TODO second object: "tut mir Weh"
 
 A 100 groß/a
 A 100 klein/a
