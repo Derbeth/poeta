@@ -235,7 +235,7 @@ class Sentence
 		parsed_opts = self.class.parse_adjective_options(options)
 		raise "no noun for #{full_match}" unless @nouns.include? noun_index
 		noun = @nouns[noun_index]
-		return '' if noun == nil || noun.person != 3
+		return '' if noun == nil || noun.get_property(:no_adjective)
 
 		freq_counter = @dictionary.semantic_chooser(noun)
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE, &freq_counter)

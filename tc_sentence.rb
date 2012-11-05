@@ -126,17 +126,27 @@ class SentenceTest < Test::Unit::TestCase
 		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${ADJ} ${SUBJ}')
 		assert_equal('prosta dobra pora', sentence.write)
 
-		dictionary.read(%Q{N 100 "" PERSON(2)\nA 100 dobry\nV 100 rozumieć/a})
-		grammar.read_rules("V a 2 ć sz ć")
-		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${SUBJ} ${VERB}')
-		assert_equal('rozumiesz', sentence.write)
-
 		# adjective with an object
 		srand 1
 		dictionary.read("N 100 kibic m\nN 100 szczęście/a f\nA 100 pijany/a OBJ(ze,2)")
 		grammar.read_rules("N a 2 e a e")
 		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${ADJ}')
 		assert_equal('kibic pijany ze szczęścia', sentence.write)
+	end
+
+	def test_handle_no_adjective
+		dictionary_text = "N 100 nobody\nA 100 cool"
+		dictionary = Dictionary.new
+		dictionary.read(dictionary_text)
+		grammar = GenericGrammar.new
+
+		sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
+		assert_equal('cool nobody', sentence.write)
+
+		dictionary_text = "N 100 nobody NO_ADJ\nA 100 cool"
+		dictionary.read(dictionary_text)
+
+		assert_equal('nobody', sentence.write)
 	end
 
 	def test_handle_animate_inanimate

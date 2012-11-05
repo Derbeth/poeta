@@ -11,16 +11,16 @@ N  50 smak/g m nan
 N  10 sumienie/d n nan
 N   5 sumienie/d n Pl nan
 N 100 warga/r f Pl
-N 200 "" m PERSON(1) ONLY_SUBJ # ja
-N 200 ja/0 m ONLY_OBJ
-N 200 "" m PERSON(2) ONLY_SUBJ # ty
-N  50 ty/0 m ONLY_OBJ
-N  50 ty/0 f ONLY_OBJ
-N 200 "" m Pl PERSON(1) ONLY_SUBJ # my
-N  50 my/0 m Pl ONLY_OBJ   # TODO set "no adjective"
-N  10 "" m Pl PERSON(2) ONLY_SUBJ # wy
-N  50 wy/0 m Pl ONLY_OBJ
-N  50 oni/0 m Pl
+N 200 "" m PERSON(1) NO_ADJ ONLY_SUBJ # ja
+N 200 ja/0 m NO_ADJ ONLY_OBJ
+N 200 "" m PERSON(2) NO_ADJ ONLY_SUBJ # ty
+N  50 ty/0 m NO_ADJ ONLY_OBJ
+N  50 ty/0 f NO_ADJ ONLY_OBJ
+N 200 "" m Pl PERSON(1) NO_ADJ ONLY_SUBJ # my
+N  50 my/0 m Pl NO_ADJ ONLY_OBJ   # TODO set "no adjective"
+N  10 "" m Pl PERSON(2) NO_ADJ ONLY_SUBJ # wy
+N  50 wy/0 m Pl NO_ADJ ONLY_OBJ
+N  50 oni/0 m Pl NO_ADJ
 
 # dodać: ja OBJ
 

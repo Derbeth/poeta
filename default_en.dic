@@ -15,6 +15,7 @@ N 100 lie/a
 N 100 lie/a      Pl
 N 100 love/a
 N 100 madness/a      TAKES_NO_W(insane)
+N  50 nobody         NO_ADJ OBJ_FREQ(10)
 N 100 pain/a         TAKES_NO(pain)
 N 100 silence/a      TAKES_NO_W(silent)
 N 100 sin/a
@@ -24,11 +25,11 @@ N 100 thought/a  Pl
 N 100 truth/a
 N  50 war/a
 
-N 100 I/0            PERSON(1)
-N 100 we/0       Pl  PERSON(1)
-N 100 they/0     Pl
-N 100 you/0          PERSON(2)
-N 100 you/0      Pl  PERSON(2)
+N 100 I/0            NO_ADJ PERSON(1)
+N 100 we/0       Pl  NO_ADJ PERSON(1)
+N 100 they/0     Pl  NO_ADJ
+N 100 you/0          NO_ADJ PERSON(2)
+N 100 you/0      Pl  NO_ADJ PERSON(2)
 
 # TODO to + INF: try to, long for
 

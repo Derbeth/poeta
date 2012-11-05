@@ -123,6 +123,7 @@ module Grammar
 						when 'nan' then animate = false
 						when /^PERSON\(([^)]*)\)/
 							person = Integer($1.strip)
+						when 'NO_ADJ' then general_props[:no_adjective] = true
 						when 'ONLY_SUBJ' then general_props[:only_subj] = true
 						when 'ONLY_OBJ' then general_props[:only_obj] = true
 						when /^OBJ_FREQ/
