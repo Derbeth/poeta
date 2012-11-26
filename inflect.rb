@@ -6,7 +6,7 @@ require './dictionary'
 
 include Grammar
 
-dict_file = 'default'
+dict_file = nil
 language = 'pl'
 only_list = false
 direct_input = nil
@@ -33,6 +33,8 @@ OptionParser.new do |opts|
 		exit
 	end
 end.parse!
+
+dict_file ||= "default_#{language}"
 
 dict_file += '.dic' unless dict_file =~ /\.dic/
 

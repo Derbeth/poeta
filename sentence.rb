@@ -345,7 +345,7 @@ class Sentence
 		end
 
 		freq_counter = @dictionary.semantic_chooser(verb)
-		adjective = @dictionary.get_random(Dictionary::ADJECTIVE, &freq_counter)
+		adjective = @dictionary.get_random_adjective_object(&freq_counter)
 		return '' unless adjective
 
 		form = {:case=>NOMINATIVE, :gender=>gender, :number=>number}

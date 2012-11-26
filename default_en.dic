@@ -4,25 +4,35 @@
 N 100 abyss/a
 N  50 air/a
 N 100 darkness/a     TAKES_NO_W(dark)
+N  50 day/a
+N  50 day/a      Pl
 N 100 death/a
 N 100 flame/a
 N  50 fruit/a
 N 100 heart/a
 N 100 hope/a
+N  50 horror/a
+N  10 horror/a   Pl
 N 100 kiss/a # TODO deaths' kiss
 N  10 lady/a
 N 100 lie/a
 N 100 lie/a      Pl
+N 100 life/a
 N 100 love/a
 N 100 madness/a      TAKES_NO_W(insane)
 N  50 nobody         NO_ADJ OBJ_FREQ(10)
 N 100 pain/a         TAKES_NO(pain)
+N  10 prophet/a
+N  10 prophet/a  Pl
 N 100 silence/a      TAKES_NO_W(silent)
 N 100 sin/a
 N 100 sorrow/a
+N  30 sun/a
+N 100 tear/a     Pl
 N 100 thought/a
 N 100 thought/a  Pl
 N 100 truth/a
+N  10 truth/a    Pl
 N  50 war/a
 
 N 100 I/0            NO_ADJ PERSON(1)
@@ -33,6 +43,7 @@ N 100 you/0      Pl  NO_ADJ PERSON(2)
 
 # TODO to + INF: try to, long for
 
+V 100 become/a    ADJ
 V  50 burn/a      OBJ(2)
 V 100 cannot      INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  10 could       INF TAKES_NO(MODAL) SEMANTIC(MODAL)
@@ -51,18 +62,23 @@ V 100 torture/a   OBJ(2)
 A 100 burning
 A 100 cold
 A 100 dark
+A 100 dead        NOT_WITH_W(death)
+A  30 deadly      NOT_WITH_W(death)
 A  50 endless
 A 100 eternal
+A  30 fallen
+A 100 false
 A 100 forbidden
 A 100 forgotten
 A  50 her
+A 100 hidden
 A  30 hideous
 A 100 impossible
 A 100 insane
 A 100 last
 A 100 lonely
 A 100 lost
-A  10 lost OBJ(in,2)
+A  10 lost        OBJ(in,2)
 A  50 my
 A  50 our
 A 100 painful
@@ -71,7 +87,9 @@ A 100 shining
 A 100 silent
 A 100 stolen
 A 100 sweet
+A 100 that/a      NOT_AS_OBJ
 A  50 their
+A 100 this/a      NOT_AS_OBJ
 A  50 true
 A  50 your
 

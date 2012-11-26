@@ -250,7 +250,12 @@ module Grammar
 
 		def Adjective.parse(text,gram_props,frequency,line)
 			general_props = {}
-			Word.parse(line,general_props,{:parse_object=>true})
+			Word.parse(line,general_props,{:parse_object=>true}) do |part|
+				case part
+					when 'NOT_AS_OBJ' then general_props[:not_as_object] = true
+					else puts "warn: unknown option #{part}"
+				end
+			end
 			Adjective.new(text,gram_props,frequency,general_props) # TODO TEMP
 		rescue AdjectiveError => e
 			raise ParseError, e.message
@@ -380,6 +385,16 @@ module Grammar
 					frequency = 0
 				elsif word.get_property(:obj_freq)
 					frequency = word.get_property(:obj_freq)
+				end
+				counter.call(frequency,word)
+			end
+		end
+
+		def get_random_adjective_object(&freq_counter)
+			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
+			get_random(ADJECTIVE) do |frequency, word|
+				if word.get_property(:not_as_object)
+					frequency = 0
 				end
 				counter.call(frequency,word)
 			end

@@ -419,6 +419,27 @@ V 100 kills OBJ(1)
 		assert_equal('jesteśmy dobrzy', sentence.write)
 	end
 
+	def test_handle_adjective_object_not_as_object
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read("N 100 flower\nV 100 is ADJ\nA 10 beautiful\nA 100 this NOT_AS_OBJ")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+			assert_equal('flower is beautiful', sentence.write)
+		end
+	end
+
+	# verb requires an object but sentence pattern explicitly omits object
+	# sentence should be written without object
+	def test_no_object_verb_object
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read("N 100 people \nV 100 become ADJ \nA 100 sick\n")
+
+		sentence = Sentence.new(dictionary,grammar,'what ${SUBJ} ${VERB}')
+		assert_equal('what people become', sentence.write)
+	end
+
 	def test_handle_other
 		dictionary = Dictionary.new
 		dictionary.read('O 100 "some other"')

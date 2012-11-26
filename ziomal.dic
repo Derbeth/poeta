@@ -128,7 +128,7 @@ A 100 radykalny/a NOT_WITH(POLICJA)
 A  50 sprzedajny/a NOT_WITH(OK)
 A 120 szczery/a NOT_WITH(POLICJA)
 A 200 taki/b
-A 200 ten/c
+A 200 ten/c NOT_AS_OBJ
 A 200 uliczny/a NOT_WITH(POLICJA) NOT_WITH_W(ulica)
 A 100 zajebisty/a NOT_WITH(POLICJA)
 A  50 zwyczajny/a

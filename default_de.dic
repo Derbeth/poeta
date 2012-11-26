@@ -2,10 +2,12 @@ N 100 Blut       n
 N 100 Feuer      m
 N 100 Finsternis f
 N 100 Geheimnis  f
+N  50 Liebe      f
 N  50 Hand/h     f
 N  50 Hand/h     Pl
 N 100 niemand    m   NO_ADJ OBJ_FREQ(10)
 N  50 Schall     m
+N  50 Tod        m
 N 100 Wahrheit   f
 N  50 Weh        n
 

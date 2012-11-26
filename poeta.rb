@@ -9,7 +9,7 @@ require './sentence'
 include Grammar
 
 version = '4.0 pre-alpha'
-dictionary = 'default'
+dictionary = nil
 language = 'pl'
 debug = false
 forced_seed = nil
@@ -41,13 +41,19 @@ OptionParser.new do |opts|
 end.parse!
 
 raise "expects none or one argument" if ARGV.size > 1
-dictionary = ARGV[0] if ARGV[0]
+default_name = "default_#{language}"
+dictionary = if ARGV[0]
+	ARGV[0]
+else
+	default_name
+end
 
 dictionary_file = dictionary
 sentences_file = dictionary
 
 dictionary_file += '.dic' if dictionary_file !~ /\.dic$/
 sentences_file += '.cfg' if sentences_file !~ /\.cfg$/
+sentences_file = "#{default_name}.cfg" unless File.exists?(sentences_file)
 raise "#{dictionary_file} does not exist" unless File.exists?(dictionary_file)
 raise "#{sentences_file} does not exist" unless File.exists?(sentences_file)
 
@@ -72,5 +78,6 @@ puts poem.text
 
 if debug
 	puts
+	puts "dictionary: #{dictionary_file} sentences: #{sentences_file} grammar: #{grammar_class}"
 	puts "rand seed: #{srand}"
 end
