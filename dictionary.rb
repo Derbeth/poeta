@@ -5,8 +5,8 @@ require './grammar'
 require './randomized_choice'
 
 module Grammar
-	OBJECT_ONLY = 'OO'
-	NO_NOUN_NOUN = 'NO_NOUN_NOUN'
+	OBJECT_ONLY = 'OO' # TODO unused
+	NO_NOUN_NOUN = 'NO_NOUN_NOUN' # TODO unused
 
 	class Word
 		attr_reader :text, :gram_props, :frequency
