@@ -1,4 +1,0 @@
-#!/bin/sh
-rm -r doc
-rdoc -x 'tc_*' --title 'Poeta RDoc'
-find doc -name *.html -exec sed -e /^$/d -e 's/<=>/\&lt;=>/g' -i {} \;

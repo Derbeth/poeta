@@ -53,7 +53,14 @@ class PolishGrammarTest < Test::Unit::TestCase
 
 	def test_noun
 		grammar = PolishGrammar.new
-		grammar.read_rules(File.open('test.aff'))
+		grammar_text = <<-END
+N A 6 0 u   b
+N A 6 0 ie  t/X
+N A 6 t cie t
+N A 6 t xxx t
+N B 12 a 0 a
+		END
+		grammar.read_rules grammar_text
 
 		assert_equal('kot', grammar.inflect_noun('kot', :case=>LOCATIVE))
 		assert_equal('kot', grammar.inflect_noun('kot', {:case=>LOCATIVE}, 'Z'))
