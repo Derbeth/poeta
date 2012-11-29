@@ -275,19 +275,20 @@ N q 15       o ami o
 N q 16       o ach o
 
 # f, 130, 131, ręka, droga, apteka, matka
-N r 2,11,14,17 a  i  a
-N r 3,6        ka ce ka
-N r 4          a   ę  a
-N r 5          a   ą  a
-N r 7          a   o  a
-N r 12         oga óg oga
-N r 12         ęka ąk ęka
-N r 12         a   0  eka
-N r 12         a   0  rga
-N r 12         ka  ek ka
-N r 13         a   om a
-N r 15         0   mi a
-N r 16         0   ch a
+N r 2,11,14,17 a   i   a
+N r 3,6        ka  ce  ka
+N r 3,6        ga  dze ga
+N r 4          a   ę   a
+N r 5          a   ą   a
+N r 7          a   o   a
+N r 12         oga óg  oga
+N r 12         ęka ąk  ęka
+N r 12         a   0   eka
+N r 12         a   0   rga
+N r 12         ka  ek  ka
+N r 13         a   om  a
+N r 15         0   mi  a
+N r 16         0   ch  a
 
 # f, 141, nuda, zdrada
 N s 2,11,14,17 a y   a
@@ -337,6 +338,8 @@ N 0 12,14    one   ich    one
 N 0 13       one   im     one
 N 0 15       one   nimi   one
 N 0 16       one   nich   one
+
+# http://grzegorj.w.interia.pl/gram/pl/odmiana2.html
 
 A a 102,202     y  ego y
 A a 104         y  ego y
@@ -465,12 +468,18 @@ V 4 12 ować ujecie ować
 V 4 13 ować ują    ować
 
 # koniugacja Va, płonąć, ciągnąć
-V 5	 1 ąć ę     nąć
-V 5  2 ąć iesz  nąć
-V 5  3 ąć ie    nąć
-V 5 11 ąć iemy  nąć
-V 5 12 ąć iecie nąć
-V 5 13 ć  0     nąć
+# Vb: wysunąć
+# Vc: obrosnąć
+V 5  1 ąć    ę     nąć
+V 5  2 snąć śniesz snąć
+V 5  2 ąć   iesz   nąć
+V 5  3 snąć śnie   snąć
+V 5  3 ąć   ie     nąć
+V 5 11 snąć śniemy snąć
+V 5 11 ąć   iemy   nąć
+V 5 12 snąć śniemy snąć
+V 5 12 ąć   iecie  nąć
+V 5 13 ć    0      nąć
 
 # koniugacja VIa, VIb robić, wierzyć, prosić
 V 6  1 sić szę sić

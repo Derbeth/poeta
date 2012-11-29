@@ -35,12 +35,9 @@ A 50 "strasznie mocny"
 
 	def test_get_random
 		srand
+		# deliberately used different order of speech parts here to assure word order is not important
 		input = <<-END
-N 0 nigdy
-N 1 jeden
-N 0 przenigdy
-N 2 dwa
-N 0 też nigdy
+D 100 czasem
 
 A 1 jedyny
 
@@ -48,7 +45,11 @@ V 0 nic
 
 O 100 "some other"
 
-D 100 czasem
+N 0 nigdy
+N 1 jeden
+N 0 przenigdy
+N 2 dwa
+N 0 też nigdy
 		END
 		dict = Dictionary.new
 		dict.read(input)
@@ -81,12 +82,11 @@ D 100 czasem
 
 	def test_parse_adjective
 		dict = Dictionary.new
-
-		dict_text = "A 100 foo/a OBJ(przed,5)"
-		dict.read(dict_text)
-		adj = dict.get_random(ADJECTIVE)
-		assert_equal('przed', adj.preposition)
-		assert_equal(5, adj.object_case)
+		dict.read "A 100 foo/b OBJ(przed,5)"
+		adj = dict.get_random ADJECTIVE
+		assert_equal 'foo', adj.text
+		assert_equal 'przed', adj.objects[0].preposition
+		assert_equal 5, adj.objects[0].case
 
 	end
 
@@ -99,8 +99,7 @@ D 100 czasem
 		assert_equal('foo', verb.text)
 		assert_equal(%w{B}, verb.gram_props)
 		assert !verb.reflexive
-		assert_nil verb.preposition
-		assert_nil verb.object_case
+		assert_equal 0, verb.objects.size
 
 		dict_text = "V 100 foo OBJ(,,,)\nV 100 bar REFLEX"
 		dict.read(dict_text)
@@ -109,16 +108,15 @@ D 100 czasem
 		assert_equal('bar', verb.text)
 		assert_equal([], verb.gram_props)
 		assert verb.reflexive
-		assert_nil verb.preposition
-		assert_nil verb.object_case
+		assert_equal 0, verb.objects.size
 
 		dict_text = "V 100 foo/B OBJ(4)"
 		dict.read(dict_text)
 		verb = dict.get_random(VERB)
 		assert_equal(%w{B}, verb.gram_props)
 		assert !verb.reflexive
-		assert_nil verb.preposition
-		assert_equal(4, verb.object_case)
+		assert_nil verb.objects[0].preposition
+		assert_equal(4, verb.objects[0].case)
 
 		dict_text = "V 100 foo OBJ(4,na)"
 		dict.read(dict_text)
@@ -136,18 +134,18 @@ D 100 czasem
 		dict.read(dict_text)
 		verb = dict.get_random(VERB)
 		assert verb.reflexive
-		assert_equal('na', verb.preposition)
-		assert_equal(4, verb.object_case)
+		assert_equal('na', verb.objects[0].preposition)
+		assert_equal(4, verb.objects[0].case)
 
 		dict_text = "V 100 foo INF"
 		dict.read(dict_text)
 		verb = dict.get_random(VERB)
-		assert verb.infinitive_object
+		assert verb.objects[0].is_infinitive?
 
 		dict_text = "V 100 foo ADJ"
 		dict.read(dict_text)
 		verb = dict.get_random(VERB)
-		assert verb.adjective_object
+		assert verb.objects[0].is_adjective?
 	end
 
 	def test_inline_comments
@@ -343,8 +341,40 @@ class VerbTest < Test::Unit::TestCase
 		assert_raise(ParseError) { Verb.parse('foo',[],100,"OBJ(na)") } # wrong existing option
 		Verb.parse('foo',[],100,"SUBJ") # unknown option - ignore
 		assert_raise(ParseError) { Verb.parse('foo',[],100,"OBJ(8)") } # wrong case
+
 		verb = Verb.parse('foo',[],100,"OBJ(3)")
-		assert_equal(3,verb.object_case)
+		assert_equal(1,verb.objects.size)
+		assert verb.objects[0].is_noun?
+		assert !verb.objects[0].is_adjective?
+		assert !verb.objects[0].is_infinitive?
+		assert_equal(3,verb.objects[0].case)
+		assert_nil verb.objects[0].preposition
+
+		verb = Verb.parse('foo',[],100,"OBJ(3) OBJ(o,6)")
+		assert_equal(2,verb.objects.size)
+		assert verb.objects[0].is_noun?
+		assert !verb.objects[0].is_adjective?
+		assert !verb.objects[0].is_infinitive?
+		assert_equal(3,verb.objects[0].case)
+		assert_nil verb.objects[0].preposition
+		assert verb.objects[1].is_noun?
+		assert !verb.objects[1].is_adjective?
+		assert !verb.objects[1].is_infinitive?
+		assert_equal(6,verb.objects[1].case)
+		assert_equal('o',verb.objects[1].preposition)
+
+		verb = Verb.parse('foo',[],100,"ADJ")
+		assert_equal(1,verb.objects.size)
+		assert !verb.objects[0].is_noun?
+		assert verb.objects[0].is_adjective?
+		assert !verb.objects[0].is_infinitive?
+
+		verb = Verb.parse('foo',[],100,"INF")
+		assert_equal(1,verb.objects.size)
+		assert !verb.objects[0].is_noun?
+		assert !verb.objects[0].is_adjective?
+		assert verb.objects[0].is_infinitive?
+
 		verb = Verb.parse('foo',[],100,"REFL")
 		assert verb.reflexive
 		verb = Verb.parse('foo',[],100,"REFLEX")
@@ -437,7 +467,22 @@ class AdjectiveTest < Test::Unit::TestCase
 		Adjective.parse('good',[],100,'')
 		adjective = Adjective.parse('good',['F'],100,'ONLY_WITH(GOOD)')
 		assert_equal 'good', adjective.text
+		assert_equal 0, adjective.objects.size
 		Adjective.parse('good',[],100,'NOTEXIST')
+	end
+
+	def test_parse_object
+		adjective = Adjective.parse('good', [], 100, 'ADJ')
+		assert_equal 0, adjective.objects.size
+
+		adjective = Adjective.parse('good', [], 100, 'OBJ(z,5)')
+		assert_equal 1, adjective.objects.size
+		assert_equal 5, adjective.objects[0].case
+
+		# not allowed to have 2 objects
+		assert_raise(ParseError) { Adjective.parse('good', [], 100, 'OBJ(z,5) OBJ(od,4)') }
+		# wrong case
+		assert_raise(ParseError) { Adjective.parse('good', [], 100, 'OBJ(8)') }
 	end
 
 	def test_all_forms

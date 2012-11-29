@@ -46,6 +46,7 @@ N 150 "" m PERSON(2) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM)    # ty
 N 200 "" m Pl PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM) # my
 # jazda
 # blok, krew
+# pretekst
 
 V 100 brać/b OBJ(4)
 V 50 być/c OBJ(5) SEMANTIC(MODAL) NOT_WITH(MODAL,POLICJA) TAKES_NO(POLICJA)
@@ -53,6 +54,7 @@ V 50 być/c OBJ(5) SEMANTIC(MODAL) NOT_WITH(MODAL,ZIOM) TAKES_NO(ZIOM)
 V  25 być/c ADJ NOT_WITH(POLICJA) TAKES_NO(POLICJA)  # ekipa jest zajebista
 V  25 być/c ADJ NOT_WITH(ZIOM) TAKES_NO(ZIOM)        # komercha jest chujowa
 V  80 chcieć/7c INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  30 dawać/A OBJ(3) OBJ(4)
 V  30 donosić/6b NOT_WITH(ZIOM)
 V 100 iść/c
 V  40 iść/c INF TAKES_NO(MODAL)

@@ -322,7 +322,7 @@ V 100 kills OBJ(1)
 		assert_equal('pies', dictionary.get_random(NOUN).text)
 		srand 1
 		grammar = PolishGrammar.new
-		grammar.read_rules("N a 4 0 a .\nN a 15 0 ami .")
+		grammar.read_rules("N a 4 0 a .\nN a 15 0 ami .\nN b 3 ies su ies")
 
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${OBJ} ${VERB}')
 		assert_equal('pies je', sentence.write)
@@ -334,6 +334,11 @@ V 100 kills OBJ(1)
 		dictionary.read("N 100 pies\nN 100 kot/a Pl\nV 100 goni OBJ(za,5)")
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('pies goni za kotami', sentence.write)
+
+		# handle two objects of a noun
+		dictionary.read "N 100 pies/b\nN 100 kot/a\nV 100 daję OBJ(3) OBJ(4)"
+		sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+		assert_equal 'daję psu kota', sentence.write
 	end
 
 	def test_object_wont_equal_subject
@@ -650,5 +655,10 @@ class SentenceManagerTest < Test::Unit::TestCase
 		assert_raise(RuntimeError) { mgr.read('10 ${VERB} ${OBJ}') }
 		assert_raise(ArgumentError) { mgr.read('10 ${VERB(a)}') }
 		assert_raise(RuntimeError) { mgr.read('10 ${VERB(14)}') }
+
+		# unclosed brackets
+		assert_raise(RuntimeError) { mgr.read('10 ${SUBJ ${VERB} ${SUBJ2}') }
+		assert_raise(RuntimeError) { mgr.read('10 ${SUBJ} ${VERB ${SUBJ2}') }
+		assert_raise(RuntimeError) { mgr.read('10 ${SUBJ} ${VERB} ${SUBJ2') }
 	end
 end

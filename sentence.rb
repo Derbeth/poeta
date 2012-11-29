@@ -13,6 +13,8 @@ module Sentences
 	OBJECT = 'OBJ'
 	ADVERB = 'ADV'
 	OTHER = 'OTHER'
+
+	PARTS = [SUBJECT, NOUN, ADJECTIVE, VERB, OBJECT, ADVERB, OTHER]
 end
 
 # Ruby 1.8 had a broken handling of unicode, so ljust() did not work with accented characters
@@ -142,6 +144,14 @@ class Sentence
 				raise "undefined noun referenced from #{full_match} in '#{pattern}'" unless noun_occurs.include? noun_index
 			end
 		end
+
+		# check that after replacing all placeholders there are no unclosed
+		# placeholders left
+		reduced_text = pattern.clone
+		Sentences::PARTS.each { |p| reduced_text.gsub!(match_token(p), '') }
+		if reduced_text =~ /\$\{\S+/
+			raise "syntax error near '#{$&}' - cannot handle this placeholder"
+		end
 	end
 
 	# creates and returns a new sentence
@@ -244,8 +254,8 @@ class Sentence
 		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number, :animate => noun.animate}
 		text = adjective.inflect(@grammar,form)
 
-		if adjective.object_case
-			object_text = handle_noun_object(adjective)
+		if !adjective.objects.empty?
+			object_text = handle_noun_object(adjective, adjective.objects[0])
 			text += ' ' + object_text unless object_text.empty?
 		end
 		text
@@ -287,20 +297,26 @@ class Sentence
 		noun_index = self.class.read_index(full_match,index)
 		verb = @verbs[noun_index]
 		raise "no verb for #{full_match}" unless verb
-		if verb.object_case
-			handle_noun_object(verb,noun_index)
-		elsif verb.infinitive_object
-			handle_infinitive_object(verb)
-		elsif verb.adjective_object
-			handle_adjective_object(verb,noun_index)
-		else
-			''
+		resolved_objects = verb.objects.map do |o|
+			if o.is_noun?
+				handle_noun_object(verb,o,noun_index)
+			elsif o.is_infinitive?
+				handle_infinitive_object(verb)
+			elsif o.is_adjective?
+				handle_adjective_object(verb,noun_index)
+			else
+				puts "warn: verb #{verb} contains object #{o} which is impossible to handle"
+				''
+			end
 		end
+
+		resolved_objects.join(' ')
 	end
 
-	# word - either adjective or verb
+	# word - either adjective or verb needing an object
+	# object_spec - specification of how to find object, of class GramObject
 	# noun_index - index for noun to be set, may be nil, nothing will be set then
-	def handle_noun_object(word,noun_index=nil)
+	def handle_noun_object(word, object_spec,noun_index=nil)
 		object = nil
 		4.times do
 			freq_counter = @dictionary.semantic_chooser(word)
@@ -311,10 +327,10 @@ class Sentence
 		end
 		return '' unless object
 
-		form = {:case=>word.object_case}
+		form = {:case=>object_spec.case}
 		inflected_object = object.inflect(@grammar,form)
-		word.preposition ?
-			@grammar.join_preposition_object(word.preposition,inflected_object) :
+		object_spec.preposition ?
+			@grammar.join_preposition_object(object_spec.preposition,inflected_object) :
 			inflected_object
 	end
 

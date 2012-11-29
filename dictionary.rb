@@ -53,10 +53,8 @@ module Grammar
 		attr_reader :general_props
 
 		# global_props - hash where read options will be stored
-		# parse_opts - instructions how to parse; key :parse_object instructs
-		#              to parse OBJ() option
 		# block - will receive split params to parse
-		def self.parse(line,global_props,parse_opts={},&block)
+		def self.parse(line,global_props,&block)
 			line.strip! if line
 			if line && !line.empty?
 				semantic_opts = {'SEMANTIC'=>:semantic,
@@ -78,18 +76,7 @@ module Grammar
 							end
 						end
 
-						if parse_opts[:parse_object] && part =~ /^OBJ\(([^)]+)\)$/
-							opts = $1
-							case opts
-								when /^([^,]+),(\d+)$/
-									global_props[:preposition] = $1.strip
-									global_props[:object_case] = Integer($2)
-								when /^\d+$/
-									global_props[:object_case] = Integer(opts)
-								else
-									raise ParseError, "wrong option format for #{line}: '#{part}'"
-							end
-						elsif block_given?
+						if block_given?
 							block.call(part)
 						else
 							puts "warn: unknown option #{part}"
@@ -157,40 +144,96 @@ module Grammar
 		end
 	end
 
+	# abstract base class for grammatical object in a sentence
+	class GramObject
+		def initialize
+			@is_noun, @is_adjective, @is_infinitive = false, false, false
+		end
+
+		def is_noun?
+			@is_noun
+		end
+
+		def is_adjective?
+			@is_adjective
+		end
+
+		def is_infinitive?
+			@is_infinitive
+		end
+	end
+
+	# common exception thrown by GramObject descendants when given invalid data
+	class GramObjectError < RuntimeError
+	end
+
+	class NounObject < GramObject
+		attr_reader :case, :preposition
+
+		def initialize(noun_case, preposition=nil)
+			super()
+			@case, @preposition, @is_noun = noun_case, preposition, true
+			raise GramObjectError, "invalid case: #{noun_case}" if !CASES.include? noun_case
+		end
+	end
+
+	class AdjectiveObject < GramObject
+		def initialize
+			super()
+			@is_adjective = true
+		end
+	end
+
+	class InfinitiveObject < GramObject
+		def initialize
+			super()
+			@is_infinitive = true
+		end
+	end
+
 	class Verb < Word
-		attr_reader :adjective_object, :infinitive_object, :reflexive, :preposition, :object_case
+		attr_reader :objects, :reflexive
 
 		def initialize(text,gram_props,frequency,general_props={},reflexive=false,
-			adjective_object=false,infinitive_object=false,suffix=nil)
+			objects=[],suffix=nil)
 
 			super(text,gram_props,general_props,frequency)
-			raise VerbError, "invalid case: #{general_props[:object_case]}" if general_props[:object_case] && !CASES.include?(general_props[:object_case])
-			@reflexive,@preposition,@object_case,@adjective_object,@infinitive_object,@suffix =
-				reflexive,general_props[:preposition],general_props[:object_case],adjective_object,infinitive_object,suffix
+			@reflexive,@objects,@suffix = reflexive,objects,suffix
 		end
 
 		def Verb.parse(text,gram_props,frequency,line)
-			reflexive = false
-			adjective_object,infinitive_object,suffix = false,nil,nil
+			reflexive, suffix = false, nil
+			objects = []
 			general_props = {}
-			Word.parse(line,general_props,{:parse_object=>true}) do |part|
+			Word.parse(line,general_props) do |part|
 				part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
 				case part
 					when /^REFL(?:EXIVE|EX)?$/ then reflexive = true
-					when /^INF$/ then infinitive_object = true
-					when /^ADJ/ then adjective_object = true
+					when /^INF$/ then objects << InfinitiveObject.new
+					when /^ADJ/ then objects << AdjectiveObject.new
 					when /^SUFFIX\(([^)]+)\)$/
 						suffix = $1
+					when /^OBJ\(([^)]+)\)$/
+						opts = $1
+						object_case, preposition = nil, nil
+						case opts
+							when /^([^,]+),(\d+)$/
+								preposition = $1.strip
+								object_case = Integer($2)
+							when /^\d+$/
+								object_case = Integer(opts)
+							else
+								raise ParseError, "wrong option format for #{line}: '#{part}'"
+						end
+						objects << NounObject.new(object_case, preposition)
 					else
 						puts "warn: unknown option '#{part}' for '#{text}'"
 				end
 			end
-			begin
-				Verb.new(text,gram_props,frequency,general_props,reflexive,
-					adjective_object,infinitive_object,suffix)
-			rescue VerbError => e
-				raise ParseError, e.message
-			end
+			Verb.new(text,gram_props,frequency,general_props,reflexive,
+				objects,suffix)
+		rescue VerbError, GramObjectError => e
+			raise ParseError, e.message
 		end
 
 		def inflect(grammar,form)
@@ -241,23 +284,40 @@ module Grammar
 	end
 
 	class Adjective < Word
-		attr_reader :preposition, :object_case
+		attr_reader :objects
 
-		def initialize(text,gram_props,frequency,general_props={})
+		def initialize(text,gram_props,frequency,objects=[],general_props={})
 			super(text,gram_props,general_props,frequency)
-			@preposition,@object_case=general_props[:preposition],general_props[:object_case]
+			if objects.size > 1
+				raise AdjectiveError, "not allowed to have more than 1 object"
+			end
+			@objects=objects
 		end
 
 		def Adjective.parse(text,gram_props,frequency,line)
 			general_props = {}
-			Word.parse(line,general_props,{:parse_object=>true}) do |part|
+			objects = []
+			Word.parse(line,general_props) do |part|
 				case part
 					when 'NOT_AS_OBJ' then general_props[:not_as_object] = true
+					when /^OBJ\(([^)]+)\)$/
+						opts = $1
+						object_case, preposition = nil, nil
+						case opts
+							when /^([^,]+),(\d+)$/
+								preposition = $1.strip
+								object_case = Integer($2)
+							when /^\d+$/
+								object_case = Integer(opts)
+							else
+								raise ParseError, "wrong option format for #{line}: '#{part}'"
+						end
+						objects << NounObject.new(object_case, preposition)
 					else puts "warn: unknown option #{part}"
 				end
 			end
-			Adjective.new(text,gram_props,frequency,general_props) # TODO TEMP
-		rescue AdjectiveError => e
+			Adjective.new(text,gram_props,frequency,objects, general_props)
+		rescue GramObjectError, AdjectiveError => e
 			raise ParseError, e.message
 		end
 

@@ -3,13 +3,7 @@ Dictionary structure
 
 Dictionary file ends with .dic extension.
 
-Structure:
-
-1. Nouns (N)
-2. Verbs (V)
-3. Adjectives (A)
-4. Adverbs (D)
-5. Other (O)
+It consists of word definitions.
 
 Word definition looks like
 
@@ -17,11 +11,15 @@ Word definition looks like
 
 Where:
 
-* `N` means word type (N - noun)
+* `N` means word type (A - adjective, D - adverb, N - noun, O - other, V - verb)
 * `100` is the word frequency (can be any integer greater or equal 0)
 * `cat` is the word text; if it includes spaces, the text must be surrounded by double quotes
 * `/a` is the inflection scheme (a)
 * `Pl` includes word properties (see below)
+
+You can enter words of different types in whatever order you want. It is legal (although not advised) to mix words of different types. Usually you would group them: first nouns, then adjectives and so on.
+
+The hash sign (#) marks begin of a comment.
 
 Word properties
 ==============
