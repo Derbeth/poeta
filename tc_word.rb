@@ -141,6 +141,14 @@ class VerbTest < Test::Unit::TestCase
 		assert !verb.objects[0].is_noun?
 		assert !verb.objects[0].is_adjective?
 		assert verb.objects[0].is_infinitive?
+		assert_nil verb.objects[0].preposition
+
+		verb = Verb.parse('foo',[],100,"INF(for)")
+		assert_equal(1,verb.objects.size)
+		assert !verb.objects[0].is_noun?
+		assert !verb.objects[0].is_adjective?
+		assert verb.objects[0].is_infinitive?
+		assert_equal 'for', verb.objects[0].preposition
 
 		verb = Verb.parse('foo',[],100,"REFL")
 		assert verb.reflexive

@@ -60,6 +60,7 @@ module Grammar
 					'TAKES_ONLY_W'=>:takes_only_word, 'TAKES_NO_W'=>:takes_no_word}
 				escaped = []
 				last_e = -1
+				# ignore whitespaces inside brackets by escaping what's inside
 				line.gsub!(/\([^)]+\)/) { |match| last_e +=1; escaped[last_e] = match; "$#{last_e}" }
 				line.split(/\s+/).each do |part|
 					catch(:process_next_part) do
@@ -181,9 +182,11 @@ module Grammar
 	end
 
 	class InfinitiveObject < GramObject
-		def initialize
+		attr_reader :preposition
+
+		def initialize(preposition=nil)
 			super()
-			@is_infinitive = true
+			@preposition, @is_infinitive = preposition, true
 		end
 	end
 
@@ -202,11 +205,11 @@ module Grammar
 			objects = []
 			general_props = {}
 			Word.parse(line,general_props) do |part|
-				part.gsub!(/\$(\d)/) { escaped[$1.to_i] }
 				case part
 					when /^REFL(?:EXIVE|EX)?$/ then reflexive = true
-					when /^INF$/ then objects << InfinitiveObject.new
-					when /^ADJ/ then objects << AdjectiveObject.new
+					when /^INF(?:\(([^)]+)\))?$/
+						objects << InfinitiveObject.new($1)
+					when /^ADJ$/ then objects << AdjectiveObject.new
 					when /^SUFFIX\(([^)]+)\)$/
 						suffix = $1
 					when /^OBJ\(([^)]+)\)$/

@@ -40,8 +40,6 @@ N 100 they/0     Pl  NO_ADJ
 N 100 you/0          NO_ADJ PERSON(2)
 N 100 you/0      Pl  NO_ADJ PERSON(2)
 
-# TODO to + INF: try to, long for
-
 V 100 become/a    ADJ
 V  50 burn/a      OBJ(2)
 V 100 cannot      INF TAKES_NO(MODAL) SEMANTIC(MODAL)
@@ -50,13 +48,14 @@ V 100 die/a
 V 100 be/0        ADJ
 V 100 kill/a      OBJ(2)
 V  50 lie/a       NOT_WITH_W(lie)
-V  10 long/a      OBJ(2)
+V  30 long/a      OBJ(for,2) SEMANTIC(MODAL)
 V 100 must        INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  10 scream/a
 V 100 see/a       OBJ(2)
 V 100 shine/a
 V  10 take/a      OBJ(2)
 V 100 torture/a   OBJ(2)
+V  40 try/a       INF(to) TAKES_NO(MODAL) SEMANTIC(MODAL)
 
 A 100 burning
 A 100 cold

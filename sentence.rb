@@ -301,7 +301,7 @@ class Sentence
 			if o.is_noun?
 				handle_noun_object(verb,o,noun_index)
 			elsif o.is_infinitive?
-				handle_infinitive_object(verb)
+				handle_infinitive_object(verb,o)
 			elsif o.is_adjective?
 				handle_adjective_object(verb,noun_index)
 			else
@@ -334,7 +334,7 @@ class Sentence
 			inflected_object
 	end
 
-	def handle_infinitive_object(verb)
+	def handle_infinitive_object(verb, object_spec)
 		object_verb = nil
 		4.times do
 			semantic_counter = @dictionary.semantic_chooser(verb)
@@ -347,7 +347,9 @@ class Sentence
 		end
 		return '' unless object_verb
 
-		object_verb.inflect(@grammar,{:infinitive=>1})
+		text = object_verb.inflect(@grammar,{:infinitive=>1})
+		text = object_spec.preposition + ' ' + text if object_spec.preposition
+		text
 	end
 
 	def handle_adjective_object(verb,noun_index)

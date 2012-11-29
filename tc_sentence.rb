@@ -392,15 +392,21 @@ V 100 kills OBJ(1)
 		srand 1
 		assert_equal('chce', dictionary.get_random(VERB).text)
 		assert_equal('chce', dictionary.get_random(VERB).text)
-		srand 1
 
+		srand 1
 		grammar = PolishGrammar.new
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('pies chce jeść', sentence.write)
 
+		srand 1
 		dictionary.read("N 100 pies\nV 100 chce INF\nV 30 przejść REFL")
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('pies chce się przejść', sentence.write)
+
+		srand 1
+		dictionary.read "N 100 they\nV 100 want INF(to)\nV 30 eat"
+		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+		assert_equal('they want to eat', sentence.write)
 	end
 
 	def test_handle_adjective_object
