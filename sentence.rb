@@ -111,8 +111,11 @@ class Sentence
 		@dictionary,@grammar,@pattern,@better,@debug = dictionary,grammar,pattern.strip,better,debug
 		@subject = nil
 		@forced_subject_number = nil
-		@nouns,@verbs = {},{}
+		# maps: verb_index => word object; @indexed_nouns include only $SUBJ/$NOUN and *not* $OBJ
+		@indexed_nouns,@verbs = {},{}
 		@verbs_text = {}
+		# set of all nouns used in a sentence, including also objects (contrary to @indexed_nouns)
+		@nouns = []
 		self.other_word_chance = DEFAULT_OTHER_CHANCE
 	end
 
@@ -174,7 +177,7 @@ class Sentence
 
 	def subject=(s)
 		@subject = s
-		@nouns[1] = @subject
+		@indexed_nouns[1] = @subject
 	end
 
 	private
@@ -205,11 +208,11 @@ class Sentence
 					new_frequency
 				end
 			end
-			noun_index = self.class.read_index(full_match,index)
-			@nouns[noun_index] = noun
+			@indexed_nouns[subject_index] = noun
 		end
 		@subject ||= noun
 		return '' unless noun
+		@nouns << noun
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case}
 		noun.inflect(@grammar,form)
@@ -233,8 +236,9 @@ class Sentence
 			end
 		end
 
-		@nouns[noun_index] = noun
+		@indexed_nouns[noun_index] = noun
 		return '' unless noun
+		@nouns << noun
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case}
 		noun.inflect(@grammar,form)
@@ -243,8 +247,8 @@ class Sentence
 	def handle_adjective(full_match,index,options)
 		noun_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_adjective_options(options)
-		raise "no noun for #{full_match}" unless @nouns.include? noun_index
-		noun = @nouns[noun_index]
+		raise "no noun for #{full_match}" unless @indexed_nouns.include? noun_index
+		noun = @indexed_nouns[noun_index]
 		return '' if noun == nil || noun.get_property(:no_adjective)
 
 		freq_counter = @dictionary.semantic_chooser(noun)
@@ -273,8 +277,8 @@ class Sentence
 			form = parsed_opts[:form]
 			@forced_subject_number = form[:number] if form[:number]
 		else
-			raise "no noun for #{full_match}" unless @nouns.include? noun_index
-			noun = @nouns[noun_index]
+			raise "no noun for #{full_match}" unless @indexed_nouns.include? noun_index
+			noun = @indexed_nouns[noun_index]
 			return '' unless noun
 			form = {:number=>noun.number,:person=>noun.person}
 		end
@@ -318,14 +322,14 @@ class Sentence
 	# noun_index - index for noun to be set, may be nil, nothing will be set then
 	def handle_noun_object(word, object_spec,noun_index=nil)
 		object = nil
-		4.times do
+		12.times do
 			freq_counter = @dictionary.semantic_chooser(word)
 			object = @dictionary.get_random_object(&freq_counter)
-			next if (@subject && object.text == @subject.text)
-			@nouns[noun_index] = object
+			next if (@nouns.find { |n| n.text == object.text})
 			break
 		end
 		return '' unless object
+		@nouns << object
 
 		form = {:case=>object_spec.case}
 		inflected_object = object.inflect(@grammar,form)
@@ -353,7 +357,7 @@ class Sentence
 	end
 
 	def handle_adjective_object(verb,noun_index)
-		noun = @nouns[noun_index]
+		noun = @indexed_nouns[noun_index]
 		if noun
 			gender = noun.gender
 			number = noun.number
@@ -383,6 +387,9 @@ class Sentence
 		adverb ? adverb.text : ''
 	end
 
+	# full_match - like ${NOUN} or ${VERB2}
+	# index_match - number matched from full_match, like '' or '2'
+	# returns Integer (here: 1 and 2)
 	def Sentence.read_index(full_match,index_match)
 		index_match.strip! if index_match
 		if index_match && !index_match.empty?

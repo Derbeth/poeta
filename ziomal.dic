@@ -27,6 +27,7 @@ N  10 numer/e m nan OBJ_FREQ(50)
 N 100 pięść/n f SEMANTIC(OK,ZIOM)
 N 100 policja/h f SEMANTIC(POLICJA)
 N  10 polityka/r f OBJ_FREQ(50) SEMANTIC(POLITYKA)
+N   3 porozumienie/d n Pl nan SUFFIX(ponad podziałami)
 N  50 prawo/p n
 N 100 rap/e m nan SEMANTIC(OK,ZIOM)
 N 100 skręt/m m SEMANTIC(OK,ZIOM)

@@ -26,7 +26,7 @@ module Grammar
 
 		def <=>(other)
 			res = @text <=> other.text
-			res = self.class.to_s <=> other.class.to_s if (res == 0)
+			res = self.class.name <=> other.class.name if (res == 0)
 			res = @gram_props <=> other.gram_props if (res == 0)
 			res = @frequency <=> other.frequency if (res == 0)
 			res
@@ -88,17 +88,17 @@ module Grammar
 		attr_reader :animate,:gender, :number, :person
 		STRING2GENDER = {'m'=>MASCULINE,'n'=>NEUTER,'f'=>FEMININE}
 
-		def initialize(text,gram_props,frequency,gender,general_props={},number=SINGULAR,person=3,animate=true)
+		def initialize(text,gram_props,frequency,gender,general_props={},number=SINGULAR,person=3,animate=true,suffix=nil)
 			super(text,gram_props,general_props,frequency)
 			raise "invalid gender #{gender}" unless(GENDERS.include?(gender))
 			raise "invalid number #{number}" unless(NUMBERS.include?(number))
 			raise "invalid person #{person}" unless([1,2,3].include?(person))
-			@gender,@number,@person,@animate = gender,number,person,animate
+			@gender,@number,@person,@animate,@suffix = gender,number,person,animate,suffix
 		end
 
 		def Noun.parse(text,gram_props,frequency,line)
 			begin
-				gender,number,person,animate = MASCULINE,SINGULAR,3,true
+				gender,number,person,animate,suffix = MASCULINE,SINGULAR,3,true,nil
 				general_props = {}
 				Word.parse(line,general_props) do |part|
 					case part
@@ -107,6 +107,8 @@ module Grammar
 						when 'nan' then animate = false
 						when /^PERSON\(([^)]*)\)/
 							person = Integer($1.strip)
+						when /^SUFFIX\(([^)]+)\)$/
+							suffix = $1
 						when 'NO_ADJ' then general_props[:no_adjective] = true
 						when 'ONLY_SUBJ' then general_props[:only_subj] = true
 						when 'ONLY_OBJ' then general_props[:only_obj] = true
@@ -118,7 +120,7 @@ module Grammar
 						else puts "warn: unknown option #{part}"
 					end
 				end
-				Noun.new(text,gram_props,frequency,gender,general_props,number,person,animate)
+				Noun.new(text,gram_props,frequency,gender,general_props,number,person,animate,suffix)
 			rescue RuntimeError, ArgumentError
 				raise ParseError, "cannot parse '#{line}': #{$!.message}"
 			end
@@ -137,7 +139,13 @@ module Grammar
 
 		def inflect(grammar,form)
 			form[:number] ||= @number
-			return grammar.inflect_noun(text,form,*gram_props)
+			inflected = grammar.inflect_noun(text,form,*gram_props)
+			inflected += ' ' + @suffix if (@suffix)
+			inflected
+		end
+
+		def to_s
+			"Noun(#{text} n=#{number})"
 		end
 	end
 
@@ -253,6 +261,13 @@ module Grammar
 			retval
 		end
 
+		def to_s
+			result = "Verb(#{text}"
+			result += ' reflexive' if reflexive;
+			result += ')'
+			result
+		end
+
 		private
 		class VerbError < RuntimeError
 		end
@@ -268,6 +283,10 @@ module Grammar
 			Word.parse(line,general_props)
 			Adverb.new(text,gram_props,frequency,general_props)
 		end
+
+		def to_s
+			"Adverb(#{text})"
+		end
 	end
 
 	class Other < Word
@@ -279,6 +298,10 @@ module Grammar
 			raise ParseError, "does not expect any grammar properties for other but got '#{gram_props}'" if !gram_props.empty?
 			raise ParseError, "does not expect other properties for other but got '#{line}'" if line && line =~ /\w/
 			Other.new(text,gram_props,frequency)
+		end
+
+		def to_s
+			"OtherWord(#{text})"
 		end
 	end
 
@@ -337,6 +360,10 @@ module Grammar
 
 		def inflect(grammar,form)
 			return grammar.inflect_adjective(text,form,*gram_props)
+		end
+
+		def to_s
+			"Adjective(#{text})"
 		end
 
 		private

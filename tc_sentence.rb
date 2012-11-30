@@ -289,7 +289,7 @@ V 100 kills OBJ(1)
 
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB}')
 		assert_equal('lipy rosną', sentence.write)
-
+		
 		dictionary.read("N 100 lipy f Pl\nV 100 rosnąć/a REFLEXIVE")
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB}')
 		assert_equal('lipy rosną się', sentence.write)
@@ -307,6 +307,11 @@ V 100 kills OBJ(1)
 		sentence = Sentence.new(dictionary,grammar,'${VERB(1)}')
 		assert_equal('rosnę', sentence.write)
 
+		dictionary.read("V 100 rosnąć/a SUFFIX(w siłę)")
+		grammar.read_rules("V a 1 ąć ę ąć")
+		sentence = Sentence.new(dictionary,grammar,'${VERB(1)}')
+		assert_equal('rosnę w siłę', sentence.write)
+
 		dictionary.read("N 100 lipa/b f\nV 100 uderzać/a OBJ(4)")
 		grammar.read_rules("N b 4 a ę a\nV a 1 ć m ć")
 		sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
@@ -319,22 +324,33 @@ V 100 kills OBJ(1)
 		dictionary = Dictionary.new
 		dictionary.read("N 100 pies\nN 100 kot/a\nV 100 je")
 		srand 1
-		assert_equal('pies', dictionary.get_random(NOUN).text)
-		srand 1
+		assert_equal 'pies', dictionary.get_random(NOUN).text
+
 		grammar = PolishGrammar.new
 		grammar.read_rules("N a 4 0 a .\nN a 15 0 ami .\nN b 3 ies su ies")
 
-		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${OBJ} ${VERB}')
+		srand 1
+		# verb has no object set
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${OBJ} ${VERB}')
 		assert_equal('pies je', sentence.write)
 
+		srand 1
 		dictionary.read("N 100 pies\nN 100 kot/a\nV 100 je OBJ(4)")
-		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies je kota', sentence.write)
 
-		dictionary.read("N 100 pies\nN 100 kot/a Pl\nV 100 goni OBJ(za,5)")
-		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
-		assert_equal('pies goni za kotami', sentence.write)
+		srand 1
+		# noun suffix
+		dictionary.read("N 100 pies\nN 100 kot/a SUFFIX(w butach)\nV 100 je OBJ(4)")
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies je kota w butach', sentence.write)
 
+		srand 1
+		dictionary.read("N 100 pies\nN 100 kot/a Pl\nV 100 goni OBJ(za,5)")
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies goni za kotami', sentence.write)
+		
+		srand 8
 		# handle two objects of a noun
 		dictionary.read "N 100 pies/b\nN 100 kot/a\nV 100 daję OBJ(3) OBJ(4)"
 		sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
@@ -351,6 +367,21 @@ V 100 kills OBJ(1)
 		grammar = PolishGrammar.new
 		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies goni kota', sentence.write)
+	end
+	
+	def test_two_objects_and_subject_different
+		srand
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 100 Alice\nN 100 Bob\nN 100 Chris\nN 100 Donald\nV 100 gives OBJ(2) OBJ(2)"
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+			text = sentence.write
+			assert_match(/^\w+ \w+ \w+ \w+$/, text, "Failed to resolve subject, verb and two subjects: '#{text}'")
+			%w{Alice Bob Chris Donald}.each do |noun|
+				assert_no_match(/#{noun}.*#{noun}/, text, "Duplicated #{noun} in '#{text}'")
+			end
+		end
 	end
 
 	def test_object_preposition_letter_change
@@ -433,13 +464,14 @@ V 100 kills OBJ(1)
 	def test_handle_adjective_object_not_as_object
 		grammar = GenericGrammar.new
 		dictionary = Dictionary.new
+		# adjective 'this' should never be chosen as object for 'is' because 'this' is marked as NOT_AS_OBJ
 		dictionary.read("N 100 flower\nV 100 is ADJ\nA 10 beautiful\nA 100 this NOT_AS_OBJ")
 		10.times do
 			sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
 			assert_equal('flower is beautiful', sentence.write)
 		end
 	end
-
+	
 	# verb requires an object but sentence pattern explicitly omits object
 	# sentence should be written without object
 	def test_no_object_verb_object

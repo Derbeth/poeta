@@ -169,7 +169,7 @@ class VerbTest < Test::Unit::TestCase
 	def test_suffix
 		verb = Verb.parse('mieć',%w{a},100,"SUFFIX(na karku)")
 		grammar = PolishGrammar.new
-		grammar.read_rules("V a 1 ieć am ieć");
+		grammar.read_rules "V a 1 ieć am ieć"
 		assert_equal('mieć na karku', verb.inflect(grammar,{:infinitive=>1}))
 		assert_equal('mam na karku', verb.inflect(grammar,{:person=>1}))
 	end
@@ -212,6 +212,13 @@ class NounTest < Test::Unit::TestCase
 		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ') }
 		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ()') }
 		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ(a)') }
+	end
+
+	def test_suffix
+		noun = Noun.parse('pies',%w{a},100,"SUFFIX(z kulawą nogą)")
+		grammar = PolishGrammar.new
+		grammar.read_rules "N a 2 ies sa pies"
+		assert_equal 'psa z kulawą nogą', noun.inflect(grammar, {:case => 2})
 	end
 
 	def test_validation
