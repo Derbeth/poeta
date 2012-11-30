@@ -249,22 +249,22 @@ class AdjectiveTest < Test::Unit::TestCase
 		Adjective.parse('good',[],100,'')
 		adjective = Adjective.parse('good',['F'],100,'ONLY_WITH(GOOD)')
 		assert_equal 'good', adjective.text
-		assert_equal 0, adjective.objects.size
+		assert_equal 0, adjective.attributes.size
 		Adjective.parse('good',[],100,'NOTEXIST')
 	end
 
 	def test_parse_object
 		adjective = Adjective.parse('good', [], 100, 'ADJ')
-		assert_equal 0, adjective.objects.size
+		assert_equal 0, adjective.attributes.size
 
-		adjective = Adjective.parse('good', [], 100, 'OBJ(z,5)')
-		assert_equal 1, adjective.objects.size
-		assert_equal 5, adjective.objects[0].case
+		adjective = Adjective.parse('good', [], 100, 'ATTR(z,5)')
+		assert_equal 1, adjective.attributes.size
+		assert_equal 5, adjective.attributes[0].case
 
-		# not allowed to have 2 objects
-		assert_raise(ParseError) { Adjective.parse('good', [], 100, 'OBJ(z,5) OBJ(od,4)') }
+		# not allowed to have 2 attributes
+		assert_raise(ParseError) { Adjective.parse('good', [], 100, 'ATTR(z,5) ATTR(od,4)') }
 		# wrong case
-		assert_raise(ParseError) { Adjective.parse('good', [], 100, 'OBJ(8)') }
+		assert_raise(ParseError) { Adjective.parse('good', [], 100, 'ATTR(8)') }
 	end
 
 	def test_all_forms

@@ -306,23 +306,23 @@ module Grammar
 	end
 
 	class Adjective < Word
-		attr_reader :objects
+		attr_reader :attributes
 
-		def initialize(text,gram_props,frequency,objects=[],general_props={})
+		def initialize(text,gram_props,frequency,attributes=[],general_props={})
 			super(text,gram_props,general_props,frequency)
-			if objects.size > 1
-				raise AdjectiveError, "not allowed to have more than 1 object"
+			if attributes.size > 1
+				raise AdjectiveError, "not allowed to have more than 1 attribute"
 			end
-			@objects=objects
+			@attributes=attributes
 		end
 
 		def Adjective.parse(text,gram_props,frequency,line)
 			general_props = {}
-			objects = []
+			attributes = []
 			Word.parse(line,general_props) do |part|
 				case part
 					when 'NOT_AS_OBJ' then general_props[:not_as_object] = true
-					when /^OBJ\(([^)]+)\)$/
+					when /^ATTR\(([^)]+)\)$/
 						opts = $1
 						object_case, preposition = nil, nil
 						case opts
@@ -334,11 +334,11 @@ module Grammar
 							else
 								raise ParseError, "wrong option format for #{line}: '#{part}'"
 						end
-						objects << NounObject.new(object_case, preposition)
+						attributes << NounObject.new(object_case, preposition)
 					else puts "warn: unknown option #{part}"
 				end
 			end
-			Adjective.new(text,gram_props,frequency,objects, general_props)
+			Adjective.new(text,gram_props,frequency,attributes, general_props)
 		rescue GramObjectError, AdjectiveError => e
 			raise ParseError, e.message
 		end

@@ -14,7 +14,7 @@ Where:
 * `N` means word type (A - adjective, D - adverb, N - noun, O - other, V - verb)
 * `100` is the word frequency (can be any integer greater or equal 0)
 * `cat` is the word text; if it includes spaces, the text must be surrounded by double quotes
-* `/a` is the inflection scheme (a)
+* `/a` is the inflexion scheme (a)
 * `Pl` includes word properties (see below)
 
 You can enter words of different types in whatever order you want. It is legal (although not advised) to mix words of different types. Usually you would group them: first nouns, then adjectives and so on.
@@ -35,12 +35,12 @@ Adjective
 
   prevents appearing things like "cat becomes these".
 
-* `OBJ(prep,case)`
+* `ATTR(prep,case)`
 
   Makes the adjective always be linked with a noun in given case and proposition. Example:
 
         N 100 memory
-        A 100 lost (in,2)
+        A 100 lost ATTR(in,2)
 
   may produce "lost in memory"
 
@@ -71,6 +71,16 @@ Noun
 
 * `PERSON(p)`
 
+* SUFFIX(suf)
+
+  Always adds a suffix (may contain spaces, so consist of many words) after the noun.
+  While the noun is a subject to inflexion, the suffix never is.
+  Example:
+
+        N 100 dog SUFFIX(on a lead)
+
+  may produce "dog on a lead"
+
 Verb
 ----
 
@@ -86,7 +96,9 @@ Verb
 
 * INF
 
-  Marks the verb as taking infinitive object. Example:
+  INF(prep)
+
+  Marks the verb as taking infinitive object, optionally by specifying a preposition. Example:
 
         N 100 he
         V 100 listen

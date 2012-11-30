@@ -76,7 +76,7 @@ A 100 insane
 A 100 last
 A 100 lonely
 A 100 lost
-A  10 lost        OBJ(in,2)
+A  10 lost        ATTR(in,2)
 A  50 my
 A  50 our
 A 100 painful

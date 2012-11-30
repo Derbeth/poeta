@@ -258,8 +258,8 @@ class Sentence
 		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number, :animate => noun.animate}
 		text = adjective.inflect(@grammar,form)
 
-		if !adjective.objects.empty?
-			object_text = handle_noun_object(adjective, adjective.objects[0])
+		if !adjective.attributes.empty?
+			object_text = handle_noun_object(adjective, adjective.attributes[0])
 			text += ' ' + object_text unless object_text.empty?
 		end
 		text

@@ -128,7 +128,7 @@ class SentenceTest < Test::Unit::TestCase
 
 		# adjective with an object
 		srand 1
-		dictionary.read("N 100 kibic m\nN 100 szczęście/a f\nA 100 pijany/a OBJ(ze,2)")
+		dictionary.read("N 100 kibic m\nN 100 szczęście/a f\nA 100 pijany/a ATTR(ze,2)")
 		grammar.read_rules("N a 2 e a e")
 		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${ADJ}')
 		assert_equal('kibic pijany ze szczęścia', sentence.write)

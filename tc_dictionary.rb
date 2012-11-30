@@ -82,11 +82,11 @@ N 0 też nigdy
 
 	def test_parse_adjective
 		dict = Dictionary.new
-		dict.read "A 100 foo/b OBJ(przed,5)"
+		dict.read "A 100 foo/b ATTR(przed,5)"
 		adj = dict.get_random ADJECTIVE
 		assert_equal 'foo', adj.text
-		assert_equal 'przed', adj.objects[0].preposition
-		assert_equal 5, adj.objects[0].case
+		assert_equal 'przed', adj.attributes[0].preposition
+		assert_equal 5, adj.attributes[0].case
 
 	end
 
