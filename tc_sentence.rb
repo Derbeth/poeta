@@ -192,11 +192,25 @@ class SentenceTest < Test::Unit::TestCase
 		srand
 		dictionary = Dictionary.new
 		grammar = GenericGrammar.new
-		dictionary.read "N 10 foo ATTR(prep,2)\nN 10 bar ATTR(prep,3)\nN 10 baz ATTR(prep,4)\nN 50 forbidden1 ONLY_SUBJ\nN 50 forbidden2 ONLY_SUBJ\n"
+		dictionary.read "N 30 foo ATTR(prep,2)\nN 10 bar ATTR(prep,3)\nN 10 baz\nN 50 forbidden1 ONLY_SUBJ\nN 50 forbidden2 ONLY_SUBJ\n"
 
-		0.times do
+		10.times do
 			sentence = Sentence.new(dictionary,grammar,'oto ${NOUN}')
+			assert_match(/oto \w+/, sentence.write)
 			assert_no_match(/prep forbidden[12]/, sentence.write)
+		end
+	end
+
+	# when wrongly used, noun attributes could cause infinite loops
+	def test_noun_attributes_inf_loop
+		srand
+		dictionary = Dictionary.new
+		grammar = GenericGrammar.new
+		dictionary.read "N 10 foo ATTR(prep,2)\nN 10 bar ATTR(prep,3)\nN 10 baz ATTR(prep,4)\n"
+
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'oto ${NOUN}')
+			assert_match(/oto \w+/, sentence.write)
 		end
 	end
 

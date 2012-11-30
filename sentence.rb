@@ -182,6 +182,7 @@ class Sentence
 
 	private
 
+	MAX_ATTR_RECUR = 3
 	DEFAULT_OTHER_CHANCE = 0.3
 	def handle_subject(full_match,index,options)
 		subject_index = self.class.read_index(full_match,index)
@@ -260,20 +261,20 @@ class Sentence
 	end
 
 	# takes a noun and grammar form, returns inflected noun, possibly with preposition and attribute
-	def _common_handle_noun(noun, form)
+	def _common_handle_noun(noun, form,allow_recur=MAX_ATTR_RECUR)
 		# remember the noun to prevent the same noun appearing twice in a sentence
 		@nouns << noun
 
-		_common_handle_word_with_attributes(noun, form)
+		_common_handle_word_with_attributes(noun, form, allow_recur)
 	end
 
 	# takes a word possibly having an attribute (so a noun or adjective),
 	# returns inflected word, possibly linked with a preposition and attribute
-	def _common_handle_word_with_attributes(word, form)
+	def _common_handle_word_with_attributes(word, form,allow_recur=MAX_ATTR_RECUR)
 		inflected = word.inflect(@grammar,form)
 
-		if !word.attributes.empty?
-			attribute_text = handle_noun_object(word, word.attributes[0])
+		if allow_recur > 0 && !word.attributes.empty?
+			attribute_text = handle_noun_object(word, word.attributes[0],allow_recur)
 			inflected += ' ' + attribute_text unless attribute_text.empty?
 		end
 
@@ -334,7 +335,7 @@ class Sentence
 
 	# word - either adjective or verb needing an object
 	# object_spec - specification of how to find object, of class GramObject
-	def handle_noun_object(word, object_spec)
+	def handle_noun_object(word, object_spec,allow_recur=MAX_ATTR_RECUR)
 		object = nil
 		12.times do
 			semantic_counter = @dictionary.semantic_chooser(word)
@@ -348,7 +349,7 @@ class Sentence
 		return '' unless object
 
 		form = {:case=>object_spec.case}
-		inflected_object = _common_handle_noun(object, form) # TODO infinite loop danger?
+		inflected_object = _common_handle_noun(object, form, allow_recur-1) # -1 to prevent infinite loop danger?
 		object_spec.preposition ?
 			@grammar.join_preposition_object(object_spec.preposition,inflected_object) :
 			inflected_object
