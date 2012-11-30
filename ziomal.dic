@@ -38,7 +38,8 @@ N 100 temat/e m nan ONLY_OBJ
 N  10 teren/e OBJ_FREQ(100)
 N 150 ulica/l f SEMANTIC(RZADZIC)
 N  50 ulica/l f Pl SEMANTIC(RZADZIC)
-N  50 wojna/b f
+N  20 wojna/b f
+N  35 wojna/b f ATTR(z,5)
 N 100 załoga/r f SEMANTIC(OK,ZIOM)
 N  10 zasada/b f Pl OBJ_FREQ(100)
 N  20 zmiana/b2 f OBJ_FREQ(100)
@@ -146,7 +147,7 @@ D  50 już
 D 150 "kolejny raz"
 D 100 mocno
 D  25 "na lajcie"
-D 100 "od razu"
+D 150 "od razu"
 D 250 ostro
 D 100 pewnie
 D  50 razem

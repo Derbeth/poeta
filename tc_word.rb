@@ -214,6 +214,28 @@ class NounTest < Test::Unit::TestCase
 		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ(a)') }
 	end
 
+	def test_parse_attribute
+		# wrong syntax
+		noun = Noun.parse('dog', [], 100, 'ATTRIBUTE(0)')
+		assert_equal 0, noun.attributes.size
+
+		noun = Noun.parse('dog', [], 100, 'ATTR(z,5)')
+		assert_equal 1, noun.attributes.size
+		assert_equal 5, noun.attributes[0].case
+		assert_equal 'z', noun.attributes[0].preposition
+
+		# well, also legal
+		noun = Noun.parse('dog', [], 100, 'ATTR(2)')
+		assert_equal 1, noun.attributes.size
+		assert_equal 2, noun.attributes[0].case
+		assert_nil noun.attributes[0].preposition
+
+		# not allowed to have 2 attributes
+		assert_raise(ParseError) { Noun.parse('dog', [], 100, 'ATTR(z,5) ATTR(od,4)') }
+		# wrong case
+		assert_raise(ParseError) { Noun.parse('dog', [], 100, 'ATTR(8)') }
+	end
+
 	def test_suffix
 		noun = Noun.parse('pies',%w{a},100,"SUFFIX(z kulawą nogą)")
 		grammar = PolishGrammar.new
@@ -253,7 +275,7 @@ class AdjectiveTest < Test::Unit::TestCase
 		Adjective.parse('good',[],100,'NOTEXIST')
 	end
 
-	def test_parse_object
+	def test_parse_attribute
 		adjective = Adjective.parse('good', [], 100, 'ADJ')
 		assert_equal 0, adjective.attributes.size
 

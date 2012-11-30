@@ -85,45 +85,58 @@ module Grammar
 	end
 
 	class Noun < Word
-		attr_reader :animate,:gender, :number, :person
+		attr_reader :animate,:gender, :number, :person,:attributes
 		STRING2GENDER = {'m'=>MASCULINE,'n'=>NEUTER,'f'=>FEMININE}
 
-		def initialize(text,gram_props,frequency,gender,general_props={},number=SINGULAR,person=3,animate=true,suffix=nil)
+		def initialize(text,gram_props,frequency,gender,general_props={},number=SINGULAR,person=3,animate=true,attributes=[],suffix=nil)
 			super(text,gram_props,general_props,frequency)
-			raise "invalid gender #{gender}" unless(GENDERS.include?(gender))
-			raise "invalid number #{number}" unless(NUMBERS.include?(number))
-			raise "invalid person #{person}" unless([1,2,3].include?(person))
-			@gender,@number,@person,@animate,@suffix = gender,number,person,animate,suffix
+			raise NounError, "invalid gender #{gender}" unless(GENDERS.include?(gender))
+			raise NounError, "invalid number #{number}" unless(NUMBERS.include?(number))
+			raise NounError, "invalid person #{person}" unless([1,2,3].include?(person))
+			raise NounError, "not allowed to have more than 1 attribute" if attributes.size > 1
+			@gender,@number,@person,@animate,@attributes,@suffix = gender,number,person,animate,attributes,suffix
 		end
 
 		def Noun.parse(text,gram_props,frequency,line)
-			begin
-				gender,number,person,animate,suffix = MASCULINE,SINGULAR,3,true,nil
-				general_props = {}
-				Word.parse(line,general_props) do |part|
-					case part
-						when /^([mfn])$/ then gender = STRING2GENDER[$1]
-						when 'Pl' then number = PLURAL
-						when 'nan' then animate = false
-						when /^PERSON\(([^)]*)\)/
-							person = Integer($1.strip)
-						when /^SUFFIX\(([^)]+)\)$/
-							suffix = $1
-						when 'NO_ADJ' then general_props[:no_adjective] = true
-						when 'ONLY_SUBJ' then general_props[:only_subj] = true
-						when 'ONLY_OBJ' then general_props[:only_obj] = true
-						when /^OBJ_FREQ/
-							unless part =~ /^OBJ_FREQ\((\d+)\)$/
-								raise "illegal format of OBJ_FREQ in #{line}"
-							end
-							general_props[:obj_freq] = $1.to_i
-						else puts "warn: unknown option #{part}"
-					end
+			gender,number,person,animate,suffix = MASCULINE,SINGULAR,3,true,nil
+			general_props = {}
+			attributes = []
+			Word.parse(line,general_props) do |part|
+				case part
+					when /^([mfn])$/ then gender = STRING2GENDER[$1]
+					when 'Pl' then number = PLURAL
+					when 'nan' then animate = false
+					when /^PERSON\(([^)]*)\)/
+						person = Integer($1.strip)
+					when /^SUFFIX\(([^)]+)\)$/
+						suffix = $1
+					when 'NO_ADJ' then general_props[:no_adjective] = true
+					when 'ONLY_SUBJ' then general_props[:only_subj] = true
+					when 'ONLY_OBJ' then general_props[:only_obj] = true
+					when /^OBJ_FREQ/
+						unless part =~ /^OBJ_FREQ\((\d+)\)$/
+							raise NounError, "illegal format of OBJ_FREQ in #{line}"
+						end
+						general_props[:obj_freq] = $1.to_i
+					when /^ATTR\(([^)]+)\)$/
+						opts = $1
+						object_case, preposition = nil, nil
+						case opts
+							when /^([^,]+),(\d+)$/
+								preposition = $1.strip
+								object_case = Integer($2)
+							when /^\d+$/
+								object_case = Integer(opts)
+							else
+								raise ParseError, "wrong option format for #{line}: '#{part}'"
+						end
+						attributes << NounObject.new(object_case, preposition)
+					else puts "warn: unknown option #{part}"
 				end
-				Noun.new(text,gram_props,frequency,gender,general_props,number,person,animate,suffix)
-			rescue RuntimeError, ArgumentError
-				raise ParseError, "cannot parse '#{line}': #{$!.message}"
 			end
+			Noun.new(text,gram_props,frequency,gender,general_props,number,person,animate,attributes,suffix)
+		rescue GramObjectError, NounError, ArgumentError
+			raise ParseError, "cannot parse '#{line}': #{$!.message}"
 		end
 
 		# returns an Enumerable collection of all applicable grammar forms
@@ -146,6 +159,10 @@ module Grammar
 
 		def to_s
 			"Noun(#{text} n=#{number})"
+		end
+
+		private
+		class NounError < RuntimeError
 		end
 	end
 
@@ -217,7 +234,7 @@ module Grammar
 					when /^REFL(?:EXIVE|EX)?$/ then reflexive = true
 					when /^INF(?:\(([^)]+)\))?$/
 						objects << InfinitiveObject.new($1)
-					when /^ADJ$/ then objects << AdjectiveObject.new
+					when 'ADJ' then objects << AdjectiveObject.new
 					when /^SUFFIX\(([^)]+)\)$/
 						suffix = $1
 					when /^OBJ\(([^)]+)\)$/

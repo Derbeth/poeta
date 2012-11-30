@@ -162,6 +162,44 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('widzę dobrego psa', sentence.write)
 	end
 
+	def test_handle_noun_attribute
+		srand
+		dictionary = Dictionary.new
+		grammar = GenericGrammar.new
+		grammar.read_rules "N a 2 0 a .\nN a 3 0. owi ."
+		dictionary.read "N 10 bat/a\nN 10 tag/a ATTR(z,2)\nN 10 log/a\nV 10 oddaje OBJ(3)\n"
+
+		# tag should always come with an attribute
+		possible = ['bat', 'tag z bata', 'tag z loga', 'log']
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${NOUN}')
+			assert_includes possible, sentence.write
+		end
+
+		possible = ['bat oddaje logowi', 'bat oddaje tagowi z loga',
+			'tag z bata oddaje logowi', 'tag z loga oddaje batowi',
+			'tag z bata oddaje batowi', # clumsy repetition here, but let other tests take care of it
+			'log oddaje batowi', 'log oddaje tagowi z bata',
+		]
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+			assert_includes possible, sentence.write
+		end
+	end
+
+	# objects marked as ONLY_SUBJ should not be taken as noun attributes
+	def test_noun_attribute_respects_subj_only
+		srand
+		dictionary = Dictionary.new
+		grammar = GenericGrammar.new
+		dictionary.read "N 10 foo ATTR(prep,2)\nN 10 bar ATTR(prep,3)\nN 10 baz ATTR(prep,4)\nN 50 forbidden1 ONLY_SUBJ\nN 50 forbidden2 ONLY_SUBJ\n"
+
+		0.times do
+			sentence = Sentence.new(dictionary,grammar,'oto ${NOUN}')
+			assert_no_match(/prep forbidden[12]/, sentence.write)
+		end
+	end
+
 	def test_handle_double_usage
 		grammar = PolishGrammar.new
 		dictionary = Dictionary.new

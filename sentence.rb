@@ -215,7 +215,7 @@ class Sentence
 		@nouns << noun
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case}
-		noun.inflect(@grammar,form)
+		_common_handle_noun(noun,form)
 	end
 
 	def handle_noun(full_match,index,options)
@@ -241,7 +241,7 @@ class Sentence
 		@nouns << noun
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case}
-		noun.inflect(@grammar,form)
+		_common_handle_noun(noun,form)
 	end
 
 	def handle_adjective(full_match,index,options)
@@ -256,13 +256,28 @@ class Sentence
 		return '' unless adjective
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number, :animate => noun.animate}
-		text = adjective.inflect(@grammar,form)
+		_common_handle_word_with_attributes(adjective, form)
+	end
 
-		if !adjective.attributes.empty?
-			object_text = handle_noun_object(adjective, adjective.attributes[0])
-			text += ' ' + object_text unless object_text.empty?
+	# takes a noun and grammar form, returns inflected noun, possibly with preposition and attribute
+	def _common_handle_noun(noun, form)
+		# remember the noun to prevent the same noun appearing twice in a sentence
+		@nouns << noun
+
+		_common_handle_word_with_attributes(noun, form)
+	end
+
+	# takes a word possibly having an attribute (so a noun or adjective),
+	# returns inflected word, possibly linked with a preposition and attribute
+	def _common_handle_word_with_attributes(word, form)
+		inflected = word.inflect(@grammar,form)
+
+		if !word.attributes.empty?
+			attribute_text = handle_noun_object(word, word.attributes[0])
+			inflected += ' ' + attribute_text unless attribute_text.empty?
 		end
-		text
+
+		inflected
 	end
 
 	def handle_verb(full_match,index,options)
@@ -303,7 +318,7 @@ class Sentence
 		raise "no verb for #{full_match}" unless verb
 		resolved_objects = verb.objects.map do |o|
 			if o.is_noun?
-				handle_noun_object(verb,o,noun_index)
+				handle_noun_object(verb,o)
 			elsif o.is_infinitive?
 				handle_infinitive_object(verb,o)
 			elsif o.is_adjective?
@@ -319,20 +334,21 @@ class Sentence
 
 	# word - either adjective or verb needing an object
 	# object_spec - specification of how to find object, of class GramObject
-	# noun_index - index for noun to be set, may be nil, nothing will be set then
-	def handle_noun_object(word, object_spec,noun_index=nil)
+	def handle_noun_object(word, object_spec)
 		object = nil
 		12.times do
-			freq_counter = @dictionary.semantic_chooser(word)
+			semantic_counter = @dictionary.semantic_chooser(word)
+			freq_counter = lambda do |freq,candidate_word|
+				word.text == candidate_word.text ? 0 : semantic_counter.call(freq,candidate_word)
+			end
 			object = @dictionary.get_random_object(&freq_counter)
 			next if (@nouns.find { |n| n.text == object.text})
 			break
 		end
 		return '' unless object
-		@nouns << object
 
 		form = {:case=>object_spec.case}
-		inflected_object = object.inflect(@grammar,form)
+		inflected_object = _common_handle_noun(object, form) # TODO infinite loop danger?
 		object_spec.preposition ?
 			@grammar.join_preposition_object(object_spec.preposition,inflected_object) :
 			inflected_object
