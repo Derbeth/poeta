@@ -8,6 +8,7 @@ N 100 buch/i m ONLY_OBJ SEMANTIC(OK)
 N  10 dzielnica/l f OBJ_FREQ(100) SEMANTIC(OK,RZADZIC)
 N 100 dzień/o1 m nan
 N  50 dziwka/r f SEMANTIC(POLICJA)
+N  10 efekt/e m nan ATTR(2) OBJ_FREQ(40) # "efekt zmian"
 N 150 ekipa/b f SEMANTIC(OK,ZIOM,RZADZIC)
 N 100 głos/e m nan
 N  50 hasło/p n
@@ -22,13 +23,17 @@ N  10 konfident/j m Pl OBJ_FREQ(100) SEMANTIC(POLICJA)
 N 200 ludzie/a m Pl
 N 100 małolat/j1 m SEMANTIC(OK)
 N 100 miasto/p n SEMANTIC(RZADZIC)
-N 100 miejsce/d n
+N  50 miejsce/d n
+N  50 miejsce/d n ATTR(2) # "miejsce agresji"
 N  10 numer/e m nan OBJ_FREQ(50)
+N  50 ofiara/b3 f ATTR(2)
 N 100 pięść/n f SEMANTIC(OK,ZIOM)
 N 100 policja/h f SEMANTIC(POLICJA)
 N  10 polityka/r f OBJ_FREQ(50) SEMANTIC(POLITYKA)
-N   3 porozumienie/d n Pl nan SUFFIX(ponad podziałami)
+N  10 przyczyna/b1 f ATTR(2) OBJ_FREQ(50) # "przyczyna buntu"
+N   3 porozumienie/d n Pl nan SUFFIX(ponad podziałami) OBJ_FREQ(6)
 N  50 prawo/p n
+N  10 przekaz/e m nan SEMANTIC(OK,ZIOM)
 N 100 rap/e m nan SEMANTIC(OK,ZIOM)
 N 100 skręt/m m SEMANTIC(OK,ZIOM)
 N  10 styl/c m nan OBJ_FREQ(50)
@@ -39,7 +44,8 @@ N  10 teren/e OBJ_FREQ(100)
 N 150 ulica/l f SEMANTIC(RZADZIC)
 N  50 ulica/l f Pl SEMANTIC(RZADZIC)
 N  20 wojna/b f
-N  35 wojna/b f ATTR(z,5)
+N  33 wojna/b f ATTR(z,5)
+N   7 wojna/b f ATTR(przeciw,3)
 N 100 załoga/r f SEMANTIC(OK,ZIOM)
 N  10 zasada/b f Pl OBJ_FREQ(100)
 N  20 zmiana/b2 f OBJ_FREQ(100)

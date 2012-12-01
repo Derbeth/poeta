@@ -1,10 +1,14 @@
 # http://grzegorj.w.interia.pl/gram/pl/deklin_stat.html
 
-# 9 m, gość, ludzie
+# 9 m, gość, ludzie; 17 m człowiek, Polak /1
 N a 2,4   ć   cia   ć
+N a 2,4   0   a     ./1
 N a 3     ć   ciowi ć
+N a 3     0   owi   ./1
 N a 5     ć   ciem  ć
+N a 5     0   iem   k/1
 N a 6,7   ć   ciu   ć
+N a 6,7   0   u     ./1
 N a 11,17 ć   cie   ć
 N a 12,14 ć   ci    ć
 N a 12,14 e   0     ie
@@ -18,6 +22,7 @@ N a 16    e   ach   ie
 # 139 f, miotła, kołdra, panna, igła, gra, wiara
 N b 2        a   y a
 N b 3,6      ła  le   ła
+N b 3,6      ara erze ara/3 # ofiara -> ofierze
 N b 3,6      ra  rze  ra
 N b 3,6      cha sze  cha # mucha -> musze
 N b 3,6      a   ie   [npsz]a
@@ -29,6 +34,7 @@ N b 11,14,17 a   y    a
 N b 12       ła  eł   ła
 N b 12       ra  ier  ra/1  # gra -> gier
 N b 12       a   0    ra/2  # kara -> kar
+N b 12       a   0    ra/3  # ofiara -> ofiar
 N b 12       ra  er   ra    # kołdra -> kołder
 N b 12       a   0    na/1  # wina -> win
 N b 12       a   0    [dpshz]a
@@ -92,7 +98,7 @@ N e 3         0 owi .
 N e 5         0 em  .
 N e 6,7       0 zie d
 N e 6,7       0 ze  r
-N e 6,7       0 ie  [bnps]
+N e 6,7       0 ie  [bnpsz]
 N e 6,7       t cie t
 N e 6,7       0 u   ch # oddech
 N e 11,14,17  0 y   .
@@ -197,13 +203,18 @@ N m 13        0 om  .
 N m 15        0 ami .
 N m 16        0 ach .
 
-# 124 f, kość, część
-N n 2,3,6,7,11,14,17 ć ci    ć
-N n 4                0 0     ć
-N n 5                ć cią   ć
-N n 13               ć ciom  ć
-N n 15               ć ciami ć
-N n 16               ć ciach ć
+# 124 f, kość, część; 123: /1 sieć, myśl, brew
+N n 2,3,6,7,11,12,14,17 ć ci    ć
+N n 2,3,6,7,11,12,14,17 0 i     l
+N n 4                   0 0     [ćl]
+N n 5                   ć cią   ć
+N n 5                   0 ą     l
+N n 13                  ć ciom  ć
+N n 13                  0 om    l
+N n 15                  ć ciami ć
+N n 15                  0 ami   l
+N n 16                  ć ciach ć
+N n 16                  0 ach   l
 
 # 82 m, dzień, cień, modrzew, bal, gwóźdź, tułów, mięsień, mebel, pień, węgiel
 N o 2    zień nia   zień
@@ -316,7 +327,7 @@ N 0 2,3,4,6  ja    mnie  ja
 N 0 5        ja    mną   ja
 N 0 2,4      ty    ciebie ty
 N 0 3,6      ty    tobie  ty
-N 0 4        ty    tobą   ty
+N 0 5        ty    tobą   ty
 N 0 2,4      on    jego   on
 N 0 3        on    jemu   on
 N 0 5,6      on    nim    on
@@ -354,18 +365,16 @@ A a 303         y  ej  y
 A a 304         y  ą   y
 A a 305         y  ą   y
 A a 306         y  ej  y
-A a 111         dy dzi dy
-A a 111         ry rzy ry
-A a 111         ty ci  ty
-A a 111         zy i   szy
-A a 111         y  i   [bnsw]y
+A a 111,117     dy dzi dy
+A a 111,117     ry rzy ry
+A a 111,117     ty ci  ty
+A a 111,117     zy i   szy
+A a 111,117     y  i   [bnpsw]y
 A a 112,212,312 0  ch  y
 A a 113,213,313 0  m   y
 A a 114         0  ch  y
 A a 115,215,315 0  mi  y
 A a 116,216,316 0  ch  y
-A a 117         dy dzi dy
-A a 117         ry rzy ry
 A a 211,311     y  e   y
 A a 214,314     y  e   y
 A a 217,317     y  e   y
@@ -495,21 +504,25 @@ V 6  3 ć   0   ć
 V 6 11 ć   my  ć
 V 6 12 ć   cie ć
 
-# koniugacja VIIa, widzieć i VIIb, leżeć, milczeć
+# koniugacja VIIa, widzieć cierpieć i VIIb, leżeć, milczeć
 V 7  1 ieć zę   sieć/m
 V 7  1 ieć ę    ieć
 V 7  1 eć  ę    eć
 V 7  2 ieć esz  ieć/c # chcieć
 V 7  2 eć  sz   ieć
+V 7  2 eć  isz  eć/a  # myśleć
 V 7  2 eć  ysz  eć
 V 7  3 ieć e    ieć/c
 V 7  3 eć  0    ieć
+V 7  3 eć  i    eć/a
 V 7  3 eć  y    eć
 V 7 11 ieć emy  ieć/c
 V 7 11 eć  my   ieć
+V 7 11 eć  imy  eć/a
 V 7 11 eć  ymy  eć
 V 7 12 ieć ecie ieć/c
 V 7 12 eć  cie  ieć
+V 7 12 eć  icie eć/a
 V 7 12 eć  ycie eć
 V 7 13 ieć zą   sieć/m
 V 7 13 ieć ą    ieć

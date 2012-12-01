@@ -1,15 +1,27 @@
 N 100 ciało/p n nan
 N  50 ciało/p n Pl nan
-N  25 grzech/t m nan
+N 100 cisza/l f
+N 100 człowiek/a1 m
+N 100 egzystencja/h f
+N  50 grzech/t m nan
+N  50 istnienie/d n
 N 100 jedność/n f
+N 100 ludzie/a m Pl
+N  50 myśl/n f
+N  50 myśl/n f Pl
+N 100 los/e m nan
 N 100 oddech/e m nan
 N 100 owoc/c1 m Pl nan
 N  50 piekło/d n Pl nan
+N  50 pytanie/d n Pl nan
 N 100 raj/c m nan
 N 100 ruch/t m nan
+N 100 sens/e m OBJ(2) # sens istnienia
 N  50 smak/g m nan
 N  10 sumienie/d n nan
 N   5 sumienie/d n Pl nan
+N  50 tajemnica/l f OBJ(2) # tajemnica istnienia
+N  50 tajemnica/l f Pl
 N 100 warga/r f Pl
 N  20 zamek/g m Pl nan SUFFIX(z piasku)
 
@@ -27,24 +39,43 @@ N  50 oni/0 m Pl NO_ADJ
 V 100 brać/b OBJ(4)
 V  25 być/c ADJ
 V  80 chcieć/7c INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  50 dogonić/6 OBJ(4)
 V  25 kłamać/9
 V 100 milczeć/7
 V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  50 myśleć/7a OBJ(o,6)
 V 100 płonąć/5
+V 100 płynąć/5
+V  20 pomagać/1 INF        # pomaga kłamać
+V  25 pomagać/1 OBJ(3) INF # pomaga mi zasnąć
+V 100 próbować/4 INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V 100 stawać/A REFL OBJ(5)
 
+# TODO only INF V  10 zrozumieć/1 OBJ(4)
+
+A 100 absolutny/a
 A 100 brudny/a
 A 100 chory/a
+A 100 dziwny/a
 A  50 jego
 A  30 jej
+A  50 niemy/a
 A  50 obcy/a
 A  50 odcięty/a ATTR(od,2)
 A 100 pęknięty/a
 A  50 przeklęty/a
+A 100 ślepy/a
 A  50 wygnany/a ATTR(z,2)
+A 100 złamany/a
+A 100 zmęczony/a
+A  30 zmęczony/a ATTR(5)
 
+D 100 ciężko
+D 100 leniwie
 D  50 nieśmiało
 D 100 "po kres"
+D 100 powoli
+D 100 sennie
 D  50 szybko
 D 100 tam
 D 100 tutaj
