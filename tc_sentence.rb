@@ -134,6 +134,25 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('kibic pijany ze szczęścia', sentence.write)
 	end
 
+	def test_double_adjective
+		srand
+
+		grammar = GenericGrammar.new
+		# to check if form is passed
+		grammar.read_rules "A a 301 0 e ."
+		dictionary = Dictionary.new
+		dictionary.read "N 100 Stube f\nA 100 dies/a DOUBLE\nA 100 dein/a POSS\nA 10 klein/a\n"
+
+		possible = ['diese kleine Stube', 'deine kleine Stube', 'kleine Stube']
+		# times to check if there is an infinite loop
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${ADJ} ${NOUN}')
+			assert_raise(ArgumentError) { sentence.double_adj_chance = 100 }
+			sentence.double_adj_chance = 1
+			assert_includes possible, sentence.write
+		end
+	end
+
 	def test_handle_no_adjective
 		dictionary_text = "N 100 nobody\nA 100 cool"
 		dictionary = Dictionary.new

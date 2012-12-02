@@ -272,6 +272,11 @@ class AdjectiveTest < Test::Unit::TestCase
 		adjective = Adjective.parse('good',['F'],100,'ONLY_WITH(GOOD)')
 		assert_equal 'good', adjective.text
 		assert_equal 0, adjective.attributes.size
+		assert !adjective.double
+		adjective = Adjective.parse('good',['F'],100,'POSS')
+		assert adjective.double
+		adjective = Adjective.parse('good',['F'],100,'DOUBLE')
+		assert adjective.double
 		Adjective.parse('good',[],100,'NOTEXIST')
 	end
 

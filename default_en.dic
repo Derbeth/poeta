@@ -69,7 +69,7 @@ A  30 fallen
 A 100 false
 A 100 forbidden
 A 100 forgotten
-A  50 her
+A  50 her         POSS
 A 100 hidden
 A  30 hideous
 A 100 impossible
@@ -78,8 +78,8 @@ A 100 last
 A 100 lonely
 A 100 lost
 A  10 lost        ATTR(in,2)
-A  50 my
-A  50 our
+A  50 my          POSS
+A  50 our         POSS
 A 100 painful
 A 100 relentless
 A 100 rotting
@@ -88,11 +88,11 @@ A 100 silent
 A 100 stinking
 A 100 stolen
 A 100 sweet
-A 100 that/a      NOT_AS_OBJ
-A  50 their
-A 100 this/a      NOT_AS_OBJ
+A 100 that/a      DOUBLE NOT_AS_OBJ
+A  50 their       POSS
+A 100 this/a      DOUBLE NOT_AS_OBJ
 A  50 true
-A  50 your
+A  50 your        POSS
 
 # TODO throughout ..., through + A + N, with + N
 # TODO inside

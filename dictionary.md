@@ -27,14 +27,6 @@ Word properties
 Adjective
 -----------
 
-* `NOT_AS_OBJ`
-
-  Makes the adjective never be chosen as adjective object. Example:
-
-        A 100 this NOT_AS_OBJ
-
-  prevents appearing things like "cat becomes these".
-
 * `ATTR(prep,case)`
 
   Makes the adjective always be linked with a noun in given case and proposition. Example:
@@ -43,6 +35,28 @@ Adjective
         A 100 lost ATTR(in,2)
 
   may produce "lost in memory"
+
+* DOUBLE
+
+  Makes the adjective possibly take another adjective immeditely afterwards. Example:
+
+        N 100 memory
+        A 100 this DOUBLE
+        A 100 short
+
+  may produce "this short memory".
+
+* `NOT_AS_OBJ`
+
+  Makes the adjective never be chosen as adjective object. Example:
+
+        A 100 this NOT_AS_OBJ
+
+  prevents appearing things like "cat becomes these".
+
+* POSS
+
+  Marks the adjective as possessive. This marks it automatically as 'double' as well.
 
 Noun
 ----

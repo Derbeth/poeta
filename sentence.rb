@@ -105,7 +105,8 @@ end
 
 class Sentence
 	attr_accessor :debug
-	attr_reader :text, :subject, :other_word_chance, :pattern
+	attr_reader :double_adj_chance, :other_word_chance
+	attr_reader :text, :subject, :pattern
 
 	def initialize(dictionary,grammar,pattern,better=false,debug=false)
 		@dictionary,@grammar,@pattern,@better,@debug = dictionary,grammar,pattern.strip,better,debug
@@ -117,11 +118,21 @@ class Sentence
 		# set of all nouns used in a sentence, including also objects (contrary to @indexed_nouns)
 		@nouns = []
 		self.other_word_chance = DEFAULT_OTHER_CHANCE
+		self.double_adj_chance = DEFAULT_DBL_ADJ_CHANCE
 	end
 
 	def other_word_chance=(chance)
-		raise "chance should be 0.0 and 1.0, but got #{chance}" if chance < 0.0 || chance > 1.0
+		validate_chance(chance)
 		@other_word_chance = chance
+	end
+
+	def double_adj_chance=(chance)
+		validate_chance(chance)
+		@double_adj_chance = chance
+	end
+
+	def validate_chance(chance)
+		raise ArgumentError, "chance should be 0.0 and 1.0, but got #{chance}" if chance < 0.0 || chance > 1.0
 	end
 
 	def Sentence.validate_pattern(pattern)
@@ -184,6 +195,7 @@ class Sentence
 
 	MAX_ATTR_RECUR = 3
 	DEFAULT_OTHER_CHANCE = 0.3
+	DEFAULT_DBL_ADJ_CHANCE = 0.4
 	def handle_subject(full_match,index,options)
 		subject_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_common_noun_options(options)
@@ -252,12 +264,31 @@ class Sentence
 		noun = @indexed_nouns[noun_index]
 		return '' if noun == nil || noun.get_property(:no_adjective)
 
-		freq_counter = @dictionary.semantic_chooser(noun)
+		_handle_adjective(noun, parsed_opts[:case])
+	end
+
+	def _handle_adjective(noun, gram_case=nil, exclude_double=false)
+		gram_case ||= NOMINATIVE
+
+		semantic_counter = @dictionary.semantic_chooser(noun)
+		if exclude_double
+			freq_counter = lambda do |freq,candidate|
+				candidate.double ? 0 : semantic_counter.call(freq,candidate)
+			end
+		else
+			freq_counter = semantic_counter
+		end
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE, &freq_counter)
 		return '' unless adjective
-		gram_case = parsed_opts[:case] || NOMINATIVE
+
 		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number, :animate => noun.animate}
-		_common_handle_word_with_attributes(adjective, form)
+		inflected = _common_handle_word_with_attributes(adjective, form)
+
+		if adjective.double && check_chance(double_adj_chance)
+			inflected += ' ' + _handle_adjective(noun, gram_case, true)
+		end
+
+		inflected
 	end
 
 	# takes a noun and grammar form, returns inflected noun, possibly with preposition and attribute
@@ -392,8 +423,7 @@ class Sentence
 	end
 
 	def handle_other(full_match,index,options)
-		draw = rand
-		return '' if draw >= @other_word_chance
+		return '' unless check_chance(@other_word_chance)
 
 		other_word = @dictionary.get_random(Grammar::OTHER)
 		other_word ? other_word.text : ''
@@ -402,6 +432,12 @@ class Sentence
 	def handle_adverb(full_match,index,options)
 		adverb = @dictionary.get_random(Grammar::ADVERB)
 		adverb ? adverb.text : ''
+	end
+
+	# gets a random number in [0,1) and returns true if it smaller than given chance
+	def check_chance(chance)
+		draw = rand
+		draw < chance
 	end
 
 	# full_match - like ${NOUN} or ${VERB2}

@@ -323,22 +323,25 @@ module Grammar
 	end
 
 	class Adjective < Word
-		attr_reader :attributes
+		attr_reader :attributes, :double
 
-		def initialize(text,gram_props,frequency,attributes=[],general_props={})
+		def initialize(text,gram_props,frequency,double=false,attributes=[],general_props={})
 			super(text,gram_props,general_props,frequency)
 			if attributes.size > 1
 				raise AdjectiveError, "not allowed to have more than 1 attribute"
 			end
-			@attributes=attributes
+			@attributes,@double=attributes,double
 		end
 
 		def Adjective.parse(text,gram_props,frequency,line)
 			general_props = {}
+			double = false
 			attributes = []
 			Word.parse(line,general_props) do |part|
 				case part
 					when 'NOT_AS_OBJ' then general_props[:not_as_object] = true
+					when 'DOUBLE' then double = true
+					when 'POSS' then double = true
 					when /^ATTR\(([^)]+)\)$/
 						opts = $1
 						object_case, preposition = nil, nil
@@ -355,7 +358,7 @@ module Grammar
 					else puts "warn: unknown option #{part}"
 				end
 			end
-			Adjective.new(text,gram_props,frequency,attributes, general_props)
+			Adjective.new(text,gram_props,frequency,double,attributes,general_props)
 		rescue GramObjectError, AdjectiveError => e
 			raise ParseError, e.message
 		end

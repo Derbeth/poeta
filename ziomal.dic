@@ -120,15 +120,15 @@ A  40 marny/a
 A  70 miejski/b
 A  50 mistrzowski/b NOT_WITH(POLICJA)
 A 100 mocny/a NOT_WITH(POLICJA)
-A 200 mój/e NOT_WITH(POLICJA)
+A 1200 mój/e POSS NOT_WITH(POLICJA)
 A 100 najlepszy/a NOT_WITH(POLICJA)
-A 200 nasz/d NOT_WITH(POLICJA)
+A 200 nasz/d POSS NOT_WITH(POLICJA)
 A 100 nocny/a
 A 100 nowy/a
 A  50 obcy/a
 A 100 ostatni/b
 A 100 pierdolony/a NOT_WITH(OK)
-A 100 pierwszy/a
+A 100 pierwszy/a DOUBLE
 A  50 pojebany/a NOT_WITH(OK)
 A 100 policyjny/a NOT_WITH(ZIOM) NOT_WITH_W(policja)
 A 100 pozytywny/a NOT_WITH(POLICJA)
@@ -137,8 +137,8 @@ A 100 prosty/a
 A 100 radykalny/a NOT_WITH(POLICJA)
 A  50 sprzedajny/a NOT_WITH(OK)
 A 120 szczery/a NOT_WITH(POLICJA)
-A 200 taki/b
-A 200 ten/c NOT_AS_OBJ
+A 200 taki/b DOUBLE
+A 200 ten/c DOUBLE NOT_AS_OBJ
 A 200 uliczny/a NOT_WITH(POLICJA) NOT_WITH_W(ulica)
 A 100 zajebisty/a NOT_WITH(POLICJA)
 A  50 zwyczajny/a

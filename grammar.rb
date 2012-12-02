@@ -198,7 +198,7 @@ module Grammar
 		def adjective_form_id(form)
 			gram_case = form[:case]
 			number = form[:number] || 1
-			gender = number == 1 ? MASCULINE : form[:gender]
+			gender = form[:gender] || MASCULINE
 
 			form_id = gram_case
 			form_id += (number-1) * 10
