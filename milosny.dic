@@ -1,0 +1,66 @@
+N  50 ciało/p n
+N  50 ciało/p n Pl
+N 100 dotyk/g m
+N 100 namiętność/n f
+N 100 oczekiwanie/d n
+N 100 pasja/h f
+N 100 piękno/p n
+N  50 pocałunek/g m nan
+N  50 pocałunek/g m nan Pl
+N  50 powieka/r f Pl
+N  50 rozkosz/k f
+N  50 rozkosz/k f Pl
+N 100 spojrzenie/d n
+N 100 tęsknota/b f
+N  50 uczucie/d n
+N  50 uczucie/d n Pl
+N 100 wstyd/e m nan
+N 100 żar/e m nan
+
+N 200 "" m PERSON(1) NO_ADJ ONLY_SUBJ # ja
+N 200 "" m PERSON(2) NO_ADJ ONLY_SUBJ # ty
+N 200 "" m Pl PERSON(1) NO_ADJ ONLY_SUBJ # my
+N 100 ja/0 m NO_ADJ ONLY_OBJ
+N  50 ty/0 f NO_ADJ ONLY_OBJ
+
+A 100 cielesny/a NOT_WITH_W(ciało)
+A 100 delikatny/a
+A 100 drżący/a
+A 100 gorący/a
+A  50 młody/a
+A 100 namiętny/a NOT_WITH_W(namiętność)
+A 100 nagi/b
+A  50 nasz/d
+A 100 nieśmiały/a
+A 100 pierwszy/a
+A 100 słodki/b
+A  50 spleciony/a
+A  50 twój/e
+A 100 utęskniony/a
+A 100 wstydliwy/a
+
+V 100 budzić/6b OBJ(4)
+V 100 czekać/1 OBJ(na,4) NOT_WITH_W(oczekiwanie) TAKES_NO_W(oczekiwanie)
+V 100 dotykać/1 OBJ(4) NOT_WITH_W(dotyk) TAKES_NO_W(dotyk)
+V 100 leżeć/7m
+V 100 patrzeć/7 OBJ(na,4)
+V 100 pragnąć/5 OBJ(2)
+V 100 rozbierać/1 OBJ(4)
+V 100 rozbudzać/1 OBJ(4)
+V 100 rozpalać/1 OBJ(4)
+V 100 szukać/1 OBJ(2)
+V 100 uwielbiać/1 OBJ(4)
+
+D  50 "nad ranem"
+D 100 namiętnie
+D  50 nareszcie
+D 100 niecierpliwie
+D  50 rozkosznie
+D 100 ukradkiem
+D 100 wstydliwie
+
+O 100 a
+O 100 ale
+O   5 "chciałbym jeszcze zobaczyć, jak"
+O 100 choć
+O 100 i

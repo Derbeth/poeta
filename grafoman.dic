@@ -3,7 +3,7 @@ N  50 ciało/p n Pl nan
 N 100 cisza/l f
 N 100 człowiek/a1 m
 N 100 egzystencja/h f
-N  50 grzech/t m nan
+N  50 grzech/e m nan
 N  50 istnienie/d n
 N 100 jedność/n f
 N 100 ludzie/a m Pl
@@ -15,7 +15,7 @@ N 100 owoc/c1 m Pl nan
 N  50 piekło/d n Pl nan
 N  50 pytanie/d n Pl nan
 N 100 raj/c m nan
-N 100 ruch/t m nan
+N 100 ruch/e m nan
 N 100 sens/e m ATTR(2) # sens istnienia
 N  50 smak/g m nan
 N  10 sumienie/d n nan
@@ -67,6 +67,7 @@ A  50 drobny/a
 A 100 dziwny/a
 A  50 jego
 A  30 jej
+A 100 ludzki/b
 A  50 niemy/a
 A  50 nieskończony/a
 A  50 nieznajomy/a

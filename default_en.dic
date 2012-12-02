@@ -7,6 +7,7 @@ N  50 day/a
 N  50 day/a      Pl
 N 100 death/a
 N 100 flame/a
+N 100 flesh/a
 N  50 fruit/a
 N 100 heart/a
 N 100 hope/a
@@ -81,8 +82,10 @@ A  50 my
 A  50 our
 A 100 painful
 A 100 relentless
+A 100 rotting
 A 100 shining
 A 100 silent
+A 100 stinking
 A 100 stolen
 A 100 sweet
 A 100 that/a      NOT_AS_OBJ
@@ -103,6 +106,7 @@ D 100 slowly
 O   5 alas
 O 100 although
 O 100 as
-O 100 even
 O  5 "can it be that"
+O 100 even
+O   5 lest
 O 100 therefore

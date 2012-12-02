@@ -19,11 +19,12 @@ N a 15    zie źmi   dzie
 N a 16    ć   ciach ć
 N a 16    e   ach   ie
 
-# 139 f, miotła, kołdra, panna, igła, gra, wiara
+# 139 f, miotła, kołdra, panna, igła, gra, wiara, kobieta
 N b 2        a   y a
 N b 3,6      ła  le   ła
 N b 3,6      ara erze ara/3 # ofiara -> ofierze
 N b 3,6      ra  rze  ra
+N b 3,6      ta  cie  ta
 N b 3,6      cha sze  cha # mucha -> musze
 N b 3,6      a   ie   [npsz]a
 N b 3,6      da  dzie da
@@ -37,7 +38,7 @@ N b 12       a   0    ra/2  # kara -> kar
 N b 12       a   0    ra/3  # ofiara -> ofiar
 N b 12       ra  er   ra    # kołdra -> kołder
 N b 12       a   0    na/1  # wina -> win
-N b 12       a   0    [dpshz]a
+N b 12       a   0    [dpsthz]a
 N b 12       na  en   jna   # wojna -> wojen
 N b 12       a   0    na/2  # zmiana -> zmian, kraina -> krain
 N b 12       na  ien  na
@@ -82,6 +83,7 @@ N d 6         o   u   o
 N d 11,14,17  e   a   e
 N d 11,14,17  o   a   o
 N d 12        nie ń   nie
+N d 12        cie ć   cie
 N d 12        ło  ieł ło
 N d 12        e   0   e
 N d 13        e   om  e
