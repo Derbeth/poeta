@@ -407,7 +407,7 @@ V 100 kills OBJ(1)
 		assert_equal 'pies', dictionary.get_random(NOUN).text
 
 		grammar = PolishGrammar.new
-		grammar.read_rules("N a 4 0 a .\nN a 15 0 ami .\nN b 3 ies su ies")
+		grammar.read_rules("N a 2,4 0 a .\nN a 15 0 ami .\nN b 3 ies su ies\nA a 102,104 y ego y")
 
 		srand 1
 		# verb has no object set
@@ -426,15 +426,37 @@ V 100 kills OBJ(1)
 		assert_equal('pies je kota w butach', sentence.write)
 
 		srand 1
+		# object preposition
 		dictionary.read("N 100 pies\nN 100 kot/a Pl\nV 100 goni OBJ(za,5)")
 		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies goni za kotami', sentence.write)
-		
+
 		srand 8
 		# handle two objects of a noun
 		dictionary.read "N 100 pies/b\nN 100 kot/a\nV 100 daję OBJ(3) OBJ(4)"
 		sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
 		assert_equal 'daję psu kota', sentence.write
+
+		srand
+		# object adjective
+		dictionary.read "N 100 kot/a \nA 100 ładny/a \nV 100 widzę OBJ(4)"
+		sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+		assert_raise(ArgumentError) { sentence.object_adj_chance = 100 }
+		sentence.object_adj_chance = 1
+		assert_equal 'widzę ładnego kota', sentence.write
+
+		srand
+		# adjective for noun attribute, additionally check proper preposition letter change
+		dictionary.read "N 10 wąsy ATTR(w,4)\nN 10 kot/a ONLY_OBJ\nA 10 wredny/a"
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ}')
+		sentence.object_adj_chance = 1
+		assert_equal 'wąsy we wrednego kota', sentence.write
+
+		dictionary.read "N 10 wąsy ATTR(w,4)\nN 10 wrot/a ONLY_OBJ\nA 10 ładny/a"
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ}')
+		sentence.object_adj_chance = 1
+		# without the adjective should be 'wąsy we wrota'
+		assert_equal 'wąsy w ładnego wrota', sentence.write
 	end
 
 	def test_object_wont_equal_subject

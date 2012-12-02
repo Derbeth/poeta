@@ -105,7 +105,7 @@ end
 
 class Sentence
 	attr_accessor :debug
-	attr_reader :double_adj_chance, :other_word_chance
+	attr_reader :double_adj_chance, :other_word_chance, :object_adj_chance
 	attr_reader :text, :subject, :pattern
 
 	def initialize(dictionary,grammar,pattern,better=false,debug=false)
@@ -117,8 +117,10 @@ class Sentence
 		@verbs_text = {}
 		# set of all nouns used in a sentence, including also objects (contrary to @indexed_nouns)
 		@nouns = []
+		@adjectives = []
 		self.other_word_chance = DEFAULT_OTHER_CHANCE
 		self.double_adj_chance = DEFAULT_DBL_ADJ_CHANCE
+		self.object_adj_chance = DEFAULT_OBJ_ADJ_CHANCE
 	end
 
 	def other_word_chance=(chance)
@@ -129,6 +131,11 @@ class Sentence
 	def double_adj_chance=(chance)
 		validate_chance(chance)
 		@double_adj_chance = chance
+	end
+
+	def object_adj_chance=(chance)
+		validate_chance(chance)
+		@object_adj_chance = chance
 	end
 
 	def validate_chance(chance)
@@ -196,6 +203,7 @@ class Sentence
 	MAX_ATTR_RECUR = 3
 	DEFAULT_OTHER_CHANCE = 0.3
 	DEFAULT_DBL_ADJ_CHANCE = 0.4
+	DEFAULT_OBJ_ADJ_CHANCE = 0.4
 	def handle_subject(full_match,index,options)
 		subject_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_common_noun_options(options)
@@ -281,6 +289,7 @@ class Sentence
 		adjective = @dictionary.get_random(Grammar::ADJECTIVE, &freq_counter)
 		return '' unless adjective
 
+		@adjectives << adjective
 		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number, :animate => noun.animate}
 		inflected = _common_handle_word_with_attributes(adjective, form)
 
@@ -386,6 +395,13 @@ class Sentence
 
 		form = {:case=>object_spec.case}
 		inflected_object = _common_handle_noun(object, form, allow_recur-1) # -1 to prevent infinite loop danger?
+
+		adj_chance = @adjectives.empty?  ? object_adj_chance : object_adj_chance/2
+		if check_chance(adj_chance)
+			adj_text = _handle_adjective(object, object_spec.case)
+			inflected_object = adj_text + ' ' + inflected_object unless adj_text.empty?
+		end
+
 		object_spec.preposition ?
 			@grammar.join_preposition_object(object_spec.preposition,inflected_object) :
 			inflected_object
