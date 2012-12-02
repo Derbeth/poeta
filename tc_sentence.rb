@@ -494,7 +494,15 @@ V 100 kills OBJ(1)
 		dictionary.read("N 100 pies\nN 30 wronie\nV 100 idzie OBJ(w,6)")
 		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie we wronie', sentence.write)
-		# TODO ode mnie?
+
+		srand 1
+		dictionary.read "N 100 pies \nN 30 mnicha \nV 100 idzie OBJ(od,6)"
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal 'pies idzie od mnicha', sentence.write
+		srand 1
+		dictionary.read "N 100 pies \nN 30 mnie \nV 100 idzie OBJ(od,6)"
+		sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal 'pies idzie ode mnie', sentence.write
 	end
 
 	def test_handle_infinitive_object
@@ -508,12 +516,20 @@ V 100 kills OBJ(1)
 		grammar = PolishGrammar.new
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('pies chce jeść', sentence.write)
+		
+		# infinitive taking object itself
+		srand 1
+		grammar.read_rules "N a 4 ies sa ies\nV a 1 e ę e\n"
+		dictionary.read "N 100 pies/a\nV 100 chce/a INF\nV 30 jeść OBJ(4)"
+		sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+		assert_equal 'chcę jeść psa', sentence.write
 
 		srand 1
 		dictionary.read("N 100 pies\nV 100 chce INF\nV 30 przejść REFL")
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('pies chce się przejść', sentence.write)
 
+		# infitinive with preposition
 		srand 1
 		dictionary.read "N 100 they\nV 100 want INF(to)\nV 30 eat"
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')

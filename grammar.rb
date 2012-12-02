@@ -233,6 +233,7 @@ module Grammar
 				when prep == 'z' &&
 					object =~ /^(z#{cons_match}|s[#{consonants-['z']}]|sz#{cons_match})/ then prep = 'ze'
 				when prep == 'w' && object =~ /^w#{cons_match}/ then prep = 'we'
+				when prep == 'od' && object == 'mnie' then prep = 'ode'
 			end
 			prep + ' ' + object
 		end

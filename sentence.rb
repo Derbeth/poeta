@@ -348,11 +348,16 @@ class Sentence
 		noun_index = self.class.read_index(full_match,index)
 		verb = @verbs[noun_index]
 		raise "no verb for #{full_match}" unless verb
+		_handle_object(verb, noun_index)
+	end
+
+	# noun_index - index of the subject connected with the verb, needed to properly handle form of adjective object
+	def _handle_object(verb, noun_index)
 		resolved_objects = verb.objects.map do |o|
 			if o.is_noun?
 				handle_noun_object(verb,o)
 			elsif o.is_infinitive?
-				handle_infinitive_object(verb,o)
+				handle_infinitive_object(verb,o,noun_index)
 			elsif o.is_adjective?
 				handle_adjective_object(verb,noun_index)
 			else
@@ -386,7 +391,7 @@ class Sentence
 			inflected_object
 	end
 
-	def handle_infinitive_object(verb, object_spec)
+	def handle_infinitive_object(verb, object_spec, noun_index)
 		object_verb = nil
 		4.times do
 			semantic_counter = @dictionary.semantic_chooser(verb)
@@ -400,7 +405,12 @@ class Sentence
 		return '' unless object_verb
 
 		text = object_verb.inflect(@grammar,{:infinitive=>1})
-		text = object_spec.preposition + ' ' + text if object_spec.preposition
+		if !object_verb.objects.empty?
+			text += ' ' + _handle_object(object_verb, noun_index)
+		end
+		if object_spec.preposition
+			text = object_spec.preposition + ' ' + text
+		end
 		text
 	end
 
