@@ -185,6 +185,15 @@ class SentenceTest < Test::Unit::TestCase
 			sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 			assert_includes possible, sentence.write
 		end
+
+		# now test subject
+		dictionary.read "N 10 bat/a ONLY_OBJ\nN 10 tag/a ATTR(z,2)\nN 10 log/a ONLY_OBJ\nV 10 oddaje\n"
+
+		possible = ['tag z bata oddaje', 'tag z loga oddaje']
+		5.times do
+			sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB}')
+			assert_includes possible, sentence.write
+		end
 	end
 
 	# objects marked as ONLY_SUBJ should not be taken as noun attributes

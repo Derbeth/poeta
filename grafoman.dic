@@ -16,12 +16,15 @@ N  50 piekło/d n Pl nan
 N  50 pytanie/d n Pl nan
 N 100 raj/c m nan
 N 100 ruch/t m nan
-N 100 sens/e m OBJ(2) # sens istnienia
+N 100 sens/e m ATTR(2) # sens istnienia
 N  50 smak/g m nan
 N  10 sumienie/d n nan
 N   5 sumienie/d n Pl nan
-N  50 tajemnica/l f OBJ(2) # tajemnica istnienia
+N  50 ślad/e m nan
+N  50 świt/e m nan
+N  50 tajemnica/l f ATTR(2) # tajemnica istnienia
 N  50 tajemnica/l f Pl
+N 100 tchnienie/d n
 N 100 warga/r f Pl
 N  20 zamek/g m Pl nan SUFFIX(z piasku)
 
@@ -44,28 +47,45 @@ V  25 kłamać/9
 V 100 milczeć/7
 V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  50 myśleć/7a OBJ(o,6)
+V  25 niszczyć/6 OBJ(4)
 V 100 płonąć/5
 V 100 płynąć/5
-V  20 pomagać/1 INF        # pomaga kłamać
+V  20 pomagać/1 INF TAKES_NO(MODAL) SEMANTIC(MODAL)  # pomaga kłamać
 V  25 pomagać/1 OBJ(3) INF # pomaga mi zasnąć
 V 100 próbować/4 INF TAKES_NO(MODAL) SEMANTIC(MODAL)
-V 100 stawać/A REFL OBJ(5)
+V  50 stawać/A REFL OBJ(5) SEMANTIC(MODAL)
 
 # TODO only INF V  10 zrozumieć/1 OBJ(4)
 
 A 100 absolutny/a
+A  50 blady/a
 A 100 brudny/a
+A 100 chłodny/a
 A 100 chory/a
+A  50 cierpiący/a
+A  50 drobny/a
 A 100 dziwny/a
 A  50 jego
 A  30 jej
 A  50 niemy/a
+A  50 nieskończony/a
+A  50 nieznajomy/a
+A 100 nieznany/a
+A  50 nowy/a
 A  50 obcy/a
 A  50 odcięty/a ATTR(od,2)
+A 100 ostatni/b
 A 100 pęknięty/a
+A  50 pogardzany/a
 A  50 przeklęty/a
+A  10 przytłumiony/a
+A 100 senny/a
+A 100 stary/a
+A 100 szary/a
 A 100 ślepy/a
 A  50 wygnany/a ATTR(z,2)
+A  30 zamknięty/a
+A 100 zapomniany/a
 A 100 złamany/a
 A 100 zmęczony/a
 A  30 zmęczony/a ATTR(5)
@@ -73,13 +93,16 @@ A  30 zmęczony/a ATTR(5)
 D 100 ciężko
 D 100 leniwie
 D  50 nieśmiało
+D  10 podstępnie
 D 100 "po kres"
+D 100 "po prostu"
 D 100 powoli
 D 100 sennie
 D  50 szybko
 D 100 tam
 D 100 tutaj
 D  10 "z wahaniem"
+D  10 złośliwie
 
 O  50 ależ
 O 100 ale
