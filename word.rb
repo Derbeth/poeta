@@ -368,9 +368,13 @@ module Grammar
 			retval = []
 			GENDERS.each do |gender|
 				[1,2].each do |number|
-					[true,false].each do |animate|
-						CASES.each do |gram_case|
-							retval << {:case => gram_case, :number => number, :gender => gender, :animate => animate}
+					CASES.each do |gram_case|
+						form = {:case => gram_case, :number => number, :gender => gender}
+						if gender == MASCULINE
+							retval << form.merge({:animate => true})
+							retval << form.merge({:animate => false})
+						else
+							retval << form
 						end
 					end
 				end
