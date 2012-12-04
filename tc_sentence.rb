@@ -311,7 +311,17 @@ V 100 kills OBJ(1)
 			sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
 			assert_equal('purge evil', sentence.write)
 		end
+		dictionary.read("V 100 purge OBJ(1) TAKES_ONLY(EVIL,HIPEREVIL)\nN 100 evil SEMANTIC(ADJECTIVE,EVIL)\nN 100 good SEMANTIC(GOOD,ADJECTIVE)")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			assert_equal('purge evil', sentence.write)
+		end
 		dictionary.read("V 100 purge OBJ(1) TAKES_NO(GOOD)\nN 100 evil SEMANTIC(EVIL)\nN 100 good SEMANTIC(GOOD)")
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			assert_equal('purge evil', sentence.write)
+		end
+		dictionary.read("V 100 purge OBJ(1) TAKES_NO(GOOD,HIPERGOOD)\nN 100 evil SEMANTIC(ADJECTIVE,EVIL)\nN 100 good SEMANTIC(GOOD,ADJECTIVE)")
 		10.times do
 			sentence = Sentence.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
 			assert_equal('purge evil', sentence.write)
@@ -638,11 +648,36 @@ V 100 kills OBJ(1)
 	end
 
 	def test_handle_adverb
+		grammar = GenericGrammar.new
 		dictionary = Dictionary.new
-		dictionary.read('D 100 fast')
 
-		sentence = Sentence.new(dictionary,'grammar','${ADV}')
-		assert_equal('fast', sentence.write)
+		dictionary.read "N 100 beast\nV 100 smiles\nD 100 horribly"
+		3.times do
+			sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV}')
+			assert_equal 'beast smiles horribly', sentence.write
+		end
+
+		dictionary.read "N 100 beast SEMANTIC(EVIL)\nV 100 smiles\nD 100 horribly\nD 100 lovely NOT_WITH(EVIL)"
+		3.times do
+			sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV}')
+			assert_equal 'beast smiles horribly', sentence.write
+		end
+		dictionary.read "N 100 beast SEMANTIC(EVIL,BEAST)\nV 100 smiles\nD 100 horribly\nD 100 lovely NOT_WITH(EVIL,HORRIBLE)"
+		3.times do
+			sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV}')
+			assert_equal 'beast smiles horribly', sentence.write
+		end
+
+		dictionary.read "N 100 beast SEMANTIC(EVIL)\nV 100 smiles\nD 100 horribly\nD 100 lovely ONLY_WITH(CUTE)"
+		3.times do
+			sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV}')
+			assert_equal 'beast smiles horribly', sentence.write
+		end
+		dictionary.read "N 100 beast\nV 100 smiles\nD 100 horribly\nD 100 lovely ONLY_WITH(CUTE)"
+		3.times do
+			sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV}')
+			assert_equal 'beast smiles horribly', sentence.write
+		end
 	end
 
 	def test_handle_empty_dictionary

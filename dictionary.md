@@ -36,7 +36,7 @@ Adjective
 
   may produce "lost in memory"
 
-* DOUBLE
+* `DOUBLE`
 
   Makes the adjective possibly take another adjective immeditely afterwards. Example:
 
@@ -54,7 +54,7 @@ Adjective
 
   prevents appearing things like "cat becomes these".
 
-* POSS
+* `POSS`
 
   Marks the adjective as possessive. This marks it automatically as 'double' as well.
 
@@ -69,7 +69,7 @@ Noun
 
   Marks the noun gender: male, female or neuter. Defaults to male if not specified.
 
-* nan
+* `nan`
 
   Marks the noun as non-animated (important for inflection in Slavic languages).
 
@@ -85,7 +85,7 @@ Noun
 
 * `PERSON(p)`
 
-* SUFFIX(suf)
+* `SUFFIX(suf)`
 
   Always adds a suffix (may contain spaces, so consist of many words) after the noun.
   While the noun is a subject to inflexion, the suffix never is.
@@ -98,7 +98,7 @@ Noun
 Verb
 ----
 
-* ADJ
+* `ADJ`
 
   Marks the verb as taking adjective object. Example:
 
@@ -108,9 +108,9 @@ Verb
 
   may produce "he becomes lost"
 
-* INF
+* `INF`
 
-  INF(prep)
+  `INF(prep)`
 
   Marks the verb as taking infinitive object, optionally by specifying a preposition. Example:
 
@@ -120,9 +120,9 @@ Verb
 
   may produce "he must listen"
 
-* OBJ(case)
+* `OBJ(case)`
 
-  OBJ(prep,case)
+  `OBJ(prep,case)`
 
   Marks the verb as taking noun as an object, optionally linked with a preposition. Example:
 
@@ -142,9 +142,9 @@ Verb
 
   Makes the verb be only used as object (so as an infinitive).
 
-* REFLEX
+* `REFLEX`
 
-  RELEXIVE
+  `RELEXIVE`
 
   Marks the verb as reflexive. Example:
 
@@ -153,7 +153,7 @@ Verb
 
   may produce "die Stadt befindet sich"
 
-* SUFFIX(suf)
+* `SUFFIX(suf)`
 
   Always adds a suffix (may contain spaces, so consist of many words) after the verb. Example:
 
@@ -165,12 +165,25 @@ Verb
 Semantic properties
 ===================
 
-* `ONLY_WITH(prop)`
+* `NOT_WITH(prop1,prop2)`
 
-  For adjectives: allows an adjective to be used only if its noun has given property.
+  Works exactly like `ONLY_WITH`, only it requires *none* of the given properties to be present.
 
-  For verbs: allows a verb to be used only when the subject has given property.
+* `ONLY_WITH(prop1,prop2)`
 
-* `TAKES_ONLY(prop)`
+  For adjectives: allows an adjective to be used only if its noun *has any* of given properties.
 
-  For verbs: makes a verb take only objects having given property.
+  For adverbs: allows an adverb to be used only if the subject has any of given properties.
+
+  For verbs: allows a verb to be used only if the subject has any of given properties.
+
+* `TAKES_NO(prop1,prop2)`
+
+  Works exactly like `TAKES_ONLY`, only it requires *none* of the given properties to be present.
+
+* `TAKES_ONLY(prop1,prop2)`
+
+  For verbs: makes a verb take only objects *having any* of given properties.
+
+All above have variants taking comma-separated list of words (instead of properties):
+`NOT_WITH_W`, `ONLY_WITH_W`, `TAKES_NO_W`, `TAKES_ONLY_W`

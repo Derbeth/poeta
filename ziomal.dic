@@ -158,7 +158,7 @@ D 100 dookoła
 D  50 już
 D 150 "kolejny raz"
 D 100 mocno
-D  25 "na lajcie"
+D  25 "na lajcie" NOT_WITH(POLICJA)
 D 150 "od razu"
 D 250 ostro
 D 100 pewnie

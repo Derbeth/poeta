@@ -456,7 +456,10 @@ class Sentence
 	end
 
 	def handle_adverb(full_match,index,options)
-		adverb = @dictionary.get_random(Grammar::ADVERB)
+		noun_index = self.class.read_index(full_match,index)
+		noun = @indexed_nouns[noun_index]
+		freq_counter = noun ? @dictionary.semantic_chooser(noun) : nil
+		adverb = @dictionary.get_random(Grammar::ADVERB, &freq_counter)
 		adverb ? adverb.text : ''
 	end
 
