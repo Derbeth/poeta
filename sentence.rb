@@ -347,7 +347,7 @@ class Sentence
 			nil
 		end
 
-		verb = @dictionary.get_random(Grammar::VERB, &freq_counter)
+		verb = @dictionary.get_random_verb_as_predicate(&freq_counter)
 		return '' unless verb
 		@verbs[noun_index] = verb
 		verb.inflect(@grammar,form)
@@ -414,7 +414,7 @@ class Sentence
 			freq_counter = lambda do |freq,word|
 				verb.text == word.text ? 0 : semantic_counter.call(freq,word)
 			end
-			object_verb = @dictionary.get_random(Grammar::VERB, &freq_counter)
+			object_verb = @dictionary.get_random_verb_as_object(&freq_counter)
 			next if (verb.text == object_verb.text)
 			break
 		end

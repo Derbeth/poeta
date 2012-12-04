@@ -250,6 +250,7 @@ module Grammar
 								raise ParseError, "wrong option format for #{line}: '#{part}'"
 						end
 						objects << NounObject.new(object_case, preposition)
+					when 'ONLY_OBJ' then general_props[:only_obj] = true
 					else
 						puts "warn: unknown option '#{part}' for '#{text}'"
 				end

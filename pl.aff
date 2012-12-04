@@ -27,6 +27,7 @@ N b 3,6      ra  rze  ra
 N b 3,6      ta  cie  ta
 N b 3,6      cha sze  cha # mucha -> musze
 N b 3,6      a   ie   [npsz]a
+N b 3,6      azda eździe azda # jazda
 N b 3,6      da  dzie da
 N b 4        a   ę    a
 N b 5        a   ą    a
@@ -94,20 +95,21 @@ N d 16        e   ach e
 N d 16        o   ach o
 
 # 93 m, sad, wał, mur, dąb, sen, chrzest, kwiat wiatr
-N e 1,4       0 0 .
-N e 2         0 u .
-N e 3         0 owi .
-N e 5         0 em  .
-N e 6,7       0 zie d
-N e 6,7       0 ze  r
-N e 6,7       0 ie  [bnpsz]
-N e 6,7       t cie t
-N e 6,7       0 u   ch # oddech
-N e 11,14,17  0 y   .
-N e 12        0 ów .
-N e 13        0 om .
-N e 15        0 ami .
-N e 16        0 ach .
+N e 1,4       0  0    .
+N e 2         0  u    .
+N e 3         0  owi  .
+N e 5         0  em   .
+N e 6,7       0  zie  d
+N e 6,7       0  ze   r
+N e 6,7       st ście st
+N e 6,7       t  cie  t
+N e 6,7       0  ie   [bnpsz]
+N e 6,7       0  u    ch # oddech
+N e 11,14,17  0  y    .
+N e 12        0  ów   .
+N e 13        0  om   .
+N e 15        0  ami  .
+N e 16        0  ach  .
 
 # 2 m, szatan, hiszpan
 N f 2,4    0 a .
@@ -206,17 +208,22 @@ N m 15        0 ami .
 N m 16        0 ach .
 
 # 124 f, kość, część; 123: /1 sieć, myśl, brew
-N n 2,3,6,7,11,12,14,17 ć ci    ć
-N n 2,3,6,7,11,12,14,17 0 i     l
-N n 4                   0 0     [ćl]
-N n 5                   ć cią   ć
-N n 5                   0 ą     l
-N n 13                  ć ciom  ć
-N n 13                  0 om    l
-N n 15                  ć ciami ć
-N n 15                  0 ami   l
-N n 16                  ć ciach ć
-N n 16                  0 ach   l
+N n 2,3,6,7,11,12,14,17 ew wi   ew
+N n 2,3,6,7,11,12,14,17 ć  ci    ć
+N n 2,3,6,7,11,12,14,17 0  i     l
+N n 4                   0  0     [ćl]
+N n 5                   ew wią   ew
+N n 5                   ć  cią   ć
+N n 5                   0  ą     l
+N n 13                  ew wiom  ew
+N n 13                  ć  ciom  ć
+N n 13                  0  om    l
+N n 15                  ew wiami ew
+N n 15                  ć  ciami ć
+N n 15                  0  ami   l
+N n 16                  ew wiach ew
+N n 16                  ć  ciach ć
+N n 16                  0  ach   l
 
 # 82 m, dzień, cień, modrzew, bal, gwóźdź, tułów, mięsień, mebel, pień, węgiel
 N o 2    zień nia   zień

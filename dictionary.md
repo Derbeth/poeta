@@ -136,6 +136,12 @@ Verb
 
   may produce "hör mich".
 
+* `OBJ_FREQ(f)`
+
+* `ONLY_OBJ`
+
+  Makes the verb be only used as object (so as an infinitive).
+
 * REFLEX
 
   RELEXIVE
@@ -155,3 +161,16 @@ Verb
         V 100 go/1 SUFFIX(nuts)
 
   may produce "she goes nuts"
+
+Semantic properties
+===================
+
+* `ONLY_WITH(prop)`
+
+  For adjectives: allows an adjective to be used only if its noun has given property.
+
+  For verbs: allows a verb to be used only when the subject has given property.
+
+* `TAKES_ONLY(prop)`
+
+  For verbs: makes a verb take only objects having given property.

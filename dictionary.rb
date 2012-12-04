@@ -100,6 +100,26 @@ module Grammar
 			end
 		end
 
+		def get_random_verb_as_predicate(&freq_counter)
+			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
+			get_random(VERB) do |frequency, word|
+				if word.get_property(:only_obj)
+					frequency = 0
+				end
+				counter.call(frequency,word)
+			end
+		end
+
+		def get_random_verb_as_object(&freq_counter)
+			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
+			get_random(VERB) do |frequency, word|
+				if word.get_property(:obj_freq)
+					frequency = word.get_property(:obj_freq)
+				end
+				counter.call(frequency,word)
+			end
+		end
+
 		def get_random_adjective_object(&freq_counter)
 			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
 			get_random(ADJECTIVE) do |frequency, word|

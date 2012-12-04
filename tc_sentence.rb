@@ -538,7 +538,15 @@ V 100 kills OBJ(1)
 		grammar = PolishGrammar.new
 		sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('pies chce jeść', sentence.write)
-		
+
+		# check that ONLY_OBJ works for verbs
+		srand
+		dictionary.read "N 100 pies\nV 100 chce INF\nV 30 jeść ONLY_OBJ"
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+			assert_equal 'pies chce jeść', sentence.write
+		end
+
 		# infinitive taking object itself
 		srand 1
 		grammar.read_rules "N a 4 ies sa ies\nV a 1 e ę e\n"
@@ -692,6 +700,17 @@ N  10 "foo"
 		dictionary_text = <<-END
 N 100 noun1 ONLY_SUBJ
 N  10 noun2
+V 100 verb1 OBJ(4)
+		END
+		dictionary.read(dictionary_text)
+		10.times do
+			assert_equal('verb1 noun2', Sentence.new(dictionary,grammar,'${VERB(2)} ${OBJ}').write)
+		end
+
+		# test OBJ_FREQ
+		dictionary_text = <<-END
+N 100 noun1 ONLY_SUBJ
+N  0  noun2 OBJ_FREQ(10)
 V 100 verb1 OBJ(4)
 		END
 		dictionary.read(dictionary_text)
