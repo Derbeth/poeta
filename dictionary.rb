@@ -130,6 +130,7 @@ module Grammar
 			end
 		end
 
+		# erases all contents of the dictionary and reads new contents from the given source
 		def read(source)
 			@words = {}
 			source.each_line do |line|
@@ -145,7 +146,6 @@ module Grammar
 
 					@words[speech_part] ||= []
 					@words[speech_part] << word
-# 					puts "#{word.inspect}"
 				rescue ParseError => e
 					puts "error: #{e.message}"
 				end
@@ -238,6 +238,42 @@ module Grammar
 			@remembered_indices[speech_part].shift if @remembered_indices[speech_part].size > @max_size
 			index
 		end
+	end
+
+	# Useful for tests: user can supply the object with a sequence of indices
+	# and they will be returned. If there are no supplied inidices, falls
+	# back to default (returning random index).
+	class ControlledDictionary < Dictionary
+		def initialize
+			super
+			# hash: word type => collection of indices
+			@supplied_indices = {}
+		end
+
+		def set_indices(speech_part, indices)
+			unless SPEECH_PARTS.include? speech_part
+				raise ArgumentError, "no such speech part: #{speech_part}"
+			end
+			unless indices.respond_to? :shift
+				raise ArgumentError, "expected something array-like but received #{indices.class}"
+			end
+			words_count = @words[speech_part] ? @words[speech_part].size : 0
+			if indices.find { |i| i < 0 || i >= words_count }
+				raise ArgumentError, "wrong index in #{indices.inspect}: words count is #{words_count}"
+			end
+			@supplied_indices[speech_part] = indices
+		end
+
+		protected
+		def get_random_index(freq_array,speech_part)
+			indices = @supplied_indices[speech_part]
+			if indices.nil? || indices.empty?
+				return super(freq_array,speech_part)
+			end
+
+			indices.shift
+		end
+
 	end
 
 end

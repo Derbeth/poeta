@@ -197,6 +197,12 @@ module Grammar
 			@case, @preposition, @is_noun = noun_case, preposition, true
 			raise GramObjectError, "invalid case: #{noun_case}" if !CASES.include? noun_case
 		end
+
+		def to_s
+			res = "NounObject(#{CASE2STRING[@case]}"
+			res += ", prep=#{@preposition}" if @preposition
+			res + ")"
+		end
 	end
 
 	class AdjectiveObject < GramObject
@@ -212,6 +218,10 @@ module Grammar
 		def initialize(preposition=nil)
 			super()
 			@preposition, @is_infinitive = preposition, true
+		end
+
+		def to_s
+			"InfObject(#{preposition})"
 		end
 	end
 

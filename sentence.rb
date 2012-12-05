@@ -37,8 +37,8 @@ end
 class SentenceManager
 	attr_reader :debug
 
-	def initialize(dictionary,grammar,better=false,debug=false)
-		@dictionary,@grammar,@better,@debug=dictionary,grammar,better,debug
+	def initialize(dictionary,grammar,debug=false)
+		@dictionary,@grammar,@debug=dictionary,grammar,debug
 		@sentence_builders=[]
 	end
 
@@ -50,7 +50,7 @@ class SentenceManager
 				next if line !~ /\w/
 				line.chomp!
 				frequency, rest = read_frequency(line)
-				sentence_builder = SentenceBuilder.new(@dictionary,@grammar,rest,frequency,@better,@debug)
+				sentence_builder = SentenceBuilder.new(@dictionary,@grammar,rest,frequency,@debug)
 				@sentence_builders << sentence_builder
 			rescue ParseError => e
 				puts "error: #{e.message}"
@@ -92,24 +92,24 @@ class SentenceBuilder
 	include Sentences
 	attr_accessor :frequency, :debug
 
-	def initialize(dictionary,grammar,pattern,frequency,better=false,debug=false)
-		@dictionary,@grammar,@pattern,@frequency,@better,@debug = dictionary,grammar,pattern,frequency,better,debug
+	def initialize(dictionary,grammar,pattern,frequency,debug=false)
+		@dictionary,@grammar,@pattern,@frequency,@debug = dictionary,grammar,pattern,frequency,debug
 		raise "invalid frequency: #{frequency}" if frequency < 0
 		Sentence.validate_pattern(pattern)
 	end
 
 	def create_sentence
-		Sentence.new(@dictionary,@grammar,@pattern.dup,@better,@debug)
+		Sentence.new(@dictionary,@grammar,@pattern.dup,@debug)
 	end
 end
 
 class Sentence
 	attr_accessor :debug
-	attr_reader :double_adj_chance, :other_word_chance, :object_adj_chance
+	attr_reader :double_adj_chance, :double_noun_chance, :other_word_chance, :object_adj_chance
 	attr_reader :text, :subject, :pattern
 
-	def initialize(dictionary,grammar,pattern,better=false,debug=false)
-		@dictionary,@grammar,@pattern,@better,@debug = dictionary,grammar,pattern.strip,better,debug
+	def initialize(dictionary,grammar,pattern,debug=false)
+		@dictionary,@grammar,@pattern,@debug = dictionary,grammar,pattern.strip,debug
 		@subject = nil
 		@forced_subject_number = nil
 		# maps: verb_index => word object; @indexed_nouns include only $SUBJ/$NOUN and *not* $OBJ
@@ -120,6 +120,7 @@ class Sentence
 		@adjectives = []
 		self.other_word_chance = DEFAULT_OTHER_CHANCE
 		self.double_adj_chance = DEFAULT_DBL_ADJ_CHANCE
+		self.double_noun_chance = DEFAULT_DBL_NOUN_CHANCE
 		self.object_adj_chance = DEFAULT_OBJ_ADJ_CHANCE
 	end
 
@@ -131,6 +132,11 @@ class Sentence
 	def double_adj_chance=(chance)
 		validate_chance(chance)
 		@double_adj_chance = chance
+	end
+
+	def double_noun_chance=(chance)
+		validate_chance(chance)
+		@double_noun_chance = chance
 	end
 
 	def object_adj_chance=(chance)
@@ -201,8 +207,10 @@ class Sentence
 	private
 
 	MAX_ATTR_RECUR = 3
+	DBL_NOUN_RECUR = 1
 	DEFAULT_OTHER_CHANCE = 0.3
 	DEFAULT_DBL_ADJ_CHANCE = 0.4
+	DEFAULT_DBL_NOUN_CHANCE = 0.25
 	DEFAULT_OBJ_ADJ_CHANCE = 0.4
 	def handle_subject(full_match,index,options)
 		subject_index = self.class.read_index(full_match,index)
@@ -305,7 +313,14 @@ class Sentence
 		# remember the noun to prevent the same noun appearing twice in a sentence
 		@nouns << noun
 
-		_common_handle_word_with_attributes(noun, form, allow_recur)
+		inflected = _common_handle_word_with_attributes(noun, form, allow_recur)
+
+		if allow_recur > 0 && !inflected.empty? && check_chance(double_noun_chance)
+			attribute = handle_noun_object(noun, NounObject.new(GENITIVE), DBL_NOUN_RECUR)
+			inflected += ' ' + attribute
+		end
+
+		inflected
 	end
 
 	# takes a word possibly having an attribute (so a noun or adjective),
@@ -378,7 +393,7 @@ class Sentence
 		resolved_objects.join(' ')
 	end
 
-	# word - either adjective or verb needing an object
+	# word - adjective, noun or verb needing an object
 	# object_spec - specification of how to find object, of class GramObject
 	def handle_noun_object(word, object_spec,allow_recur=MAX_ATTR_RECUR)
 		object = nil
@@ -388,19 +403,24 @@ class Sentence
 				word.text == candidate_word.text ? 0 : semantic_counter.call(freq,candidate_word)
 			end
 			object = @dictionary.get_random_object(&freq_counter)
-			next if (@nouns.find { |n| n.text == object.text})
+			next if (object && @nouns.find { |n| n.text == object.text})
 			break
 		end
 		return '' unless object
 
-		form = {:case=>object_spec.case}
-		inflected_object = _common_handle_noun(object, form, allow_recur-1) # -1 to prevent infinite loop danger?
-
+		# resolve adjective before inflecting object
+		# in order to avoid assigning first object adjective to the
+		# noun attribute added to the object
+		adj_text = nil
 		adj_chance = @adjectives.empty?  ? object_adj_chance : object_adj_chance/2
 		if check_chance(adj_chance)
 			adj_text = _handle_adjective(object, object_spec.case)
-			inflected_object = adj_text + ' ' + inflected_object unless adj_text.empty?
 		end
+
+		form = {:case=>object_spec.case}
+		inflected_object = _common_handle_noun(object, form, allow_recur-1) # -1 to prevent infinite loop danger?
+
+		inflected_object = adj_text + ' ' + inflected_object if adj_text && !adj_text.empty?
 
 		object_spec.preposition ?
 			@grammar.join_preposition_object(object_spec.preposition,inflected_object) :
