@@ -236,7 +236,7 @@ class SentenceTest < Test::Unit::TestCase
 	end
 
 	# when wrongly used, noun attributes could cause infinite loops
-	def test_noun_attributes_inf_loop
+	def test_noun_attribute_inf_loop
 		dictionary = Dictionary.new
 		grammar = GenericGrammar.new
 		dictionary.read "N 10 foo ATTR(prep,2)\nN 10 bar ATTR(prep,3)\nN 10 baz ATTR(prep,4)\n"
@@ -244,6 +244,18 @@ class SentenceTest < Test::Unit::TestCase
 		10.times do
 			sentence = SentenceWrapper.new(dictionary,grammar,'oto ${NOUN}')
 			assert_match(/oto \w+/, sentence.write)
+		end
+	end
+
+	def test_noun_attribute_forbidden_combinations
+		dictionary = Dictionary.new
+		grammar = GenericGrammar.new
+		dictionary.read "N 10 licence ATTR(to,2)\nN 10 kill\nN 10 we Pl PERSON(1)"
+
+		possible = ['this licence to kill', 'this kill', 'this we']
+		10.times do
+			sentence = SentenceWrapper.new(dictionary,grammar,'this ${NOUN}')
+			assert_includes(possible, sentence.write)
 		end
 	end
 
@@ -580,6 +592,39 @@ A y 115 0 ymi .
 			sentence.double_noun_chance = 1
 			dictionary.set_indices NOUN, [0, 1] # zwierz, las
 			assert_equal 'czarny zwierz lasów idzie', sentence.write
+		end
+	end
+
+	def test_double_noun_english
+		grammar = EnglishGrammar.new
+		dictionary = ControlledDictionary.new
+		dictionary.read "N 100 eye\nN 100 eagle"
+		5.times do
+			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ}')
+			sentence.double_noun_chance = 1
+			dictionary.set_indices NOUN, [0, 1]
+			assert_equal 'eye of eagle', sentence.write
+		end
+	end
+
+	def test_double_noun_forbidden_combinations
+		grammar = EnglishGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 100 eye\nN 100 eagle\nN 100 I PERSON(1)"
+		10.times do
+			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ}')
+			sentence.double_noun_chance = 1
+			text = sentence.write
+			assert_match(/\w+ \w+/, text)
+			assert_no_match(/\b(of I|I of)\b/, text)
+		end
+
+		dictionary.read "N 100 eagle\nN 100 I PERSON(1)"
+		10.times do
+			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ}')
+			sentence.double_noun_chance = 1
+			text = sentence.write
+			assert_includes ['eagle', 'I'], text
 		end
 	end
 

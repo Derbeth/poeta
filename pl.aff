@@ -1,23 +1,32 @@
 # http://grzegorj.w.interia.pl/gram/pl/deklin_stat.html
 
-# 9 m, gość, ludzie; 17 m człowiek, Polak /1
+# 9 m, gość, ludzie; 17 m człowiek, Polak /1, Turek /2
 N a 2,4   ć   cia   ć
+N a 2,4   ek  ka    ek/2
 N a 2,4   0   a     ./1
 N a 3     ć   ciowi ć
+N a 3     ek  kowi  ek/2
 N a 3     0   owi   ./1
 N a 5     ć   ciem  ć
+N a 5     ek  kiem  ek/2
 N a 5     0   iem   k/1
 N a 6,7   ć   ciu   ć
+N a 6,7   ek  ku    ek/2
 N a 6,7   0   u     ./1
 N a 11,17 ć   cie   ć
+N a 11,17 ek  ki    ek/2
 N a 12,14 ć   ci    ć
 N a 12,14 e   0     ie
+N a 12,14 ek  ków   ek/2
 N a 13    ć   ciom  ć
 N a 13    e   om    ie
+N a 13    ek  kom   ek/2
 N a 15    ć   ciami ć
 N a 15    zie źmi   dzie
+N a 15    ek  kami  ek/2
 N a 16    ć   ciach ć
 N a 16    e   ach   ie
+N 1 16    ek  kach  ek/2
 
 # 139 f, miotła, kołdra, panna, igła, gra, wiara, kobieta
 N b 2        a   y a
@@ -361,32 +370,33 @@ N 0 16       one   nich   one
 
 # http://grzegorj.w.interia.pl/gram/pl/odmiana2.html
 
-A a 102,202     y  ego y
-A a 104         y  ego y
-A a 103,203     y  emu y
-A a 105,205     0  m   y
-A a 106,206     0  m   y
-A a 201,207     y  e   y
-A a 204         y  e   y
-A a 301,307     y  a   y
-A a 302         y  ej  y
-A a 303         y  ej  y
-A a 304         y  ą   y
-A a 305         y  ą   y
-A a 306         y  ej  y
-A a 111,117     dy dzi dy
-A a 111,117     ry rzy ry
-A a 111,117     ty ci  ty
-A a 111,117     zy i   szy
-A a 111,117     y  i   [bmnpsw]y
-A a 112,212,312 0  ch  y
-A a 113,213,313 0  m   y
-A a 114         0  ch  y
-A a 115,215,315 0  mi  y
-A a 116,216,316 0  ch  y
-A a 211,311     y  e   y
-A a 214,314     y  e   y
-A a 217,317     y  e   y
+A a 102,202     y   ego  y
+A a 104         y   ego  y
+A a 103,203     y   emu  y
+A a 105,205     0   m    y
+A a 106,206     0   m    y
+A a 201,207     y   e    y
+A a 204         y   e    y
+A a 301,307     y   a    y
+A a 302         y   ej   y
+A a 303         y   ej   y
+A a 304         y   ą    y
+A a 305         y   ą    y
+A a 306         y   ej   y
+A a 111,117     dy  dzi  dy
+A a 111,117     ry  rzy  ry
+A a 111,117     ty  ci   ty
+A a 111,117     zy  i    szy
+A a 111,117     ony eni  ony # zniszczony -> zniszczeni
+A a 111,117     y   i    [bmnpsw]y
+A a 112,212,312 0   ch   y
+A a 113,213,313 0   m    y
+A a 114         0   ch   y
+A a 115,215,315 0   mi   y
+A a 116,216,316 0   ch   y
+A a 211,311     y   e    y
+A a 214,314     y   e    y
+A a 217,317     y   e    y
 
 A b 102,202          0  ego i
 A b 103,203          0  emu i

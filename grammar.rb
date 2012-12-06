@@ -164,6 +164,16 @@ module Grammar
 			preposition + ' ' + object
 		end
 
+		# joins main noun and noun serving as an attribute_noun
+		# may reject the attribute noun and return only main noun
+		def join_attribute_noun(main_noun, attribute_noun)
+			if noun_join_allowed?(main_noun, attribute_noun)
+				joined_attribute_noun(main_noun, attribute_noun)
+			else
+				main_noun
+			end
+		end
+
 		protected
 		def read_forms(form_str)
 			forms = case form_str
@@ -204,6 +214,14 @@ module Grammar
 			form_id += (number-1) * 10
 			form_id += gender * 100
 			form_id
+		end
+
+		def noun_join_allowed?(main_noun, attribute_noun)
+			true
+		end
+
+		def joined_attribute_noun(main_noun, attribute_noun)
+			main_noun + ' ' + attribute_noun
 		end
 	end
 
@@ -268,7 +286,14 @@ module Grammar
 
 		private
 		def reflexive_word
-			'such'
+			'sich'
+		end
+	end
+
+	class EnglishGrammar < GenericGrammar
+		protected
+		def joined_attribute_noun(main_noun, attribute_noun)
+			main_noun + ' of ' + attribute_noun
 		end
 	end
 

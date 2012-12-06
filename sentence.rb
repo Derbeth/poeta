@@ -210,7 +210,7 @@ class Sentence
 	DBL_NOUN_RECUR = 1
 	DEFAULT_OTHER_CHANCE = 0.3
 	DEFAULT_DBL_ADJ_CHANCE = 0.4
-	DEFAULT_DBL_NOUN_CHANCE = 0.25
+	DEFAULT_DBL_NOUN_CHANCE = 0.2
 	DEFAULT_OBJ_ADJ_CHANCE = 0.4
 	def handle_subject(full_match,index,options)
 		subject_index = self.class.read_index(full_match,index)
@@ -317,7 +317,7 @@ class Sentence
 
 		if allow_recur > 0 && !inflected.empty? && check_chance(double_noun_chance)
 			attribute = handle_noun_object(noun, NounObject.new(GENITIVE), DBL_NOUN_RECUR)
-			inflected += ' ' + attribute
+			inflected = @grammar.join_attribute_noun(inflected, attribute) unless attribute.empty?
 		end
 
 		inflected
