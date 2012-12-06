@@ -400,7 +400,13 @@ class Sentence
 		12.times do
 			semantic_counter = @dictionary.semantic_chooser(word)
 			freq_counter = lambda do |freq,candidate_word|
-				word.text == candidate_word.text ? 0 : semantic_counter.call(freq,candidate_word)
+				if word.text == candidate_word.text
+					0
+				elsif word.class == Noun && noun_noun_forbidden?(word, candidate_word)
+					0
+				else
+					semantic_counter.call(freq,candidate_word)
+				end
 			end
 			object = @dictionary.get_random_object(&freq_counter)
 			next if (object && @nouns.find { |n| n.text == object.text})
@@ -425,6 +431,15 @@ class Sentence
 		object_spec.preposition ?
 			@grammar.join_preposition_object(object_spec.preposition,inflected_object) :
 			inflected_object
+	end
+
+	# returns true if it is forbidden to use the second noun as the attribute
+	# for the first noun
+	def noun_noun_forbidden?(main_noun, attribute_noun)
+		[main_noun, attribute_noun].each do |noun|
+			return true if noun.person != 3
+		end
+		false
 	end
 
 	def handle_infinitive_object(verb, object_spec, noun_index)

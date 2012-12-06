@@ -615,7 +615,7 @@ A y 115 0 ymi .
 			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ}')
 			sentence.double_noun_chance = 1
 			text = sentence.write
-			assert_match(/\w+ \w+/, text)
+			assert_match(/\w+/, text)
 			assert_no_match(/\b(of I|I of)\b/, text)
 		end
 
