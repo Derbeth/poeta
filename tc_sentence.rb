@@ -922,6 +922,13 @@ class SentenceManagerTest < Test::Unit::TestCase
 		assert_equal('okeee', mgr.random_sentence.write)
 	end
 
+	def test_nonlatin_characters
+		srand
+		mgr = SentenceManager.new('dictionary','grammar')
+		mgr.read '10 ну, давай'
+		assert_equal 'ну, давай', mgr.random_sentence.write
+	end
+
 	def test_get_random
 		srand
 		input = <<-END

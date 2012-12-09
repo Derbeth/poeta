@@ -488,12 +488,12 @@ V 1 12 ieć acie ieć
 V 1 13 ieć ają  ieć
 
 # koniugacja IV, malować
-V 4  1 ować uję    ować
-V 4  2 ować ujesz  ować
-V 4  3 ować uje    ować
-V 4 11 ować ujemy  ować
-V 4 12 ować ujecie ować
-V 4 13 ować ują    ować
+V 4  1 [io]wać uję    [io]wać
+V 4  2 [io]wać ujesz  [io]wać
+V 4  3 [io]wać uje    [io]wać
+V 4 11 [io]wać ujemy  [io]wać
+V 4 12 [io]wać ujecie [io]wać
+V 4 13 [io]wać ują    [io]wać
 
 # koniugacja Va, płonąć, ciągnąć
 # Vb: wysunąć

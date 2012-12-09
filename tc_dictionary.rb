@@ -87,7 +87,6 @@ N 0 też nigdy
 		assert_equal 'foo', adj.text
 		assert_equal 'przed', adj.attributes[0].preposition
 		assert_equal 5, adj.attributes[0].case
-
 	end
 
 	def test_parse_verb
@@ -231,6 +230,20 @@ N 10 MyObject3  ONLY_OBJ
 			assert_equal('good', dictionary.get_random(NOUN, &dictionary.semantic_chooser(
 				Word.new('spread', [], {:takes_no_word=>['evil']}))).text)
 		end
+	end
+
+	def test_nonlatin_characters
+		dict = Dictionary.new
+		dict.read <<-END
+A 100 стоющий/b ATTR(перед,5)
+O 100 "разве, что"
+		END
+		adj = dict.get_random ADJECTIVE
+		assert_equal 'стоющий', adj.text
+		assert_equal 'перед', adj.attributes[0].preposition
+		assert_equal 5, adj.attributes[0].case
+
+		assert_equal 'разве, что', dict.get_random(OTHER).text
 	end
 
 	private

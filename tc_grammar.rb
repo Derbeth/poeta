@@ -210,6 +210,15 @@ V a 12 ć cie ać
 	end
 end
 
+class GenericGrammarTest < Test::Unit::TestCase
+	def test_nonlatin_characters
+		grammar = GenericGrammar.new
+		assert_equal 0, grammar.size
+		grammar.read_rules "A a 301 ый ая ый"
+		assert_equal 1, grammar.size
+	end
+end
+
 class GrammarFormTest < Test::Unit::TestCase
 	def test_pretty_print
 		form = {}
