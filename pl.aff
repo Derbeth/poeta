@@ -111,6 +111,7 @@ N e 5         0  em   .
 N e 6,7       0  zie  d
 N e 6,7       0  ze   r
 N e 6,7       st ście st
+N e 6,7       at ecie iat # kwiat
 N e 6,7       t  cie  t
 N e 6,7       0  ie   [bnpsz]
 N e 6,7       0  u    ch # oddech
@@ -171,17 +172,21 @@ N i 15        0 ami .
 N i 16        0 ach .
 
 # 3 m, facet, Hucuł, błazen, sąsiad
-N j 2,4    0 a   .
-N j 3      0 owi .
-N j 5      0 em  .
-N j 6,7    t cie t
-N j 6,7    ł le  ł
-N j 11,17  0 y   ./1
-N j 11,17  t ci  t
-N j 12,14  0 ów  .
-N j 13     0 om  .
-N j 15     0 ami .
-N j 16     0 ach .
+N j 2,4    0  a     .
+N j 3      0  owi   .
+N j 5      0  em    .
+N j 6,7    at ecie  at/2 # świat (90)
+N j 6,7    t  cie   t
+N j 6,7    ł  le    ł
+N j 6,7    0  ie    s/2  # włos (90)
+N j 11,17  0  y     ./1
+N j 11,17  0  y     ./2
+N j 11,17  t  ci    t
+N j 14     0  y     ./2  # włos
+N j 12,14  0  ów    .
+N j 13     0  om    .
+N j 15     0  ami   .
+N j 16     0  ach   .
 
 # 125 f, noc, uprząż
 N k 2,3,6,7,12  0 y   .
@@ -271,7 +276,7 @@ N o 16        ń    niach ń
 N o 16        0    iach  w
 N o 16        0    ach   .
 
-# 113 n, udo, działo, zero, niebo, słowo, koło
+# 113 n, udo, działo, zero, niebo, słowo, koło, usta
 N p 2        o    a     o
 N p 3        o    u     o
 N p 5        o    em    o
@@ -287,10 +292,11 @@ N p 11,14,17 o    a     o
 N p 12       oło  ół    oło
 N p 12       ło   eł    sło
 N p 12       owo  ów    owo
-N p 12       o    0     o
+N p 12       [ao] 0     [ao]
 N p 13       0    m     o
-N p 15       o    ami   o
-N p 16       o    ach   o
+N p 13       a    om    a   # usta -> ustom
+N p 15       [ao] ami   [ao]
+N p 16       [ao] ach   [ao]
 
 # n, 115, wojsko, boisko, echo, jajo, dobro, zło
 N q 2        o a   o
@@ -304,20 +310,20 @@ N q 15       o ami o
 N q 16       o ach o
 
 # f, 130, 131, ręka, droga, apteka, matka
-N r 2,11,14,17 a   i   a
-N r 3,6        ka  ce  ka
-N r 3,6        ga  dze ga
-N r 4          a   ę   a
-N r 5          a   ą   a
-N r 7          a   o   a
-N r 12         oga óg  oga
-N r 12         ęka ąk  ęka
-N r 12         a   0   eka
-N r 12         a   0   rga
-N r 12         ka  ek  ka
-N r 13         a   om  a
-N r 15         0   mi  a
-N r 16         0   ch  a
+N r 2,11,14,17 a      i   a
+N r 3,6        ka     ce  ka
+N r 3,6        ga     dze ga
+N r 4          a      ę   a
+N r 5          a      ą   a
+N r 7          a      o   a
+N r 12         oga    óg  oga
+N r 12         [ąę]ka ąk  [ąę]ka
+N r 12         a      0   eka
+N r 12         a      0   rga
+N r 12         ka     ek  ka
+N r 13         a      om  a
+N r 15         0      mi  a
+N r 16         0      ch  a
 
 # f, 141, nuda, zdrada
 N s 2,11,14,17 a y   a
@@ -339,6 +345,32 @@ N t 12         0 ów  .
 N t 13         0 om  .
 N t 15         0 ami .
 N t 16         0 ach .
+
+# f, 121 oś, kolej, kąpiel, łódź; /1 122, dłoń, sanie
+N u 2,3,6,7,12  ń  ni    ń
+N u 2,3,6,7,12  ś  si    ś
+N u 2,3,6,7,12  j  i     j
+N u 2,3,6,7,12  ź  zi    dź
+N u 2,3,6,7,12  0  i     l
+N u 5           ń  nią   ń
+N u 5           ś  sią   ś
+N u 5           ź  zią   dź
+N u 5           0  ą     .
+N u 11,14,17    ń  nie   ń
+N u 11,14,17    ś  sie   ś
+N u 11,14,17    ź  zie   dź
+N u 11,14,17    0  e     .
+N u 13          ń  niom  ń
+N u 13          ś  siom  ś
+N u 13          ź  ziom  dź
+N u 13          0  om    .
+N u 15          0  mi    ń/1
+N u 15          ś  siami ś
+N u 15          0  ami   .
+N u 16          ń  niach ń
+N u 16          ś  siach ś
+N u 16          ź  ziach dź
+N u 16          0  ach   .
 
 # ja, ty, on
 N 0 2,3,4,6  ja    mnie  ja

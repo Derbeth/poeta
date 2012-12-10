@@ -1,28 +1,49 @@
+N  50 ból/c m
 N  50 ciało/p n
 N  50 ciało/p n Pl
+N  50 dłoń/u1 f Pl
 N 100 dotyk/g m nan
+N  50 kwiat/e m nan
+N 100 miłość/n f
 N 100 namiętność/n f
 N 100 oczekiwanie/d n
+N  90 oddech/e m nan
+N  10 oddech/e m nan Pl
 N 100 pasja/h f
 N 100 piękno/p n
+N  80 pieszczota/b f
+N  20 pieszczota/b f Pl
 N  50 pocałunek/g m nan
 N  50 pocałunek/g m nan Pl
 N 100 policzek/a2 m nan Pl
 N  50 powieka/r f Pl
 N  50 rozkosz/k f
 N  50 rozkosz/k f Pl
+N  50 rozłąka/r f
 N 100 spojrzenie/d n
+N  50 spotkanie/d n
+N 100 szept/e m nan
 N 100 tęsknota/b f
+N  50 twarz/k f
 N  50 uczucie/d n
 N  50 uczucie/d n Pl
+N 100 usta/p n Pl
+N  80 uśmiech/e m nan
+N  20 uśmiech/e m nan Pl
+N 100 warga/r f Pl
+N 100 włos/j2 m nan Pl
 N 100 wstyd/e m nan
+N 100 zapach/e m nan
 N 100 żar/e m nan
+N  45 żądza/l f
+N   5 żądza/l f Pl
 
-N 200 "" m PERSON(1) NO_ADJ ONLY_SUBJ # ja
-N 200 "" m PERSON(2) NO_ADJ ONLY_SUBJ # ty
-N 200 "" m Pl PERSON(1) NO_ADJ ONLY_SUBJ # my
-N 100 ja/0 m PERSON(1) NO_ADJ ONLY_OBJ
-N  50 ty/0 f PERSON(2) NO_ADJ ONLY_OBJ
+N 200 "" m PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(PERSON)    # ja
+N 200 "" m PERSON(2) NO_ADJ ONLY_SUBJ SEMANTIC(PERSON)    # ty
+N 200 "" m Pl PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(PERSON) # my
+N  10 ja/0 m PERSON(1) OBJ_FREQ(100) SEMANTIC(PERSON)
+N  10 ty/0 f PERSON(2) OBJ_FREQ(50) SEMANTIC(PERSON)
+N  10 my/0 m PERSON(1) OBJ_FREQ(30) SEMANTIC(PERSON,PLURAL)
 
 A 100 cielesny/a NOT_WITH_W(ciało)
 A 100 delikatny/a
@@ -35,15 +56,19 @@ A  50 nasz/d     POSS
 A  50 niecierpliwy/a
 A 100 nieśmiały/a
 A  20 nieuchwytny/a
+A  20 ostatni/b
 A 100 pierwszy/a
 A  50 rozpalony/a
 A 100 słodki/b
 A  50 spleciony/a
+A  50 szybki/b
 A  50 twój/e     POSS
+A 100 ukryty/a NOT_WITH(PERSON)
 A 100 utęskniony/a
 A 100 wstydliwy/a
 
 V 100 budzić/6b OBJ(4)
+V  10 chwytać/1 OBJ(4) OBJ(za,4)
 V 100 czekać/1 OBJ(na,4) NOT_WITH_W(oczekiwanie) TAKES_NO_W(oczekiwanie)
 V 100 dotykać/1 OBJ(4) NOT_WITH_W(dotyk) TAKES_NO_W(dotyk)
 V 100 drżeć/7
@@ -53,6 +78,8 @@ V  80 lubić/6 OBJ(4)
 V  20 lubić/6 INF
 V 100 pałać/1 OBJ(5)
 V 100 patrzeć/7 OBJ(na,4)
+V  70 płonąć/5
+V  30 płonąć/5 OBJ(z,2) TAKES_NO(PERSON)
 V  80 pragnąć/5 OBJ(2)
 V  20 pragnąć/5 INF
 V 100 rozbierać/1 OBJ(4)
@@ -72,6 +99,7 @@ D 100 niecierpliwie
 D 100 nieśmiale
 D  50 rozkosznie
 D  50 rozpaczliwie
+D  50 skrycie
 D 100 ukradkiem
 D 100 wstydliwie
 

@@ -280,12 +280,11 @@ class Sentence
 		noun = @indexed_nouns[noun_index]
 		return '' if noun == nil || noun.get_property(:no_adjective)
 
-		_handle_adjective(noun, parsed_opts[:case])
+		_handle_adjective(noun, parsed_opts)
 	end
 
-	def _handle_adjective(noun, gram_case=nil, exclude_double=false)
-		gram_case ||= NOMINATIVE
-
+	# handled adj_opts: :case, :number
+	def _handle_adjective(noun, adj_opts={}, exclude_double=false)
 		semantic_counter = @dictionary.semantic_chooser(noun)
 		if exclude_double
 			freq_counter = lambda do |freq,candidate|
@@ -298,11 +297,13 @@ class Sentence
 		return '' unless adjective
 
 		@adjectives << adjective
-		form = {:case=>gram_case, :gender=>noun.gender, :number=>noun.number, :animate => noun.animate}
+		gram_case = adj_opts[:case] || NOMINATIVE
+		number = adj_opts[:number] || noun.number
+		form = {:case=>gram_case, :gender=>noun.gender, :number=>number, :animate => noun.animate}
 		inflected = _common_handle_word_with_attributes(adjective, form)
 
 		if adjective.double && check_chance(double_adj_chance)
-			inflected += ' ' + _handle_adjective(noun, gram_case, true)
+			inflected += ' ' + _handle_adjective(noun, adj_opts, true)
 		end
 
 		inflected
@@ -420,7 +421,7 @@ class Sentence
 		adj_text = nil
 		adj_chance = @adjectives.empty?  ? object_adj_chance : object_adj_chance/2
 		if check_chance(adj_chance)
-			adj_text = _handle_adjective(object, object_spec.case)
+			adj_text = _handle_adjective(object, {:case=>object_spec.case})
 		end
 
 		form = {:case=>object_spec.case}
@@ -576,9 +577,10 @@ class Sentence
 
 	def self.parse_adjective_options(opts)
 		self.option_parsing(opts) do |opt, parsed|
-			gram_case = Integer(opt)
+			number_i,gram_case = Integer(opt).divmod(10)
 			raise "invalid case: #{gram_case}" unless CASES.include?(gram_case)
 			parsed[:case]=gram_case
+			parsed[:number] = (number_i == 1) ? PLURAL : SINGULAR
 		end
 	end
 

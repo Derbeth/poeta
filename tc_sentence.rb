@@ -123,6 +123,11 @@ class SentenceTest < Test::Unit::TestCase
 		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ(2)} ${NOUN}')
 		assert_equal('dobrej pory', sentence.write)
 
+		dictionary.read("N 100 pory f\nA 100 dobry/a")
+		grammar.read_rules("A a 311 y e y")
+		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ(11)} ${NOUN}')
+		assert_equal('dobre pory', sentence.write)
+
 		# two adjectives to one noun
 		dictionary.read "N 100 pora f\nA 100 dobry/a\nA 100 prosty/a"
 		dictionary.set_indices ADJECTIVE, [1, 0]
@@ -532,6 +537,10 @@ V 100 kills OBJ(1)
 		dictionary.read("N 100 pies\nN 30 skrętem\nV 100 idzie OBJ(z,5)")
 		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze skrętem', sentence.write)
+		srand 1
+		dictionary.read("N 100 pies\nN 30 wstydem\nV 100 idzie OBJ(z,5)")
+		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies idzie ze wstydem', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 walce\nV 100 idzie OBJ(w,6)")
 		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
