@@ -25,6 +25,8 @@ module Grammar
 	# all supported grammatical numbers (like singular or plural)
 	NUMBERS = [SINGULAR,PLURAL]
 	NUMBER_NAMES = %w{Sg Pl}
+	# persons present in each number (like: we, you, they)
+	PERSONS = [1,2,3]
 	NUMBER2STRING = Hash[*NUMBERS.zip(NUMBER_NAMES).flatten]
 
 	class ParseError < RuntimeError
@@ -147,11 +149,11 @@ module Grammar
 		def inflect_verb(text,form,reflexive=false,*gram_props)
 			return text if form[:infinitive]
 			raise ":person has to be passed '#{form.inspect}'" unless form[:person]
-			raise "invalid person: #{form[:person]}" unless (1..3) === form[:person]
-			raise "invalid number: #{form[:number]}" if form[:number] && !((1..2) === form[:number])
+			raise "invalid person: #{form[:person]}" unless PERSONS.include? form[:person]
 			number = form[:number] || 1
+			raise "invalid number: #{number}"  unless NUMBERS.include? number
 			form_id = form[:person].to_int
-			form_id += (number.to_int-1) * 10
+			form_id += (number-1) * 10
 # 			puts "verb form id: #{form_id} #{@rules[VERB].keys.sort.inspect}"
 
 			inflected = get_inflected_form(VERB,form_id,text,*gram_props)

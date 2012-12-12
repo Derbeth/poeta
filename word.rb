@@ -142,7 +142,7 @@ module Grammar
 		# returns an Enumerable collection of all applicable grammar forms
 		def all_forms
 			retval = []
-			[1,2].each do |number|
+			NUMBERS.each do |number|
 				CASES.each do |gram_case|
 					retval << {:case => gram_case, :number => number}
 				end
@@ -280,12 +280,12 @@ module Grammar
 		# returns an Enumerable collection of all applicable grammar forms
 		def all_forms
 			retval = []
-			[1,2].each do |number|
-				[1,2,3].each do |person|
+			NUMBERS.each do |number|
+				PERSONS.each do |person|
 					retval << {:person => person, :number => number}
 				end
 			end
-			retval << {:infinitive =>1 }
+			retval << {:infinitive =>true }
 			retval
 		end
 
@@ -378,7 +378,7 @@ module Grammar
 		def all_forms
 			retval = []
 			GENDERS.each do |gender|
-				[1,2].each do |number|
+				NUMBERS.each do |number|
 					CASES.each do |gram_case|
 						form = {:case => gram_case, :number => number, :gender => gender}
 						if gender == MASCULINE

@@ -560,17 +560,17 @@ class Sentence
 	# hash keys: :form => hash with verb form
 	def self.parse_verb_options(opts)
 		self.option_parsing(opts) do |opt, parsed|
-			if opt == 'INF'
-				parsed[:form] = {:infinitive => 1}
-			else
-				form_i = Integer(opt)
-				raise "nonsense form: #{form_i}" if form_i <= 0
-				number_i,person = form_i.divmod(10)
-				raise "unsupported number: #{number_i}" if number_i > 1
-				raise "unsupported person: #{person}" if !([1,2,3].include?(person))
-				form = {:person => person}
-				form[:number] = (number_i == 1) ? PLURAL : SINGULAR
-				parsed[:form] = form
+			case opt
+				when 'INF' then parsed[:form] = {:infinitive => true}
+				else
+					form_i = Integer(opt)
+					raise "nonsense form: #{form_i}" if form_i <= 0
+					number_i,person = form_i.divmod(10)
+					raise "unsupported number: #{number_i}" if number_i > 1
+					raise "unsupported person: #{person}" if !(PERSONS.include?(person))
+					form = {:person => person}
+					form[:number] = (number_i == 1) ? PLURAL : SINGULAR
+					parsed[:form] = form
 			end
 		end
 	end

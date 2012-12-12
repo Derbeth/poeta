@@ -204,9 +204,9 @@ V a 12 ć cie ać
 		assert_equal('latacie', grammar.inflect_verb('latać', {:person=>2, :number=>2}, false, 'a'))
 		assert_equal('latam się', grammar.inflect_verb('latać', {:person=>1}, true, 'a'))
 
-		assert_equal('zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>1}, false, 'a'))
-		assert_equal('się zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>1}, true, 'a'))
-		assert_equal('zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>1, :person=>1}, false, 'a'))
+		assert_equal('zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>true}, false, 'a'))
+		assert_equal('się zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>true}, true, 'a'))
+		assert_equal('zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>true, :person=>1}, false, 'a'))
 	end
 end
 
