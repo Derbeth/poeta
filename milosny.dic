@@ -78,8 +78,8 @@ V  80 lubić/6 OBJ(4)
 V  20 lubić/6 INF
 V 100 pałać/1 OBJ(5)
 V 100 patrzeć/7 OBJ(na,4)
-V  70 płonąć/5
-V  30 płonąć/5 OBJ(z,2) TAKES_NO(PERSON)
+V  70 płonąć/5b
+V  30 płonąć/5b OBJ(z,2) TAKES_NO(PERSON)
 V  80 pragnąć/5 OBJ(2)
 V  20 pragnąć/5 INF
 V 100 rozbierać/1 OBJ(4)

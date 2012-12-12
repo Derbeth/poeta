@@ -148,7 +148,7 @@ A K 211,311 y e   y
 		grammar = PolishGrammar.new
 		grammar.read_rules(grammar_text)
 
-		assert_raise(RuntimeError) { grammar.inflect_adjective('dobry', {:case=>GENITIVE}) }
+		assert_raise(GrammarError) { grammar.inflect_adjective('dobry', {:case=>GENITIVE}) }
 
 		assert_equal('dobry', grammar.inflect_adjective('dobry',
 			{:gender=>MASCULINE, :number=>1, :case=>NOMINATIVE}, 'K'))
@@ -178,20 +178,22 @@ A K 211,311 y e   y
 
 	def test_verb
 		grammar_text = <<-END
-V a  1 ć m   ać
-V a 12 ć cie ać
+V a   1 ć m    ać
+V a  12 ć cie  ać
+V a 102 ć j    ać
+V a 112 ć jcie ać
 		END
 		grammar = PolishGrammar.new
 		grammar.read_rules(grammar_text)
 
-		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {}) } # no forms
-		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:person=>'a'}) } # bad person
-		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:person=>0}) }   # bad person
-		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:person=>-1}) }  # bad person
-		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:person=>4}) }   # bad person
-		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:number=>'a'}) } # bad number
-		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:number=>0}) }   # bad number
-		assert_raise(RuntimeError) { grammar.inflect_verb('foo', {:number=>3}) }   # bad number
+		assert_raise(GrammarError) { grammar.inflect_verb('foo', {}) } # no forms
+		assert_raise(GrammarError) { grammar.inflect_verb('foo', {:person=>'a'}) } # bad person
+		assert_raise(GrammarError) { grammar.inflect_verb('foo', {:person=>0}) }   # bad person
+		assert_raise(GrammarError) { grammar.inflect_verb('foo', {:person=>-1}) }  # bad person
+		assert_raise(GrammarError) { grammar.inflect_verb('foo', {:person=>4}) }   # bad person
+		assert_raise(GrammarError) { grammar.inflect_verb('foo', {:number=>'a'}) } # bad number
+		assert_raise(GrammarError) { grammar.inflect_verb('foo', {:number=>0}) }   # bad number
+		assert_raise(GrammarError) { grammar.inflect_verb('foo', {:number=>3}) }   # bad number
 
 		assert_equal('latać', grammar.inflect_verb('latać', {:person=>1})) # no inflexion
 		assert_equal('latać się', grammar.inflect_verb('latać', {:person=>1}, true))
@@ -206,7 +208,14 @@ V a 12 ć cie ać
 
 		assert_equal('zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>true}, false, 'a'))
 		assert_equal('się zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>true}, true, 'a'))
-		assert_equal('zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>true, :person=>1}, false, 'a'))
+		# both infinitive and person
+		assert_raise(GrammarError) { grammar.inflect_verb('zaczynać', {:infinitive=>true, :person=>1}, false, 'a') }
+
+		assert_equal 'zaczynaj', grammar.inflect_verb('zaczynać', {:imperative=>true, :person=>2}, false, 'a')
+		assert_equal 'zaczynajcie', grammar.inflect_verb('zaczynać', {:imperative=>true, :person=>2, :number=>2}, false, 'a')
+		assert_equal 'zaczynaj się', grammar.inflect_verb('zaczynać', {:imperative=>true, :person=>2}, true, 'a')
+		# no form
+		assert_raise(GrammarError) { grammar.inflect_verb('zaczynać', {:imperative=>true}, false, 'a') }
 	end
 end
 
@@ -265,7 +274,7 @@ class GrammarFormTest < Test::Unit::TestCase
 		NUMBERS.each do |number|
 			number_form = {:number=>number}
 			assert_not_nil GrammarForm.pretty_print(number_form)
-			[1,2,3].each do |person|
+			PERSONS.each do |person|
 				person_form = {:person=>person}
 				number_person_form = number_form.merge(person_form)
 				assert_not_nil GrammarForm.pretty_print(person_form)

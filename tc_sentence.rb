@@ -421,12 +421,21 @@ V 100 kills OBJ(1)
 		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)}')
 		assert_equal('rosnę w siłę', sentence.write)
 
+		# infinitive
 		dictionary.read("N 100 lipa/b f\nV 100 uderzać/a OBJ(4)")
 		grammar.read_rules("N b 4 a ę a\nV a 1 ć m ć")
 		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
 		assert_equal('uderzam lipę', sentence.write)
 		sentence = SentenceWrapper.new(dictionary,grammar,'trzeba ${VERB(INF)} ${OBJ}')
 		assert_equal('trzeba uderzać lipę', sentence.write)
+
+		# imperative
+		dictionary.read "N 100 lipa/b f\nV 100 uderzać/a OBJ(4)"
+		grammar.read_rules "N b 4 a ę a\nV a 1 ć m ć\nV a 102 ać 0 ać\nV a 111 ać my ać"
+		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(2,IMP)} ${OBJ}')
+		assert_equal 'uderz lipę', sentence.write
+		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(IMP,11)} ${OBJ}')
+		assert_equal 'uderzmy lipę', sentence.write
 	end
 
 	def test_handle_object

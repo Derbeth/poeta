@@ -31,6 +31,8 @@ module Grammar
 
 	class ParseError < RuntimeError
 	end
+	class GrammarError < RuntimeError
+	end
 
 	class Grammar
 		private_class_method :new
@@ -138,22 +140,24 @@ module Grammar
 		end
 
 		def inflect_adjective(adjective,form,*gram_props)
-			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
-			raise ":gender has to be passed '#{form[:gender]}'" unless form[:gender]
-			raise "wrong gender: #{form[:gender]}" unless GENDERS.include? form[:gender]
+			raise GrammarError, ":case has to be passed '#{form[:case]}'" unless form[:case]
+			raise GrammarError, ":gender has to be passed '#{form[:gender]}'" unless form[:gender]
+			raise GrammarError, "wrong gender: #{form[:gender]}" unless GENDERS.include? form[:gender]
 
 			inflected = get_inflected_form(ADJECTIVE,adjective_form_id(form),adjective,*gram_props)
 			inflected || adjective
 		end
 
 		def inflect_verb(text,form,reflexive=false,*gram_props)
+			raise GrammarError, "both :invinitive and :person" if form[:infinitive] && form[:person]
 			return text if form[:infinitive]
-			raise ":person has to be passed '#{form.inspect}'" unless form[:person]
-			raise "invalid person: #{form[:person]}" unless PERSONS.include? form[:person]
+			raise GrammarError, ":person has to be passed '#{form.inspect}'" unless form[:person]
+			raise GrammarError, "invalid person: #{form[:person]}" unless PERSONS.include? form[:person]
 			number = form[:number] || 1
-			raise "invalid number: #{number}"  unless NUMBERS.include? number
+			raise GrammarError, "invalid number: #{number}"  unless NUMBERS.include? number
 			form_id = form[:person].to_int
 			form_id += (number-1) * 10
+			form_id += 100 if form[:imperative]
 # 			puts "verb form id: #{form_id} #{@rules[VERB].keys.sort.inspect}"
 
 			inflected = get_inflected_form(VERB,form_id,text,*gram_props)
@@ -227,12 +231,11 @@ module Grammar
 		end
 	end
 
+	# using classes need to implement private method 'reflexive_word()' returning a string
 	module SimpleReflexiveVerbsHandler
 		def inflect_verb(text,form,reflexive=false,*gram_props)
-			if form[:infinitive]
-				inflected = text
-				inflected = reflexive_word + ' ' + inflected if (reflexive)
-				return inflected
+			if form[:infinitive] && reflexive
+				return reflexive_word + ' ' + text
 			end
 
 			inflected = super
@@ -303,13 +306,15 @@ module Grammar
 	class GrammarForm
 		def self.pretty_print(form)
 			parts = []
-			parts << format_gender(form[:gender]) if (form[:gender])
-			parts << format_number(form[:number]) if (form[:number])
-			parts << format_case(form[:case]) if (form[:case])
-			parts << format_person(form[:person]) if (form[:person])
-			parts << 'Inf' if (form[:infinitive])
+			parts << format_gender(form[:gender]) if form[:gender]
+			parts << format_number(form[:number]) if form[:number]
+			parts << format_case(form[:case]) if form[:case]
+			parts << format_person(form[:person]) if form[:person]
+			parts << 'Inf' if form[:infinitive]
+			parts << 'Imp' if form[:imperative]
+			parts << 'anim' if form[:animate]
 			form.keys.sort_by{|s| s.to_s}.each do |key|
-				if ![:gender,:number,:case,:person,:infinitive].include?(key)
+				if ![:gender,:number,:case,:person,:infinitive,:imperative,:animate].include?(key)
 					parts << "#{key}=#{form[key]}"
 				end
 			end

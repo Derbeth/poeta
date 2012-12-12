@@ -280,9 +280,13 @@ module Grammar
 		# returns an Enumerable collection of all applicable grammar forms
 		def all_forms
 			retval = []
-			NUMBERS.each do |number|
-				PERSONS.each do |person|
-					retval << {:person => person, :number => number}
+			[false, true].each do |imperative|
+				NUMBERS.each do |number|
+					PERSONS.each do |person|
+						form = {:person => person, :number => number}
+						form[:imperative] = true if imperative
+						retval << form
+					end
 				end
 			end
 			retval << {:infinitive =>true }
@@ -378,14 +382,15 @@ module Grammar
 		def all_forms
 			retval = []
 			GENDERS.each do |gender|
-				NUMBERS.each do |number|
-					CASES.each do |gram_case|
-						form = {:case => gram_case, :number => number, :gender => gender}
-						if gender == MASCULINE
-							retval << form.merge({:animate => true})
-							retval << form.merge({:animate => false})
-						else
-							retval << form
+				[true, false].each do |animate|
+					NUMBERS.each do |number|
+						CASES.each do |gram_case|
+							form = {:case => gram_case, :number => number, :gender => gender}
+							if gender == MASCULINE
+								retval << form.merge({:animate => animate})
+							else
+								retval << form if animate
+							end
 						end
 					end
 				end

@@ -26,8 +26,12 @@ V a 1 n  0 en
 V a 2 en st en
 V a 3 en t  en
 V a 12 en t en
+V a 102 en 0 en
+V a 112 en t en
 
 # tun
 V b 1    n e n
 V b 2    n st n
 V b 3,12 n t  n
+V b 102  n e  n
+V b 112  n t  n

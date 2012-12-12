@@ -48,8 +48,8 @@ V 100 milczeć/7
 V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  50 myśleć/7a OBJ(o,6)
 V  25 niszczyć/6 OBJ(4)
-V 100 płonąć/5
-V 100 płynąć/5
+V 100 płonąć/5b
+V 100 płynąć/5b
 V  20 pomagać/1 INF TAKES_NO(MODAL) SEMANTIC(MODAL)  # pomaga kłamać
 V  25 pomagać/1 OBJ(3) INF # pomaga mi zasnąć
 V 100 próbować/4 INF TAKES_NO(MODAL) SEMANTIC(MODAL)

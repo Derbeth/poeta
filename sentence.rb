@@ -149,6 +149,14 @@ class Sentence
 	end
 
 	def Sentence.validate_pattern(pattern)
+		# check that after replacing all placeholders there are no unclosed
+		# placeholders left
+		reduced_text = pattern.clone
+		Sentences::PARTS.each { |p| reduced_text.gsub!(match_token(p), '') }
+		if reduced_text =~ /\$\{\S+/
+			raise "syntax error near '#{$&}' - cannot handle this placeholder"
+		end
+
 		noun_occurs = {}
 		[Sentences::SUBJECT, Sentences::NOUN].each do |part|
 			pattern.scan(match_token(part)) do |full_match,index,options|
@@ -170,14 +178,6 @@ class Sentence
 				end
 				raise "undefined noun referenced from #{full_match} in '#{pattern}'" unless noun_occurs.include? noun_index
 			end
-		end
-
-		# check that after replacing all placeholders there are no unclosed
-		# placeholders left
-		reduced_text = pattern.clone
-		Sentences::PARTS.each { |p| reduced_text.gsub!(match_token(p), '') }
-		if reduced_text =~ /\$\{\S+/
-			raise "syntax error near '#{$&}' - cannot handle this placeholder"
 		end
 	end
 
@@ -562,15 +562,18 @@ class Sentence
 		self.option_parsing(opts) do |opt, parsed|
 			case opt
 				when 'INF' then parsed[:form] = {:infinitive => true}
+				when 'IMP' then
+					parsed[:form] ||= {}
+					parsed[:form][:imperative] = true
 				else
 					form_i = Integer(opt)
 					raise "nonsense form: #{form_i}" if form_i <= 0
 					number_i,person = form_i.divmod(10)
 					raise "unsupported number: #{number_i}" if number_i > 1
 					raise "unsupported person: #{person}" if !(PERSONS.include?(person))
-					form = {:person => person}
-					form[:number] = (number_i == 1) ? PLURAL : SINGULAR
-					parsed[:form] = form
+					parsed[:form] ||= {}
+					number = (number_i == 1) ? PLURAL : SINGULAR
+					parsed[:form].merge!({:person=>person, :number=>number})
 			end
 		end
 	end
