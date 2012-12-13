@@ -250,7 +250,34 @@ module Grammar
 			@supplied_indices = {}
 		end
 
-		def set_indices(speech_part, indices)
+		# may be called as:
+		#   set_indices(NOUN, [0,1,2])
+		#   set_indices(NOUN => [0,1,2], VERB => [0,0,0])
+		def set_indices(*args)
+			if args.size == 1
+				args[0].each_pair do |speech_part, indices|
+					set_indices_for(speech_part, indices)
+				end
+			else
+				if args.size != 2
+					raise ArgumentError, "expected two args or a hash, got #{args.inspect}"
+				end
+				set_indices_for(*args)
+			end
+		end
+
+		protected
+		# override
+		def get_random_index(freq_array,speech_part)
+			indices = @supplied_indices[speech_part]
+			if indices.nil? || indices.empty?
+				return super(freq_array,speech_part)
+			end
+
+			indices.shift
+		end
+
+		def set_indices_for(speech_part, indices)
 			unless SPEECH_PARTS.include? speech_part
 				raise ArgumentError, "no such speech part: #{speech_part}"
 			end
@@ -262,16 +289,6 @@ module Grammar
 				raise ArgumentError, "wrong index in #{indices.inspect}: words count is #{words_count}"
 			end
 			@supplied_indices[speech_part] = indices
-		end
-
-		protected
-		def get_random_index(freq_array,speech_part)
-			indices = @supplied_indices[speech_part]
-			if indices.nil? || indices.empty?
-				return super(freq_array,speech_part)
-			end
-
-			indices.shift
 		end
 
 	end

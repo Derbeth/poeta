@@ -264,27 +264,28 @@ class SentenceTest < Test::Unit::TestCase
 		end
 	end
 
-	def test_handle_double_usage
-		grammar = PolishGrammar.new
-		dictionary = Dictionary.new
-		dictionary_text = <<-END
-N 100 "foo"
-N 100 "bar"
-N 100 "baz"
+	# TODO remove pending_
+	def pending_test_handle_double_usage
+		grammar = GermanGrammar.new
+		grammar.read_rules "V a 3 0 t .\nV a 13 0 en .\n"
+		dictionary = ControlledDictionary.new
+		dictionary.read <<-END
+N 100 Kinder Pl
+N 100 Mutter
 
-V 100 goes OBJ(1)
-V 100 runs OBJ(1)
-V 100 kills OBJ(1)
+V 100 spiel/a
+V 100 lach/a
+V 100 denk/a
+V 100 sing/a
 		END
-		dictionary.read(dictionary_text)
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB}, ${SUBJ} ${VERB}')
+		dictionary.set_indices(NOUN => [0,1], VERB=>[0,1,2,3])
+		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${VERB} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2}')
+		assert_equal 'Kinder spielen spielen und spielen, Mutter lacht oder lacht', sentence.write
 
-		10.times do
-			text = sentence.write
-			parts = text.split(/, /)
-			assert_equal(parts[0], parts[1], "sentence: #{text}")
-		end
-
+		# use .2 to allow two verbs for one subject
+		dictionary.set_indices(NOUN => [0,1], VERB=>[0,1,2,3])
+		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB.2} ${VERB1.2} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2.2}')
+		assert_equal 'Kinder spielen spielen und lachen, Mutter denkt oder singt', sentence.write
 	end
 
 	def test_handle_semantic

@@ -295,6 +295,8 @@ class ControlledDictionaryTest < Test::Unit::TestCase
 		assert_raise(ArgumentError) { @dictionary.set_indices(NOUN, [0, -1, 2]) }
 		# too big index
 		assert_raise(ArgumentError) { @dictionary.set_indices(VERB, [2]) }
+		# now test a hash
+		assert_raise(ArgumentError) { @dictionary.set_indices(NOUN => [0], VERB=>[2]) }
 	end
 
 	def test_correct
@@ -325,6 +327,15 @@ class ControlledDictionaryTest < Test::Unit::TestCase
 		assert_equal 'second', @dictionary.get_random(NOUN).text
 		assert_equal 'second', @dictionary.get_random(NOUN).text
 		assert_not_nil @dictionary.get_random(NOUN) # some random now
+	end
+
+	def test_set_indices_hash
+		@dictionary.set_indices(NOUN => [0,2,2,2], VERB => [1,1,1,0])
+		assert_equal 'first', @dictionary.get_random(NOUN).text
+		assert_equal 'run', @dictionary.get_random(VERB).text
+		@dictionary.set_indices({NOUN => [0,2,2,2], VERB => [1,1,1,0]})
+		assert_equal 'first', @dictionary.get_random(NOUN).text
+		assert_equal 'run', @dictionary.get_random(VERB).text
 	end
 
 	def test_interrupt
