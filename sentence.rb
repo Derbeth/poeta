@@ -17,6 +17,9 @@ module Sentences
 	PARTS = [SUBJECT, NOUN, ADJECTIVE, VERB, OBJECT, ADVERB, OTHER]
 end
 
+class SentenceError < RuntimeError
+end
+
 # Ruby 1.8 had a broken handling of unicode, so ljust() did not work with accented characters
 class String
 	if "".respond_to? :force_encoding
@@ -75,7 +78,7 @@ class SentenceManager
 
 	private
 
-	class ParseError < RuntimeError
+	class ParseError < SentenceError
 	end
 
 	def read_frequency(line)
@@ -114,6 +117,7 @@ class Sentence
 		@forced_subject_number = nil
 		# maps: verb_index => word object; @indexed_nouns include only $SUBJ/$NOUN and *not* $OBJ
 		@indexed_nouns,@verbs = {},{}
+		# maps full indices to resolved verbs text like {'1' => 'goes', '1.2' => 'runs'}
 		@verbs_text = {}
 		# set of all nouns used in a sentence, including also objects (contrary to @indexed_nouns)
 		@nouns = []
@@ -154,20 +158,20 @@ class Sentence
 		reduced_text = pattern.clone
 		Sentences::PARTS.each { |p| reduced_text.gsub!(match_token(p), '') }
 		if reduced_text =~ /\$\{\S+/
-			raise "syntax error near '#{$&}' - cannot handle this placeholder"
+			raise SentenceError, "syntax error near '#{$&}' - cannot handle this placeholder"
 		end
 
 		noun_occurs = {}
 		[Sentences::SUBJECT, Sentences::NOUN].each do |part|
 			pattern.scan(match_token(part)) do |full_match,index,options|
-				noun_index = read_index(full_match,index)
+				noun_index, norm_index = read_index(full_match,index)
 				noun_occurs[noun_index] ||= 0
 				noun_occurs[noun_index] += 1
 			end
 		end
 		[Sentences::VERB, Sentences::ADJECTIVE, Sentences::OBJECT].each do |part|
 			pattern.scan(match_token(part)) do |full_match,index,options|
-				noun_index = read_index(full_match,index)
+				noun_index, norm_index = read_index(full_match,index)
 				if part == Sentences::VERB
 					parsed = parse_verb_options(options)
 					if parsed[:form]
@@ -176,7 +180,7 @@ class Sentence
 						next
 					end
 				end
-				raise "undefined noun referenced from #{full_match} in '#{pattern}'" unless noun_occurs.include? noun_index
+				raise SentenceError, "undefined noun referenced from #{full_match} in '#{pattern}'" unless noun_occurs.include? noun_index
 			end
 		end
 	end
@@ -213,7 +217,7 @@ class Sentence
 	DEFAULT_DBL_NOUN_CHANCE = 0.2
 	DEFAULT_OBJ_ADJ_CHANCE = 0.4
 	def handle_subject(full_match,index,options)
-		subject_index = self.class.read_index(full_match,index)
+		subject_index, norm_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_common_noun_options(options)
 		if subject_index == 1 && @subject
 			noun = @subject
@@ -248,7 +252,7 @@ class Sentence
 	end
 
 	def handle_noun(full_match,index,options)
-		noun_index = self.class.read_index(full_match,index)
+		noun_index, norm_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_common_noun_options(options)
 
 		semantic_chooser = parsed_opts[:context_props] ?
@@ -274,7 +278,7 @@ class Sentence
 	end
 
 	def handle_adjective(full_match,index,options)
-		noun_index = self.class.read_index(full_match,index)
+		noun_index, norm_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_adjective_options(options)
 		raise "no noun for #{full_match}" unless @indexed_nouns.include? noun_index
 		noun = @indexed_nouns[noun_index]
@@ -338,11 +342,11 @@ class Sentence
 	end
 
 	def handle_verb(full_match,index,options)
-		noun_index = self.class.read_index(full_match,index)
-		@verbs_text[noun_index] ||= _handle_verb(full_match,noun_index,options)
+		noun_index, norm_index = self.class.read_index(full_match,index)
+		@verbs_text[norm_index] ||= _handle_verb(full_match,noun_index,norm_index,options)
 	end
 
-	def _handle_verb(full_match,noun_index,options)
+	def _handle_verb(full_match,noun_index,norm_index,options)
 		noun = nil
 		parsed_opts = self.class.parse_verb_options(options)
 		if parsed_opts[:form]
@@ -365,13 +369,13 @@ class Sentence
 
 		verb = @dictionary.get_random_verb_as_predicate(&freq_counter)
 		return '' unless verb
-		@verbs[noun_index] = verb
+		@verbs[norm_index] = verb
 		verb.inflect(@grammar,form)
 	end
 
 	def handle_object(full_match,index,options)
-		noun_index = self.class.read_index(full_match,index)
-		verb = @verbs[noun_index]
+		noun_index, norm_index = self.class.read_index(full_match,index)
+		verb = @verbs[norm_index]
 		raise "no verb for #{full_match}" unless verb
 		_handle_object(verb, noun_index)
 	end
@@ -492,7 +496,7 @@ class Sentence
 	end
 
 	def handle_adverb(full_match,index,options)
-		noun_index = self.class.read_index(full_match,index)
+		noun_index, norm_index = self.class.read_index(full_match,index)
 		noun = @indexed_nouns[noun_index]
 		freq_counter = noun ? @dictionary.semantic_chooser(noun) : nil
 		adverb = @dictionary.get_random(Grammar::ADVERB, &freq_counter)
@@ -505,26 +509,38 @@ class Sentence
 		draw < chance
 	end
 
-	# full_match - like ${NOUN} or ${VERB2}
-	# index_match - number matched from full_match, like '' or '2'
-	# returns Integer (here: 1 and 2)
+	# full_match - like ${NOUN} or ${VERB2} or ${VERB5.1}
+	# index_match - number matched from full_match, like '', '2', '5.1'
+	# returns pair: [subject_index,normalized_index_match]
+	# here: [1, '1'], [2, '2'] and [5, '5.1']
 	def Sentence.read_index(full_match,index_match)
-		index_match.strip! if index_match
+		dot_part = nil
+		if index_match
+			index_match.strip!
+			if index_match =~ /\..*/
+				index_match,dot_part = $`, $&;
+			end
+		end
+
+		int_index = nil
 		if index_match && !index_match.empty?
 			raise "invalid index in #{full_match}, should be number" if index_match !~ /^\d+$/
-			return index_match.to_i
+			int_index = index_match.to_i
 		else
-			return 1
+			int_index = 1
 		end
+
+		[int_index, "#{int_index}#{dot_part}"]
 	end
 
 	# matches tokens for given speech part, for example for NOUN matches
 	# ${NOUN}, ${NOUN2} and ${NOUN(7)}
 	# returns: [full_match, number, options_without_braces]
 	# for example, for ${NOUN2(7)} returns ['${NOUN2(7)}', '2', '7']
+	# for ${NOUN2.1} return ['${NOUN2.1}', '2.1', '']
 	# for ${NOUN} returns ['${NOUN}','','']
 	def Sentence.match_token(part)
-		/(\$\{#{part}(\d*)(?:(?:\(([^)]*)\))?) *\})/
+		/(\$\{#{part}(\d+\.\d+|\d*)(?:(?:\(([^)]*)\))?) *\})/
 	end
 
 	def match_token(part)

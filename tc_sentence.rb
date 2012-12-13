@@ -264,8 +264,7 @@ class SentenceTest < Test::Unit::TestCase
 		end
 	end
 
-	# TODO remove pending_
-	def pending_test_handle_double_usage
+	def test_handle_double_usage
 		grammar = GermanGrammar.new
 		grammar.read_rules "V a 3 0 t .\nV a 13 0 en .\n"
 		dictionary = ControlledDictionary.new
@@ -279,12 +278,12 @@ V 100 denk/a
 V 100 sing/a
 		END
 		dictionary.set_indices(NOUN => [0,1], VERB=>[0,1,2,3])
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${VERB} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2}')
+		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${VERB1} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2}')
 		assert_equal 'Kinder spielen spielen und spielen, Mutter lacht oder lacht', sentence.write
 
 		# use .2 to allow two verbs for one subject
 		dictionary.set_indices(NOUN => [0,1], VERB=>[0,1,2,3])
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB.2} ${VERB1.2} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2.2}')
+		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB1.2} ${VERB1.2} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2.2}')
 		assert_equal 'Kinder spielen spielen und lachen, Mutter denkt oder singt', sentence.write
 	end
 
@@ -969,41 +968,42 @@ class SentenceManagerTest < Test::Unit::TestCase
 	def test_validation
 		mgr = SentenceManager.new("dictionary",'grammar')
 
-		assert_raise(RuntimeError) { mgr.read('10 ${SUBJ ${VERB}') }
+		assert_raise(SentenceError) { mgr.read('10 ${SUBJ ${VERB}') }
 
 		input = '10 ${SUBJ} ${VERB} ${SUBJ2}' # ok
 		mgr.read(input)
 
 		input = '10 ${ADJ}' # no such noun
-		assert_raise(RuntimeError) { mgr.read(input) }
+		assert_raise(SentenceError) { mgr.read(input) }
 
 		input = '10 ${NOUN2} ${ADJ}' # no such noun
-		assert_raise(RuntimeError) { mgr.read(input) }
+		assert_raise(SentenceError) { mgr.read(input) }
 
 		input = '10 ${NOUN} ${ADJ} ${NOUN2} {$ADJ2}' # ok
 		mgr.read(input)
 
 		input = '10 ${VERB}' # no such noun
-		assert_raise(RuntimeError) { mgr.read(input) }
+		assert_raise(SentenceError) { mgr.read(input) }
 
 		input = '10 ${NOUN2} ${VERB}' # wrong verb, no such noun
-		assert_raise(RuntimeError) { mgr.read(input) }
+		assert_raise(SentenceError) { mgr.read(input) }
 
 		input = '10 ${NOUN2} ${VERB2} ${OBJ}' # wrong object, no such noun
-		assert_raise(RuntimeError) { mgr.read(input) }
+		assert_raise(SentenceError) { mgr.read(input) }
 
 		input = '10 ${NOUN} ${VERB} ${NOUN2} {$VERB2}' # ok
 		mgr.read(input)
 
 		mgr.read('10 ${VERB(1)}')
 		mgr.read('10 ${VERB(1)} ${OBJ}')
-		assert_raise(RuntimeError) { mgr.read('10 ${VERB} ${OBJ}') }
+		assert_raise(SentenceError) { mgr.read('10 ${VERB} ${OBJ}') }
 		assert_raise(ArgumentError) { mgr.read('10 ${VERB(a)}') }
 		assert_raise(RuntimeError) { mgr.read('10 ${VERB(14)}') }
+		assert_raise(SentenceError) { mgr.read '10 ${VERB2.1.1}' }
 
 		# unclosed brackets
-		assert_raise(RuntimeError) { mgr.read('10 ${SUBJ ${VERB} ${SUBJ2}') }
-		assert_raise(RuntimeError) { mgr.read('10 ${SUBJ} ${VERB ${SUBJ2}') }
-		assert_raise(RuntimeError) { mgr.read('10 ${SUBJ} ${VERB} ${SUBJ2') }
+		assert_raise(SentenceError) { mgr.read('10 ${SUBJ ${VERB} ${SUBJ2}') }
+		assert_raise(SentenceError) { mgr.read('10 ${SUBJ} ${VERB ${SUBJ2}') }
+		assert_raise(SentenceError) { mgr.read('10 ${SUBJ} ${VERB} ${SUBJ2') }
 	end
 end
