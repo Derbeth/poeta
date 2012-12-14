@@ -285,6 +285,22 @@ V 100 sing/a
 		dictionary.set_indices(NOUN => [0,1], VERB=>[0,1,2,3])
 		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB1.2} ${VERB1.2} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2.2}')
 		assert_equal 'Kinder spielen spielen und lachen, Mutter denkt oder singt', sentence.write
+
+		# check objects, adverbs and prepositions are not messed up
+		dictionary.read <<-END
+N 10 Kinder Pl
+N 10 Hund
+N 10 Haus
+
+V 10 spiel/a OBJ(mit,3)
+V 10 lauf/a  OBJ(nach,4)
+
+D 10 leise
+D 10 schnell
+		END
+		dictionary.set_indices(NOUN => [0,1,2], VERB=>[0,1], ADVERB=>[0,1])
+		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV} ${OBJ} und ${VERB1.2} ${ADV1.2} ${OBJ1.2}')
+		assert_equal 'Kinder spielen leise mit Hund und laufen schnell nach Haus', sentence.write
 	end
 
 	def test_handle_semantic
