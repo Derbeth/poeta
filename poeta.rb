@@ -4,7 +4,7 @@ require 'optparse'
 
 require './poem'
 require './dictionary'
-require './sentence'
+require './sentence_manager'
 
 include Grammar
 
