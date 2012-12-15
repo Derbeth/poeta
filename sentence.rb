@@ -179,11 +179,8 @@ class Sentence
 				else
 					counted_frequency
 				end
-				if semantic_chooser
-					semantic_chooser.call(new_frequency,word)
-				else
-					new_frequency
-				end
+
+				semantic_chooser ? semantic_chooser.call(new_frequency,word) : new_frequency
 			end
 			@indexed_nouns[subject_index] = noun
 		end
@@ -302,7 +299,7 @@ class Sentence
 			form = {:number=>noun.number,:person=>noun.person}
 		end
 
-		freq_counter = if noun
+		semantic_chooser = if noun
 			@dictionary.semantic_chooser(noun)
 		elsif parsed_opts[:context_props]
 			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props]))
@@ -310,7 +307,12 @@ class Sentence
 			nil
 		end
 
-		verb = @dictionary.get_random_verb_as_predicate(&freq_counter)
+		verb = @dictionary.get_random_verb_as_predicate do |freq,word|
+			if parsed_opts[:only] && word.text != parsed_opts[:only]
+				freq = 0
+			end
+			semantic_chooser ? semantic_chooser.call(freq,word) : freq
+		end
 		return '' unless verb
 		@verbs[norm_index] = verb
 		verb.inflect(@grammar,form)
@@ -494,11 +496,15 @@ class Sentence
 			opts.split(/, */).each do |opt|
 				catch :next_opt do
 					semantic_opts.each do |string,name|
-						if opt =~ /#{string} +(.+)/
+						if opt =~ /^#{string} +(.+)/
 							context_props[name] ||= []
 							context_props[name] << $1
 							throw :next_opt
 						end
+					end
+					if opt =~ /^ONLY +(\S+)/
+						parsed[:only] = $1
+						throw :next_opt
 					end
 
 					block.call(opt, parsed)

@@ -454,6 +454,15 @@ D 10 schnell
 		assert_equal 'uderzmy lipę', sentence.write
 	end
 
+	def test_handle_verb_only
+		grammar = GermanGrammar.new
+		grammar.read_rules "V a 13 0 en ."
+		dictionary = Dictionary.new
+		dictionary.read "N 10 Hunden Pl\nV 5 bell/a\nV 10 lauf/a\nV 10 wart/a\nV 10 denk/a"
+		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB(ONLY bell)}')
+		assert_equal 'Hunden bellen', sentence.write
+	end
+
 	def test_handle_object
 		dictionary = Dictionary.new
 		dictionary.read("N 100 pies\nN 100 kot/a\nV 100 je")
