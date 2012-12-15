@@ -1,18 +1,22 @@
 N 100 ciało/p n nan
 N  50 ciało/p n Pl nan
 N 100 cisza/l f
+N 100 czas/e m nan
 N 100 człowiek/a1 m
 N 100 egzystencja/h f
 N  50 grzech/e m nan
 N  50 istnienie/d n
 N 100 jedność/n f
 N 100 ludzie/a m Pl
+N  20 łaska/r f
+N  20 mleko/p n SUFFIX(matki)
 N  50 myśl/n f
 N  50 myśl/n f Pl
 N 100 los/e m nan
 N 100 oddech/e m nan
 N 100 owoc/c1 m Pl nan
 N  50 piekło/d n Pl nan
+N 100 pustka/r f
 N  50 pytanie/d n Pl nan
 N 100 raj/c m nan
 N 100 ruch/e m nan
@@ -27,6 +31,7 @@ N  50 tajemnica/l f Pl
 N 100 tchnienie/d n
 N 100 warga/r f Pl
 N  20 zamek/g m Pl nan SUFFIX(z piasku)
+N 100 życie/d n
 
 N 200 "" m PERSON(1) NO_ADJ ONLY_SUBJ # ja
 N 200 ja/0 m NO_ADJ ONLY_OBJ
@@ -43,17 +48,24 @@ V 100 brać/b OBJ(4)
 V  25 być/c ADJ
 V  80 chcieć/7c INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  50 dogonić/6 OBJ(4)
+V 100 ginąć/5b
 V  25 kłamać/9
 V 100 milczeć/7
 V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  50 myśleć/7a OBJ(o,6)
 V  25 niszczyć/6 OBJ(4)
+V  50 opuszczać/1 OBJ(4)
+V  20 pluć/A OBJ(na,4)
 V 100 płonąć/5b
 V 100 płynąć/5b
 V  20 pomagać/1 INF TAKES_NO(MODAL) SEMANTIC(MODAL)  # pomaga kłamać
 V  25 pomagać/1 OBJ(3) INF # pomaga mi zasnąć
 V 100 próbować/4 INF TAKES_NO(MODAL) SEMANTIC(MODAL)
 V  50 stawać/A REFL OBJ(5) SEMANTIC(MODAL)
+V  50 uciekać/1
+V  25 wypełniać/1 OBJ(4)
+V  25 zabierać/1 OBJ(4)
+V 100 zmywać/1 OBJ(z,2) OBJ(4) # zmywa łzy z twarzy
 V  50 zrozumieć/1 OBJ(4) ONLY_OBJ
 
 A 100 absolutny/a
@@ -62,6 +74,7 @@ A 100 brudny/a
 A 100 chłodny/a
 A 100 chory/a
 A  50 cierpiący/a
+A 500 dojrzały/a ONLY_WITH_W(owoc)
 A  50 drobny/a
 A 100 dziwny/a
 A  50 jego     POSS
@@ -74,6 +87,7 @@ A 100 nieznany/a
 A  50 nowy/a
 A  50 obcy/a
 A  50 odcięty/a ATTR(od,2)
+A  50 oderwany/a ATTR(od,2)
 A 100 ostatni/b
 A 100 pęknięty/a
 A  50 pogardzany/a
@@ -90,14 +104,21 @@ A 100 złamany/a
 A 100 zmęczony/a
 A  30 zmęczony/a ATTR(5)
 
+D  20 bezpowrotnie
 D 100 ciężko
+D  10 kusząco
 D 100 leniwie
 D  50 nieśmiało
 D  10 podstępnie
 D 100 "po kres"
 D 100 "po prostu"
 D 100 powoli
+D  40 "przez chwilę"
+D  10 "przez jedną"
+D  40 "przez moment"
+D  10 "przez krótki moment"
 D 100 sennie
+D  10 skromnie
 D  50 szybko
 D 100 tam
 D 100 tutaj
@@ -121,5 +142,6 @@ O  10 "wyobraź sobie, że"
 O 100 "w końcu"
 O 100 zanim
 O 100 znowu
+O  50 "zobacz, jak"
 
 # http://www.youtube.com/watch?v=IcqPpPiOjMw

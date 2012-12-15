@@ -213,9 +213,9 @@ class Sentence
 	MAX_ATTR_RECUR = 3
 	DBL_NOUN_RECUR = 1
 	DEFAULT_OTHER_CHANCE = 0.3
-	DEFAULT_DBL_ADJ_CHANCE = 0.4
+	DEFAULT_DBL_ADJ_CHANCE = 0.3
 	DEFAULT_DBL_NOUN_CHANCE = 0.2
-	DEFAULT_OBJ_ADJ_CHANCE = 0.4
+	DEFAULT_OBJ_ADJ_CHANCE = 0.3
 	def handle_subject(full_match,index,options)
 		subject_index, norm_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_common_noun_options(options)

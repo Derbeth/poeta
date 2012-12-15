@@ -563,6 +563,10 @@ D 10 schnell
 		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze skrętem', sentence.write)
 		srand 1
+		dictionary.read("N 100 pies\nN 30 ślimakiem\nV 100 idzie OBJ(z,5)")
+		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies idzie ze ślimakiem', sentence.write)
+		srand 1
 		dictionary.read("N 100 pies\nN 30 wstydem\nV 100 idzie OBJ(z,5)")
 		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze wstydem', sentence.write)
