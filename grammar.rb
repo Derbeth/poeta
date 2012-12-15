@@ -254,7 +254,7 @@ module Grammar
 			cons_match = "[#{consonants.join}]"
 			case
 				when prep == 'z' &&
-					object =~ /^(z#{cons_match}|s[#{consonants-['z']}]|sz#{cons_match}|ws|śl)/u
+					object =~ /^(z#{cons_match}|s[#{(consonants-['z']).join}]|sz#{cons_match}|ws|śl)/u
 					then prep = 'ze'
 				when prep == 'w' && object =~ /^w#{cons_match}/ then prep = 'we'
 				when prep == 'od' && object == 'mnie' then prep = 'ode'
