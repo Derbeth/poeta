@@ -372,6 +372,17 @@ N u 16          ś  siach ś
 N u 16          ź  ziach dź
 N u 16          0  ach   .
 
+# 71 m, kruk, ptak, raróg
+N v 2,4      0 a .
+N v 3        0 owi .
+N v 5        0 iem .
+N v 6,7      0 u   .
+N v 11,14,17 0 i .
+N v 12       0 ów .
+N v 13       0 om .
+N v 15       0 ami .
+N v 16       0 ach .
+
 # ja, ty, on
 N 0 2,3,4,6  ja    mnie  ja
 N 0 5        ja    mną   ja
@@ -582,6 +593,9 @@ V 6 112 onić  ońcie onić
 V 6 102 dzić  dź    dzić
 V 6 111 dzić  dźmy  dzić
 V 6 112 dzić  dźcie dzić
+V 6 102 cić   ć     cić
+V 6 111 cić   ćmy   cić
+V 6 112 cić   ćcie  cić
 V 6 102 [iy]ć 0     [iy]ć
 V 6 111 [iy]ć my    [iy]ć
 V 6 112 [iy]ć cie   [iy]ć
@@ -676,7 +690,7 @@ V A 111 wać ńmy  wać
 V A 112 wać ńcie wać
 V A 102 ć   j    ć
 V A 111 ć   jmy  ć
-V A 111 ć   jcie ć
+V A 112 ć   jcie ć
 
 # niereg. - brać
 V b   1 rać iorę     brać

@@ -2,6 +2,11 @@ N 100 ból/c m nan
 N 100 cierpienie/d n
 N 100 grzech/e m nan
 N 100 kara/b2 f
+N 100 krew/n f
+N  25 kruk/v m nan
+N  25 kruk/v m nan Pl
+N  50 poczucie/d n SUFFIX(winy)
+N  20 przeczucie/d n
 N 100 pustka/r f
 N 100 słońce/d n
 N 100 spojrzenie/d n
@@ -10,20 +15,28 @@ N 100 upadek/g m nan
 N 100 wina/b1 f
 
 V 100 dotykać/1 OBJ(4)
+V  25 gnić/A
 V 100 kłamać/9
+V  25 kpić/6 OBJ(z,2) # not 6 and not 6b, but nothing better ATM
 V  50 pluć/A OBJ(na,4)
 V 100 płakać/9
 V 100 płonąć/5b
+V  50 skrywać/1 OBJ(4)
+V  50 tracić/6b OBJ(4)
+V  50 uciekać/1
 V 100 umierać/1
+V 100 walczyć/6 OBJ(z,5)
 V 100 widzieć/7 OBJ(4)
 
 A 100 czarny/a
 A 100 martwy/a
 A 100 mroczny/a
+A 100 nieznośny/a
 A 100 obcy/a
 A 100 zapomniany/a
 A 100 zdradziecki/b
 
+D  50 bezpowrotnie
 D 100 szybko
 D 100 tu
 D 100 wciąż
