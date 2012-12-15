@@ -567,6 +567,14 @@ D 10 schnell
 		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze ślimakiem', sentence.write)
 		srand 1
+		dictionary.read("N 100 pies\nN 30 mną\nV 100 idzie OBJ(z,5)")
+		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies idzie ze mną', sentence.write)
+		srand 1
+		dictionary.read("N 100 pies\nN 30 mnie\nV 100 odbiera OBJ(z,2)")
+		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies odbiera ze mnie', sentence.write)
+		srand 1
 		dictionary.read("N 100 pies\nN 30 wstydem\nV 100 idzie OBJ(z,5)")
 		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze wstydem', sentence.write)
@@ -855,6 +863,19 @@ A y 115 0 ymi .
 		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${ADJ}')
 		sentence.subject = subject
 		assert_equal('bar cool', sentence.write)
+	end
+
+	def test_set_implicit_subject
+		grammar = PolishGrammar.new
+		grammar.read_rules "A a 111 0 e .\nV a 3 0 y .\nV a 13 0 ą .\n"
+		dictionary = ControlledDictionary.new
+		dictionary.read "N 10 wilk\nV 10 słysz/a\nV 10 węsz/a\nA 10 głodn/a"
+		implicit = Noun.new('psy',[],0,1,{},PLURAL)
+		dictionary.set_indices VERB, [0,1]
+
+		sentence = SentenceWrapper.new(dictionary,grammar,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
+		sentence.implicit_subject = implicit
+		assert_equal 'i głodne słyszą, jak wilk węszy', sentence.write
 	end
 
 	def test_empty_nouns

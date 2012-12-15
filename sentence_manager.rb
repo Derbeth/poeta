@@ -1,4 +1,3 @@
-#!/usr/bin/ruby -w
 # -*- encoding: utf-8 -*-
 
 require './sentence'

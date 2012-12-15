@@ -4,6 +4,7 @@ require 'optparse'
 
 require './poem'
 require './dictionary'
+require './configuration'
 require './sentence_manager'
 
 include Grammar
@@ -13,6 +14,7 @@ dictionary = nil
 language = 'pl'
 debug = false
 forced_seed = nil
+conf = PoetryConfiguration.new
 
 OptionParser.new do |opts|
 	opts.banner = "Usage: poeta.rb [options] [dictionary]"
@@ -73,7 +75,7 @@ if forced_seed
 else
 	srand
 end
-poem = Poem.new(dictionary,grammar,sentence_mgr)
+poem = Poem.new(dictionary,grammar,sentence_mgr,conf)
 puts poem.text
 
 if debug

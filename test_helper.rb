@@ -1,5 +1,3 @@
-#!/usr/bin/ruby -w
-
 module Grammar
 	module TestHelper
 		def assert_raise_kind(error,&block)

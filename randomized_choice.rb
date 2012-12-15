@@ -1,5 +1,3 @@
-#!/usr/bin/ruby -w
-
 module ByFrequencyChoser
 	# gets random index in given array based on frequencies.
 	# Each element of the array has to respond to 'frequency' message, returning
@@ -25,5 +23,13 @@ module ByFrequencyChoser
 	def ByFrequencyChoser.choose_random(freqs_array)
 		index = choose_random_index(freqs_array)
 		return index == -1 ? nil : freqs_array[index]
+	end
+end
+
+module ChanceChecker
+	# gets a random number in [0,1) and returns true if it smaller than given chance
+	def check_chance(chance)
+		draw = rand
+		draw < chance
 	end
 end

@@ -1,4 +1,3 @@
-#!/usr/bin/ruby -w
 # -*- encoding: utf-8 -*-
 
 require './grammar'
@@ -45,6 +44,7 @@ class Sentence
 	def initialize(dictionary,grammar,pattern,debug=false)
 		@dictionary,@grammar,@pattern,@debug = dictionary,grammar,pattern.strip,debug
 		@subject = nil
+		@implicit_subject = false
 		@forced_subject_number = nil
 		# maps: verb_index => word object; @indexed_nouns include only $SUBJ/$NOUN and *not* $OBJ
 		@indexed_nouns,@verbs = {},{}
@@ -131,15 +131,27 @@ class Sentence
 		@text.gsub!(/ {2,}/, ' ')
 		@text.gsub!(/ +([.?!,])/, '\1')
 		@text = @text.fixed_ljust(40) + "| #{@pattern}" if debug
+		@text += ' (impl subj)' if debug && @implicit_subject
 		@text
 	end
 
+	# Forces the sentence to use the given noun as the first subject.
+	# The following subjects (if present) are chosen freely.
 	def subject=(s)
 		@subject = s
 		@indexed_nouns[1] = @subject
 	end
 
+	# Forces the sentence to use the given noun as the first subject, but without writing the noun
+	# text
+	def implicit_subject=(s)
+		self.subject = s
+		@implicit_subject = true
+	end
+
 	private
+	
+	include ChanceChecker
 
 	MAX_ATTR_RECUR = 3
 	DBL_NOUN_RECUR = 1
@@ -147,6 +159,7 @@ class Sentence
 	DEFAULT_DBL_ADJ_CHANCE = 0.3
 	DEFAULT_DBL_NOUN_CHANCE = 0.2
 	DEFAULT_OBJ_ADJ_CHANCE = 0.3
+
 	def handle_subject(full_match,index,options)
 		subject_index, norm_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_common_noun_options(options)
@@ -175,8 +188,8 @@ class Sentence
 			@indexed_nouns[subject_index] = noun
 		end
 		@subject ||= noun
+		return '' if subject_index == 1 && @subject && @implicit_subject
 		return '' unless noun
-		@nouns << noun
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case}
 		_common_handle_noun(noun,form)
@@ -202,7 +215,6 @@ class Sentence
 
 		@indexed_nouns[noun_index] = noun
 		return '' unless noun
-		@nouns << noun
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case}
 		_common_handle_noun(noun,form)
@@ -432,12 +444,6 @@ class Sentence
 		freq_counter = noun ? @dictionary.semantic_chooser(noun) : nil
 		adverb = @dictionary.get_random(Grammar::ADVERB, &freq_counter)
 		adverb ? adverb.text : ''
-	end
-
-	# gets a random number in [0,1) and returns true if it smaller than given chance
-	def check_chance(chance)
-		draw = rand
-		draw < chance
 	end
 
 	# full_match - like ${NOUN} or ${VERB2} or ${VERB5.1}
