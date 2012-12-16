@@ -10,8 +10,7 @@ require 'logger'
 class Verse
 	def initialize(sentence_mgr,conf)
 		splitter = SentenceSplitter.new(conf)
-		logger = Logger.new(STDERR)
-		logger.level = conf.logger_level
+		logger = conf.logger
 
 		sentences = []
 		sentences_text = []
@@ -30,7 +29,7 @@ class Verse
 					# cannot add two sentences, because it's the last sentence - try again
 					next
 				end
-				logger.debug "Split '#{text}'" if parts.size > 2
+				logger.debug "Split '#{parts.join(' | ')}'" if parts.size > 1
 				break
 			end
 			sentences << sentence
@@ -40,6 +39,8 @@ class Verse
 				break if sentences_text.size >= conf.lines_in_verse
 			end
 		end
+		sentences.each { |s| logger.debug "    #{s.debug_text}" }
+		logger.debug ""
 		@subject = find_subject(sentences)
 		@text = sentences_text.join("\n")
 	end
@@ -78,7 +79,7 @@ class Poem
 		verses = []
 		conf.verses_number.times { verses << Verse.new(sentence_mgr,conf) }
 
-		title_sentence_mgr = SentenceManager.new(dictionary,grammar)
+		title_sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
 		title_sentences_defs = <<-END
 60 ${SUBJ(NE,IG_ONLY)}
 40 ${ADJ} ${SUBJ(NE,IG_ONLY)}

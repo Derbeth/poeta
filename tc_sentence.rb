@@ -6,16 +6,6 @@ require './sentence'
 
 include Grammar
 
-class StringTest < Test::Unit::TestCase
-	def test_ljust
-		assert_equal("foo   ", "foo".ljust(6))
-		assert_equal("foo   ", "foo".fixed_ljust(6))
-		assert_equal("foó   ", "foó".fixed_ljust(6))
-		assert_equal("góo   ", "góo".fixed_ljust(6))
-		assert_equal("hóó   ", "hóó".fixed_ljust(6))
-	end
-end
-
 class SentenceTest < Test::Unit::TestCase
 
 	# wrapper for Sentence only setting some default options
@@ -845,17 +835,6 @@ A y 115 0 ymi .
 		dictionary = Dictionary.new
 		sentence = SentenceWrapper.new(dictionary,'grammar','${NOUN} ${ADJ} ${VERB}')
 		assert_equal('', sentence.write.strip)
-	end
-
-	def test_debug
-		dictionary_text = "N 100 foo\nA 100 bar"
-		dictionary = Dictionary.new
-		dictionary.read(dictionary_text)
-		grammar = PolishGrammar.new
-
-		sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN1} ${ADJ}')
-		sentence.debug = true
-# 		assert_equal('foo bar END', sentence.write) # TODO FIXME !!!
 	end
 
 	def test_set_subject

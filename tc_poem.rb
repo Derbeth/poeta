@@ -34,6 +34,9 @@ class VerseTest < Test::Unit::TestCase
 		def subject
 			nil
 		end
+		def debug_text
+			''
+		end
 	end
 
 	class WithSubjectSentence
@@ -49,6 +52,9 @@ class VerseTest < Test::Unit::TestCase
 		end
 		def implicit_subject=(s)
 			@subject = s
+		end
+		def debug_text
+			''
 		end
 	end
 

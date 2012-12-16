@@ -3,6 +3,7 @@
 require 'test/unit'
 
 require './sentence_manager'
+require './configuration'
 
 include Grammar
 
@@ -13,8 +14,9 @@ class SentenceBuilderTest < Test::Unit::TestCase
 		dictionary.read dictionary_text
 		dictionary.set_indices NOUN, [0, 1]
 		grammar = PolishGrammar.new
+		conf = PoetryConfiguration.new
 
-		builder = SentenceBuilder.new(dictionary,grammar,'a ${NOUN} b',100)
+		builder = SentenceBuilder.new(dictionary,grammar,conf,'a ${NOUN} b',100)
 		sentence1 = builder.create_sentence
 		sentence2 = builder.create_sentence
 		sentence1.double_noun_chance = 0
@@ -41,7 +43,8 @@ class SentenceManagerTest < Test::Unit::TestCase
 
 1 owaśtam
 		END
-		mgr = SentenceManager.new("dictionary",'grammar')
+		conf = PoetryConfiguration.new
+		mgr = SentenceManager.new("dictionary",'grammar',conf)
 		mgr.read(input)
 		assert_equal(3, mgr.size)
 		mgr.read(input)
@@ -52,7 +55,8 @@ class SentenceManagerTest < Test::Unit::TestCase
 
 	def test_nonlatin_characters
 		srand
-		mgr = SentenceManager.new('dictionary','grammar')
+		conf = PoetryConfiguration.new
+		mgr = SentenceManager.new('dictionary','grammar',conf)
 		mgr.read '10 ну, давай'
 		assert_equal 'ну, давай', mgr.random_sentence.write
 	end
@@ -66,7 +70,8 @@ class SentenceManagerTest < Test::Unit::TestCase
 2 is
 0 neverever
 		END
-		mgr = SentenceManager.new("dictionary",'grammar')
+		conf = PoetryConfiguration.new
+		mgr = SentenceManager.new("dictionary",'grammar',conf)
 		mgr.read(input)
 		assert_equal(5,mgr.size)
 		100.times() do
@@ -76,7 +81,8 @@ class SentenceManagerTest < Test::Unit::TestCase
 	end
 
 	def test_validation
-		mgr = SentenceManager.new("dictionary",'grammar')
+		conf = PoetryConfiguration.new
+		mgr = SentenceManager.new("dictionary",'grammar',conf)
 
 		assert_raise(SentenceError) { mgr.read('10 ${SUBJ ${VERB}') }
 

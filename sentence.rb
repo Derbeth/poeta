@@ -19,30 +19,15 @@ end
 class SentenceError < RuntimeError
 end
 
-# Ruby 1.8 had a broken handling of unicode, so ljust() did not work with accented characters
-class String
-	if "".respond_to? :force_encoding
-		# Ruby >= 1.9 - works just fine
-		alias_method :fixed_ljust, :ljust
-	else
-		# nasty hack for Ruby < 1.9
-		def fixed_ljust(width)
-		result = ljust(width)
-		two_byte_chars_count = 0
-		scan(/[ąćęłóńśżźßöäü]/) { two_byte_chars_count += 1 }
-		two_byte_chars_count /= 2
-		result + ' ' * two_byte_chars_count
-		end
-	end
-end
-
 class Sentence
-	attr_accessor :debug
 	attr_reader :double_adj_chance, :double_noun_chance, :other_word_chance, :object_adj_chance
 	attr_reader :text, :subject, :pattern
+	attr_reader :debug_text
 
-	def initialize(dictionary,grammar,pattern,debug=false)
-		@dictionary,@grammar,@pattern,@debug = dictionary,grammar,pattern.strip,debug
+	def initialize(dictionary,grammar,conf,pattern)
+		@dictionary,@grammar,@conf,@pattern = dictionary,grammar,conf,pattern.strip
+		@logger = @conf.logger
+		
 		@subject = nil
 		@implicit_subject = false
 		@forced_subject_number = nil
@@ -126,12 +111,10 @@ class Sentence
 		@text.gsub!(match_token(Sentences::VERB))      { handle_verb($1,$2,$3) }
 		@text.gsub!(match_token(Sentences::OBJECT))    { handle_object($1,$2,$3) }
 		@text.gsub!(match_token(Sentences::ADVERB))    { handle_adverb($1,$2,$3) }
-# 		@text += ' END' if @debug
+		@debug_text = "#{@pattern} #{@implicit_subject ? '(impl subj)' : ''}"
 		@text.strip!
 		@text.gsub!(/ {2,}/, ' ')
 		@text.gsub!(/ +([.?!,])/, '\1')
-		@text = @text.fixed_ljust(40) + "| #{@pattern}" if debug
-		@text += ' (impl subj)' if debug && @implicit_subject
 		@text
 	end
 

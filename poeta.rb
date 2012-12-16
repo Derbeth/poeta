@@ -68,7 +68,7 @@ raise "#{grammar_file} does not exist" unless File.exists?(grammar_file)
 File.open(grammar_file) { |f| grammar.read_rules(f) }
 dictionary = SmartRandomDictionary.new(5)
 File.open(dictionary_file) { |f| dictionary.read(f) }
-sentence_mgr = SentenceManager.new(dictionary,grammar,debug)
+sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
 File.open(sentences_file) { |f| sentence_mgr.read(f) }
 
 if forced_seed

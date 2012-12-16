@@ -5,8 +5,8 @@ require './sentence'
 class SentenceManager
 	attr_reader :debug
 
-	def initialize(dictionary,grammar,debug=false)
-		@dictionary,@grammar,@debug=dictionary,grammar,debug
+	def initialize(dictionary,grammar,conf)
+		@dictionary,@grammar,@conf=dictionary,grammar,conf
 		@sentence_builders=[]
 	end
 
@@ -18,7 +18,7 @@ class SentenceManager
 				next if line !~ /\w/
 				line.chomp!
 				frequency, rest = read_frequency(line)
-				sentence_builder = SentenceBuilder.new(@dictionary,@grammar,rest,frequency,@debug)
+				sentence_builder = SentenceBuilder.new(@dictionary,@grammar,@conf,rest,frequency)
 				@sentence_builders << sentence_builder
 			rescue ParseError => e
 				puts "error: #{e.message}"
@@ -34,11 +34,6 @@ class SentenceManager
 	# returns the number of sentence builders
 	def size
 		@sentence_builders.size
-	end
-
-	def debug=(d)
-		@debug=d
-		@sentence_builders.each { |b| b.debug=d }
 	end
 
 	private
@@ -58,15 +53,15 @@ end
 
 class SentenceBuilder
 	include Sentences
-	attr_accessor :frequency, :debug
+	attr_accessor :frequency
 
-	def initialize(dictionary,grammar,pattern,frequency,debug=false)
-		@dictionary,@grammar,@pattern,@frequency,@debug = dictionary,grammar,pattern,frequency,debug
+	def initialize(dictionary,grammar,conf,pattern,frequency)
+		@dictionary,@grammar,@conf,@pattern,@frequency = dictionary,grammar,conf,pattern,frequency
 		raise "invalid frequency: #{frequency}" if frequency < 0
 		Sentence.validate_pattern(pattern)
 	end
 
 	def create_sentence
-		Sentence.new(@dictionary,@grammar,@pattern.dup,@debug)
+		Sentence.new(@dictionary,@grammar,@conf,@pattern.dup)
 	end
 end
