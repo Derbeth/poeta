@@ -876,15 +876,25 @@ A y 115 0 ymi .
 
 	def test_set_implicit_subject
 		grammar = PolishGrammar.new
-		grammar.read_rules "A a 111 0 e .\nV a 3 0 y .\nV a 13 0 ą .\n"
+		grammar.read_rules "A a 101 0 y .\nA a 111 0 e .\nV a 3 0 y .\nV a 13 0 ą .\n"
 		dictionary = ControlledDictionary.new
 		dictionary.read "N 10 wilk\nV 10 słysz/a\nV 10 węsz/a\nA 10 głodn/a"
 		implicit = Noun.new('psy',[],0,1,{},PLURAL)
-		dictionary.set_indices VERB, [0,1]
 
 		sentence = SentenceWrapper.new(dictionary,grammar,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
 		sentence.implicit_subject = implicit
+		dictionary.set_indices VERB, [0,1]
+		assert_equal 'i słyszą, jak wilk węszy', sentence.write
+
+		sentence = SentenceWrapper.new(dictionary,grammar,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
+		sentence.implicit_subject = implicit
+		sentence.object_adj_chance = 1
+		dictionary.set_indices VERB, [0,1]
 		assert_equal 'i głodne słyszą, jak wilk węszy', sentence.write
+
+		sentence = SentenceWrapper.new(dictionary,grammar,'to ${SUBJ(NE)}')
+		sentence.implicit_subject = implicit
+		assert_match /to \w+/, sentence.write
 	end
 
 	def test_empty_nouns

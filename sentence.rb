@@ -185,7 +185,7 @@ class Sentence
 			@indexed_nouns[subject_index] = noun
 		end
 		@subject ||= noun
-		return '' if subject_index == 1 && @subject && @implicit_subject
+		return '' if subject_index == 1 && @subject && @implicit_subject && !parsed_opts[:not_empty]
 		return '' unless noun
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case}
@@ -223,6 +223,7 @@ class Sentence
 		raise "no noun for #{full_match}" unless @indexed_nouns.include? noun_index
 		noun = @indexed_nouns[noun_index]
 		return '' if noun == nil || noun.get_property(:no_adjective)
+		return '' if noun_index == 1 && @subject && @implicit_subject && !check_chance(object_adj_chance)
 
 		_handle_adjective(noun, parsed_opts)
 	end
