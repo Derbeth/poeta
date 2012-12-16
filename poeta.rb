@@ -25,6 +25,7 @@ OptionParser.new do |opts|
 	opts.separator ""
 	opts.on("-d", "--debug", "Run in debug mode") do |d|
 		debug = true
+		conf.debug = true
 	end
 	opts.on('-s', '--seed SEED', "Feed the random generator with given rand seed") do |s|
 		forced_seed = s.to_i
