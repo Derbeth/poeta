@@ -290,6 +290,7 @@ module Grammar
 	class GermanGrammar < GenericGrammar
 		include SimpleReflexiveVerbsHandler
 
+		# TODO implement joined_attribute_noun
 		private
 		def reflexive_word
 			'sich'
