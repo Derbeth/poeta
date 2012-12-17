@@ -49,27 +49,16 @@ class SentenceSplitter
 		stop_sign = stop_sign[0] # workaround for Ruby 1.8 problems
 		half_len = text.length.div 2
 
+		indices = [half_len]
+		(1..half_len).each do |n|
+			indices << (half_len - n) << (half_len + n)
+		end
+
 		# in case nothing better is found, this index will be used to split
 		last_resort_index = nil
 
-		if text[half_len] == stop_sign
-			if split_looks_nice?(text, half_len)
-				return half_len
-			else
-				last_resort_index ||= half_len
-			end
-		end
-		(1..half_len).each do |n|
-			i = half_len - n
-			if i >= 0 && text[i] == stop_sign
-				if split_looks_nice?(text, i)
-					return i
-				else
-					last_resort_index ||= i
-				end
-			end
-			i = half_len + n
-			if i < text.length && text[i] == stop_sign
+		indices.each do |i|
+			if i >= 0 && i < text.length && text[i] == stop_sign
 				if split_looks_nice?(text, i)
 					return i
 				else
