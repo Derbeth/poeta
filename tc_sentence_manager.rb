@@ -15,12 +15,11 @@ class SentenceBuilderTest < Test::Unit::TestCase
 		dictionary.set_indices NOUN, [0, 1]
 		grammar = PolishGrammar.new
 		conf = PoetryConfiguration.new
+		conf.double_noun_chance = 0
 
 		builder = SentenceBuilder.new(dictionary,grammar,conf,'a ${NOUN} b',100)
 		sentence1 = builder.create_sentence
 		sentence2 = builder.create_sentence
-		sentence1.double_noun_chance = 0
-		sentence2.double_noun_chance = 0
 		text1 = sentence1.write
 		text2 = sentence2.write
 		assert_equal('a foo b', text1)

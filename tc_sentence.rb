@@ -3,39 +3,36 @@
 require 'test/unit'
 
 require './sentence'
+require './configuration'
 
 include Grammar
 
 class SentenceTest < Test::Unit::TestCase
 
-	# wrapper for Sentence only setting some default options
-	class SentenceWrapper < Sentence
-		def initialize(*args)
-			super(*args)
-			self.object_adj_chance = 0
-			self.double_noun_chance = 0
-		end
-	end
-
 	def setup
 		srand
-	end
 
+		# safe configuration preventing unwanted and unpredictable side effects
+		@conf = PoetryConfiguration.new
+		@conf.object_adj_chance = 0
+		@conf.double_noun_chance = 0
+	end
+	
 	def test_trim
 		dictionary_text = 'N 100 foo'
 		dictionary = Dictionary.new
 		dictionary.read(dictionary_text)
 		grammar = PolishGrammar.new
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'')
+		sentence = Sentence.new(dictionary,grammar,@conf,'')
 		assert_equal('', sentence.write)
-		sentence = SentenceWrapper.new(dictionary,grammar,'  ')
+		sentence = Sentence.new(dictionary,grammar,@conf,'  ')
 		assert_equal('', sentence.write)
-		sentence = SentenceWrapper.new(dictionary,grammar,' ${VERB} ${SUBJ}   ${SUBJ} ')
+		sentence = Sentence.new(dictionary,grammar,@conf,' ${VERB} ${SUBJ}   ${SUBJ} ')
 		assert_equal('foo foo', sentence.write)
 
-		assert_equal('foo?', SentenceWrapper.new(dictionary, grammar, '${NOUN} ${VERB}?').write)
-		assert_equal('foo.', SentenceWrapper.new(dictionary, grammar, '${NOUN} ${VERB}.').write)
+		assert_equal('foo?', Sentence.new(dictionary, grammar,@conf, '${NOUN} ${VERB}?').write)
+		assert_equal('foo.', Sentence.new(dictionary, grammar,@conf, '${NOUN} ${VERB}.').write)
 	end
 
 	def test_write
@@ -43,7 +40,7 @@ class SentenceTest < Test::Unit::TestCase
 		grammar = PolishGrammar.new
 		dictionary = Dictionary.new
 		dictionary.read('N 100 foo')
-		sentence = SentenceWrapper.new(dictionary,grammar,pattern)
+		sentence = Sentence.new(dictionary,grammar,@conf,pattern)
 		assert_equal('${NOUN}', sentence.pattern)
 		sentence.write
 		assert_equal('${NOUN}', sentence.pattern)
@@ -55,7 +52,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary.read(dictionary_text)
 		grammar = PolishGrammar.new
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'a ${SUBJ} b')
+		sentence = Sentence.new(dictionary,grammar,@conf,'a ${SUBJ} b')
 		text = sentence.write
 		assert_equal('a foo b', text)
 		assert_equal('foo', sentence.subject.text)
@@ -63,7 +60,7 @@ class SentenceTest < Test::Unit::TestCase
 		contr_dict = ControlledDictionary.new
 		contr_dict.read "N 100 foo\nN 100 bar"
 		contr_dict.set_indices NOUN, [0, 1]
-		sentence = SentenceWrapper.new(contr_dict,grammar,'a ${SUBJ} ${SUBJ2} b')
+		sentence = Sentence.new(contr_dict,grammar,@conf,'a ${SUBJ} ${SUBJ2} b')
 		text = sentence.write
 		assert_equal('a foo bar b', text)
 		assert_equal('foo', sentence.subject.text)
@@ -75,10 +72,10 @@ class SentenceTest < Test::Unit::TestCase
 
 		dictionary.read("N 100 pora/a")
 		grammar.read_rules("N a 6 a ze ra")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN(6)}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN(6)}')
 		assert_equal('porze', sentence.write)
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ(6)}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ(6)}')
 		assert_equal('porze', sentence.write)
 	end
 
@@ -88,7 +85,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary.read(dictionary_text)
 		grammar = PolishGrammar.new
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'?${ADJ} ${NOUN}?')
+		sentence = Sentence.new(dictionary,grammar,@conf,'?${ADJ} ${NOUN}?')
 		assert_equal('?cool stuff?', sentence.write)
 
 		dictionary = ControlledDictionary.new
@@ -96,46 +93,46 @@ class SentenceTest < Test::Unit::TestCase
 
 		dictionary.set_indices NOUN, [0, 1]
 		dictionary.set_indices ADJECTIVE, [0, 1]
-		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ1} ${NOUN} ${ADJ2} ${NOUN2}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ1} ${NOUN} ${ADJ2} ${NOUN2}')
 		assert_equal 'cool stuff bad things', sentence.write
 		dictionary.set_indices NOUN, [1, 0]
 		dictionary.set_indices ADJECTIVE, [1, 1]
-		sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN1} ${ADJ1} ${NOUN2} ${ADJ1}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN1} ${ADJ1} ${NOUN2} ${ADJ1}')
 		assert_equal('things bad stuff bad', sentence.write)
 
 		dictionary.read("N 100 psy n Pl\nA 100 zły/a")
 		grammar.read_rules("A a 211 y e y")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${NOUN}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
 		assert_equal('złe psy', sentence.write)
 
 		dictionary.read("N 100 pory f\nA 100 dobry/a")
 		grammar.read_rules("A a 302 y ej y")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ(2)} ${NOUN}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ(2)} ${NOUN}')
 		assert_equal('dobrej pory', sentence.write)
 
 		dictionary.read("N 100 pory f\nA 100 dobry/a")
 		grammar.read_rules("A a 311 y e y")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ(11)} ${NOUN}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ(11)} ${NOUN}')
 		assert_equal('dobre pory', sentence.write)
 
 		# two adjectives to one noun
 		dictionary.read "N 100 pora f\nA 100 dobry/a\nA 100 prosty/a"
 		dictionary.set_indices ADJECTIVE, [1, 0]
 		grammar.read_rules("A a 301 y a y")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${ADJ} ${NOUN}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${ADJ} ${NOUN}')
 		assert_equal('prosta dobra pora', sentence.write)
 
 		dictionary.read "N 100 pora f\nA 100 dobry/a\nA 100 prosty/a"
 		dictionary.set_indices ADJECTIVE, [1, 0]
 		grammar.read_rules("A a 301 y a y")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${ADJ} ${SUBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${ADJ} ${SUBJ}')
 		assert_equal('prosta dobra pora', sentence.write)
 
 		# adjective with an object
 		dictionary.read "N 100 kibic m\nN 100 szczęście/a f\nA 100 pijany/a ATTR(z,2)"
 		dictionary.set_indices NOUN, [0, 1]
 		grammar.read_rules("N a 2 e a e")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${ADJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${ADJ}')
 		assert_equal('kibic pijany ze szczęścia', sentence.write)
 	end
 
@@ -145,13 +142,12 @@ class SentenceTest < Test::Unit::TestCase
 		grammar.read_rules "A a 301 0 e ."
 		dictionary = Dictionary.new
 		dictionary.read "N 100 Stube f\nA 100 dies/a DOUBLE\nA 100 dein/a POSS\nA 10 klein/a\n"
+		@conf.double_adj_chance = 1
 
 		possible = ['diese kleine Stube', 'deine kleine Stube', 'kleine Stube']
 		# times to check if there is an infinite loop
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${NOUN}')
-			assert_raise(ArgumentError) { sentence.double_adj_chance = 100 }
-			sentence.double_adj_chance = 1
+			sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
 			assert_includes possible, sentence.write
 		end
 	end
@@ -162,7 +158,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary.read(dictionary_text)
 		grammar = GenericGrammar.new
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${NOUN}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
 		assert_equal('cool nobody', sentence.write)
 
 		dictionary_text = "N 100 nobody NO_ADJ\nA 100 cool"
@@ -176,11 +172,11 @@ class SentenceTest < Test::Unit::TestCase
 		grammar = PolishGrammar.new
 		grammar.read_rules("A a 104 y ego y")
 		dictionary.read("A 100 dobry/a\nN 100 czas m nan")
-		sentence = SentenceWrapper.new(dictionary,grammar,'widzę ${ADJ(4)} ${NOUN(4)}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'widzę ${ADJ(4)} ${NOUN(4)}')
 		assert_equal('widzę dobry czas', sentence.write)
 
 		dictionary.read("A 100 dobry/a\nN 100 psa m")
-		sentence = SentenceWrapper.new(dictionary,grammar,'widzę ${ADJ(4)} ${NOUN(4)}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'widzę ${ADJ(4)} ${NOUN(4)}')
 		assert_equal('widzę dobrego psa', sentence.write)
 	end
 
@@ -193,7 +189,7 @@ class SentenceTest < Test::Unit::TestCase
 		# tag should always come with an attribute
 		possible = ['bat', 'tag z bata', 'tag z loga', 'log']
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN}')
 			assert_includes possible, sentence.write
 		end
 
@@ -203,7 +199,7 @@ class SentenceTest < Test::Unit::TestCase
 			'log oddaje batowi', 'log oddaje tagowi z bata',
 		]
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 			assert_includes possible, sentence.write
 		end
 
@@ -212,7 +208,7 @@ class SentenceTest < Test::Unit::TestCase
 
 		possible = ['tag z bata oddaje', 'tag z loga oddaje']
 		5.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB}')
 			assert_includes possible, sentence.write
 		end
 	end
@@ -224,7 +220,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary.read "N 30 foo ATTR(prep,2)\nN 10 bar ATTR(prep,3)\nN 10 baz\nN 50 forbidden1 ONLY_SUBJ\nN 50 forbidden2 ONLY_SUBJ\n"
 
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'oto ${NOUN}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'oto ${NOUN}')
 			assert_match(/oto \w+/, sentence.write)
 			assert_no_match(/prep forbidden[12]/, sentence.write)
 		end
@@ -237,7 +233,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary.read "N 10 foo ATTR(prep,2)\nN 10 bar ATTR(prep,3)\nN 10 baz ATTR(prep,4)\n"
 
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'oto ${NOUN}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'oto ${NOUN}')
 			assert_match(/oto \w+/, sentence.write)
 		end
 	end
@@ -249,7 +245,7 @@ class SentenceTest < Test::Unit::TestCase
 
 		possible = ['this licence to kill', 'this kill', 'this we']
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'this ${NOUN}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'this ${NOUN}')
 			assert_includes(possible, sentence.write)
 		end
 	end
@@ -268,12 +264,12 @@ V 100 denk/a
 V 100 sing/a
 		END
 		dictionary.set_indices(NOUN => [0,1], VERB=>[0,1,2,3])
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${VERB1} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${VERB1} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2}')
 		assert_equal 'Kinder spielen spielen und spielen, Mutter lacht oder lacht', sentence.write
 
 		# use .2 to allow two verbs for one subject
 		dictionary.set_indices(NOUN => [0,1], VERB=>[0,1,2,3])
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB1.2} ${VERB1.2} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2.2}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB1.2} ${VERB1.2} und ${VERB}, ${SUBJ2} ${VERB2} oder ${VERB2.2}')
 		assert_equal 'Kinder spielen spielen und lachen, Mutter denkt oder singt', sentence.write
 
 		# check objects, adverbs and prepositions are not messed up
@@ -289,7 +285,7 @@ D 10 leise
 D 10 schnell
 		END
 		dictionary.set_indices(NOUN => [0,1,2], VERB=>[0,1], ADVERB=>[0,1])
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV} ${OBJ} und ${VERB1.2} ${ADV1.2} ${OBJ1.2}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${ADV} ${OBJ} und ${VERB1.2} ${ADV1.2} ${OBJ1.2}')
 		assert_equal 'Kinder spielen leise mit Hund und laufen schnell nach Haus', sentence.write
 	end
 
@@ -297,101 +293,101 @@ D 10 schnell
 		grammar = PolishGrammar.new
 		dictionary = Dictionary.new
 		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good ONLY_WITH(GOOD)\n")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${NOUN}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
 		assert_equal('good work', sentence.write)
 		dictionary.read("N 100 work\nA 100 good ONLY_WITH_W(work)\n")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${NOUN}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
 		assert_equal('good work', sentence.write)
 
 		# noun -> adjective
 		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good\nA 100 bad NOT_WITH(GOOD)")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${SUBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${SUBJ}')
 			assert_equal('good work', sentence.write)
 		end
 		dictionary.read("N 100 work\nA 100 good\nA 100 bad NOT_WITH_W(work)")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${SUBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${SUBJ}')
 			assert_equal('good work', sentence.write)
 		end
 
 		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good NOT_WITH(BAD)\n")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${SUBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${SUBJ}')
 		assert_equal('good work', sentence.write)
 
 		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good\nA 100 bad ONLY_WITH(BAD)")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${NOUN}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
 			assert_equal('good work', sentence.write)
 		end
 		dictionary.read("N 100 work\nA 100 good\nA 100 bad ONLY_WITH_W(idea)")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${NOUN}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
 			assert_equal('good work', sentence.write)
 		end
 
 		# verb -> noun object
 		dictionary.read("V 100 purge OBJ(1) TAKES_ONLY(EVIL)\nN 100 evil SEMANTIC(EVIL)\nN 100 good SEMANTIC(GOOD)")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 			assert_equal('purge evil', sentence.write)
 		end
 		dictionary.read("V 100 purge OBJ(1) TAKES_ONLY(EVIL,HIPEREVIL)\nN 100 evil SEMANTIC(ADJECTIVE,EVIL)\nN 100 good SEMANTIC(GOOD,ADJECTIVE)")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 			assert_equal('purge evil', sentence.write)
 		end
 		dictionary.read("V 100 purge OBJ(1) TAKES_NO(GOOD)\nN 100 evil SEMANTIC(EVIL)\nN 100 good SEMANTIC(GOOD)")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 			assert_equal('purge evil', sentence.write)
 		end
 		dictionary.read("V 100 purge OBJ(1) TAKES_NO(GOOD,HIPERGOOD)\nN 100 evil SEMANTIC(ADJECTIVE,EVIL)\nN 100 good SEMANTIC(GOOD,ADJECTIVE)")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 			assert_equal('purge evil', sentence.write)
 		end
 
 		dictionary.read("V 100 spread OBJ(1) TAKES_ONLY_W(good)\nN 100 evil\nN 100 good")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 			assert_equal('spread good', sentence.write)
 		end
 		dictionary.read("V 100 spread OBJ(1) TAKES_NO_W(evil)\nN 100 evil\nN 100 good")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 			assert_equal('spread good', sentence.write)
 		end
 
 		# verb -> verb object
 		srand 2
 		dictionary.read("V 1000 muszę INF\nV 100 chcieć\nV 30 lecieć") # no semantic - expect wrong result
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 		assert_equal('muszę chcieć', sentence.write)
 		srand 2
 		dictionary.read("V 1000 muszę INF TAKES_NO(MODAL)\nV 100 chcieć SEMANTIC(MODAL)\nV 30 lecieć SEMANTIC(MOVE)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 		assert_equal('muszę lecieć', sentence.write)
 
 		# subject -> verb
 		srand 2
 		dictionary.read("N 100 policja\nV 100 rymuje\nV 10 idzie") # no semantic - expect wrong result
-		sentence = SentenceWrapper.new(dictionary, grammar, '${SUBJ} ${VERB}');
+		sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB}');
 		assert_equal('policja rymuje', sentence.write)
 		srand 2
 		dictionary.read("N 100 policja SEMANTIC(NOT_COOL)\nV 100 rymuje NOT_WITH(NOT_COOL)\nV 10 idzie")
-		sentence = SentenceWrapper.new(dictionary, grammar, '${SUBJ} ${VERB}');
+		sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB}');
 		assert_equal('policja idzie', sentence.write)
 
 		dictionary.read("N 100 ziomy\nN 100 policja SEMANTIC(POLICJA)\nV 100 idziesz\nV 100 donosisz NOT_WITH(ZIOM)")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary, grammar, 'spoko jak ${SUBJ(TAKES_NO POLICJA)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, 'spoko jak ${SUBJ(TAKES_NO POLICJA)}')
 			assert_equal('spoko jak ziomy', sentence.write)
-			sentence = SentenceWrapper.new(dictionary, grammar, 'spoko jak ${SUBJ(IG_ONLY,TAKES_NO POLICJA)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, 'spoko jak ${SUBJ(IG_ONLY,TAKES_NO POLICJA)}')
 			assert_equal('spoko jak ziomy', sentence.write)
-			sentence = SentenceWrapper.new(dictionary, grammar, 'spoko jak ${NOUN(TAKES_NO POLICJA)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, 'spoko jak ${NOUN(TAKES_NO POLICJA)}')
 			assert_equal('spoko jak ziomy', sentence.write)
-			sentence = SentenceWrapper.new(dictionary, grammar, '${VERB(2,SEMANTIC ZIOM)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, '${VERB(2,SEMANTIC ZIOM)}')
 			assert_equal('idziesz', sentence.write)
 		end
 	end
@@ -402,45 +398,45 @@ D 10 schnell
 		grammar = PolishGrammar.new
 		grammar.read_rules("V a 13 ć 0 ć")
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN} ${VERB}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB}')
 		assert_equal('lipy rosną', sentence.write)
 		
 		dictionary.read("N 100 lipy f Pl\nV 100 rosnąć/a REFLEXIVE")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN} ${VERB}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB}')
 		assert_equal('lipy rosną się', sentence.write)
 
 		dictionary.read("V 100 rosnąć/a")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(13)}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(13)}')
 		assert_equal('rosną', sentence.write)
 
 		dictionary.read("N 100 lipa f\nV 100 rosnąć/a")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN}. ${VERB2(13)}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN}. ${VERB2(13)}')
 		assert_equal('lipa. rosną', sentence.write)
 
 		dictionary.read("V 100 rosnąć/a")
 		grammar.read_rules("V a 1 ąć ę ąć")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)}')
 		assert_equal('rosnę', sentence.write)
 
 		dictionary.read("V 100 rosnąć/a SUFFIX(w siłę)")
 		grammar.read_rules("V a 1 ąć ę ąć")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)}')
 		assert_equal('rosnę w siłę', sentence.write)
 
 		# infinitive
 		dictionary.read("N 100 lipa/b f\nV 100 uderzać/a OBJ(4)")
 		grammar.read_rules("N b 4 a ę a\nV a 1 ć m ć")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 		assert_equal('uderzam lipę', sentence.write)
-		sentence = SentenceWrapper.new(dictionary,grammar,'trzeba ${VERB(INF)} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'trzeba ${VERB(INF)} ${OBJ}')
 		assert_equal('trzeba uderzać lipę', sentence.write)
 
 		# imperative
 		dictionary.read "N 100 lipa/b f\nV 100 uderzać/a OBJ(4)"
 		grammar.read_rules "N b 4 a ę a\nV a 1 ć m ć\nV a 102 ać 0 ać\nV a 111 ać my ać"
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(2,IMP)} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(2,IMP)} ${OBJ}')
 		assert_equal 'uderz lipę', sentence.write
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(IMP,11)} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(IMP,11)} ${OBJ}')
 		assert_equal 'uderzmy lipę', sentence.write
 	end
 
@@ -449,7 +445,7 @@ D 10 schnell
 		grammar.read_rules "V a 13 0 en ."
 		dictionary = Dictionary.new
 		dictionary.read "N 10 Hunden Pl\nV 5 bell/a\nV 10 lauf/a\nV 10 wart/a\nV 10 denk/a"
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB(ONLY bell)}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB(ONLY bell)}')
 		assert_equal 'Hunden bellen', sentence.write
 	end
 
@@ -464,50 +460,49 @@ D 10 schnell
 
 		srand 1
 		# verb has no object set
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${OBJ} ${VERB}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${OBJ} ${VERB}')
 		assert_equal('pies je', sentence.write)
 
 		srand 1
 		dictionary.read("N 100 pies\nN 100 kot/a\nV 100 je OBJ(4)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies je kota', sentence.write)
 
 		srand 1
 		# noun suffix
 		dictionary.read("N 100 pies\nN 100 kot/a SUFFIX(w butach)\nV 100 je OBJ(4)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies je kota w butach', sentence.write)
 
 		srand 1
 		# object preposition
 		dictionary.read("N 100 pies\nN 100 kot/a Pl\nV 100 goni OBJ(za,5)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies goni za kotami', sentence.write)
 
 		srand 8
 		# handle two objects of a noun
 		dictionary.read "N 100 pies/b\nN 100 kot/a\nV 100 daję OBJ(3) OBJ(4)"
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 		assert_equal 'daję psu kota', sentence.write
 
 		srand
 		# object adjective
 		dictionary.read "N 100 kot/a \nA 100 ładny/a \nV 100 widzę OBJ(4)"
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
-		assert_raise(ArgumentError) { sentence.object_adj_chance = 100 }
-		sentence.object_adj_chance = 1
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
+		@conf.object_adj_chance = 1
 		assert_equal 'widzę ładnego kota', sentence.write
 
 		srand
 		# adjective for noun attribute, additionally check proper preposition letter change
 		dictionary.read "N 10 wąsy ATTR(w,4)\nN 10 kot/a ONLY_OBJ\nA 10 wredny/a"
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ}')
-		sentence.object_adj_chance = 1
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
+		@conf.object_adj_chance = 1
 		assert_equal 'wąsy we wrednego kota', sentence.write
 
 		dictionary.read "N 10 wąsy ATTR(w,4)\nN 10 wrot/a ONLY_OBJ\nA 10 ładny/a"
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ}')
-		sentence.object_adj_chance = 1
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
+		@conf.object_adj_chance = 1
 		# without the adjective should be 'wąsy we wrota'
 		assert_equal 'wąsy w ładnego wrota', sentence.write
 	end
@@ -520,7 +515,7 @@ D 10 schnell
 		assert_equal('pies', dictionary.get_random_object.text)
 		srand 2
 		grammar = PolishGrammar.new
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies goni kota', sentence.write)
 	end
 	
@@ -529,7 +524,7 @@ D 10 schnell
 		dictionary = Dictionary.new
 		dictionary.read "N 100 Alice\nN 100 Bob\nN 100 Chris\nN 100 Donald\nV 100 gives OBJ(2) OBJ(2)"
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 			text = sentence.write
 			assert_match(/^\w+ \w+ \w+ \w+$/, text, "Failed to resolve subject, verb and two subjects: '#{text}'")
 			%w{Alice Bob Chris Donald}.each do |noun|
@@ -543,55 +538,55 @@ D 10 schnell
 		dictionary = Dictionary.new
 		srand 1
 		dictionary.read("N 100 pies\nN 30 zebrą\nV 100 idzie OBJ(z,5)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie z zebrą', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 zdradą\nV 100 idzie OBJ(z,5)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze zdradą', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 szkołą\nV 100 idzie OBJ(z,5)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze szkołą', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 szansą\nV 100 idzie OBJ(z,5)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie z szansą', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 skrętem\nV 100 idzie OBJ(z,5)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze skrętem', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 ślimakiem\nV 100 idzie OBJ(z,5)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze ślimakiem', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 mną\nV 100 idzie OBJ(z,5)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze mną', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 mnie\nV 100 odbiera OBJ(z,2)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies odbiera ze mnie', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 wstydem\nV 100 idzie OBJ(z,5)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie ze wstydem', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 walce\nV 100 idzie OBJ(w,6)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie w walce', sentence.write)
 		dictionary.read("N 100 pies\nN 30 wronie\nV 100 idzie OBJ(w,6)")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie we wronie', sentence.write)
 
 		srand 1
 		dictionary.read "N 100 pies \nN 30 mnicha \nV 100 idzie OBJ(od,6)"
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal 'pies idzie od mnicha', sentence.write
 		srand 1
 		dictionary.read "N 100 pies \nN 30 mnie \nV 100 idzie OBJ(od,6)"
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal 'pies idzie ode mnie', sentence.write
 	end
 
@@ -611,30 +606,29 @@ A y 115 0 ymi .
 		dictionary = ControlledDictionary.new
 		dictionary.read "N 100 zwierz/a \nN 100 las/b ONLY_OBJ \nV 100 idzie OBJ(z,5)\nA 100 czarn/y"
 
-		assert_raise(ArgumentError) { Sentence.new(dictionary,grammar,'${NOUN}').double_noun_chance = 100 }
-
 		# additionally check that preposition letter change catches the correct noun
 		5.times do
-			sentence = Sentence.new(dictionary,grammar,'${VERB(3)} ${OBJ}')
-			sentence.double_noun_chance = 1
-			sentence.object_adj_chance = 0
+			@conf.double_noun_chance = 1
+			@conf.object_adj_chance = 0
+			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(3)} ${OBJ}')
 			dictionary.set_indices NOUN, [0, 1] # zwierz, las
 			assert_equal 'idzie ze zwierzem lasu', sentence.write
 			dictionary.set_indices NOUN, [] # make random again
 
-			sentence = Sentence.new(dictionary,grammar,'${VERB(3)} ${OBJ}')
-			sentence.double_noun_chance = 1
-			sentence.object_adj_chance = 1
+			@conf.double_noun_chance = 1
+			@conf.object_adj_chance = 1
+			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(3)} ${OBJ}')
 			dictionary.set_indices NOUN, [0, 1] # zwierz, las
 			assert_equal 'idzie z czarnym zwierzem lasu', sentence.write
 		end
 
 		# additionally check that verb uses number from the first noun, even
 		# if the second noun is plural
+		@conf.double_noun_chance = 1
+		@conf.object_adj_chance = 0
 		dictionary.read "N 100 zwierz/a \nN 100 las/b Pl ONLY_OBJ \nV 100 idzie\nA 100 czarn/y"
 		5.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${ADJ} ${SUBJ} ${VERB}')
-			sentence.double_noun_chance = 1
+			sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${SUBJ} ${VERB}')
 			dictionary.set_indices NOUN, [0, 1] # zwierz, las
 			assert_equal 'czarny zwierz lasów idzie', sentence.write
 		end
@@ -644,9 +638,9 @@ A y 115 0 ymi .
 		grammar = EnglishGrammar.new
 		dictionary = ControlledDictionary.new
 		dictionary.read "N 100 eye\nN 100 eagle"
+		@conf.double_noun_chance = 1
 		5.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ}')
-			sentence.double_noun_chance = 1
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
 			dictionary.set_indices NOUN, [0, 1]
 			assert_equal 'eye of eagle', sentence.write
 		end
@@ -656,18 +650,18 @@ A y 115 0 ymi .
 		grammar = EnglishGrammar.new
 		dictionary = Dictionary.new
 		dictionary.read "N 100 eye\nN 100 eagle\nN 100 I PERSON(1)"
+		@conf.double_noun_chance = 1
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ}')
-			sentence.double_noun_chance = 1
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
 			text = sentence.write
 			assert_match(/\w+/, text)
 			assert_no_match(/\b(of I|I of)\b/, text)
 		end
 
 		dictionary.read "N 100 eagle\nN 100 I PERSON(1)"
+		@conf.double_noun_chance = 1
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ}')
-			sentence.double_noun_chance = 1
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
 			text = sentence.write
 			assert_includes ['eagle', 'I'], text
 		end
@@ -677,13 +671,12 @@ A y 115 0 ymi .
 		grammar = GenericGrammar.new
 		dictionary = Dictionary.new
 		dictionary.read "N 10 bat\nN 10 blog ATTR(2)\nN 10 log ATTR(z,2)\nN 10 tag ATTR(2)\nV 10 widzi OBJ(2)"
+		@conf.double_noun_chance = 0.5
 		5.times do
-			sentence = Sentence.new(dictionary,grammar,'${NOUN}')
-			sentence.double_noun_chance = 0.5
+			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN}')
 			assert_match(/\w+/, sentence.write)
 
-			sentence = Sentence.new(dictionary,grammar,'${SUBJ} ${VERB} ${OBJ}')
-			sentence.double_noun_chance = 0.5
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 			assert_match(/\w+ \w+ \w+/, sentence.write)
 		end
 	end
@@ -697,14 +690,14 @@ A y 115 0 ymi .
 
 		srand 1
 		grammar = PolishGrammar.new
-		sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('pies chce jeść', sentence.write)
 
 		# check that ONLY_OBJ works for verbs
 		srand
 		dictionary.read "N 100 pies\nV 100 chce INF\nV 30 jeść ONLY_OBJ"
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 			assert_equal 'pies chce jeść', sentence.write
 		end
 
@@ -712,18 +705,18 @@ A y 115 0 ymi .
 		srand 1
 		grammar.read_rules "N a 4 ies sa ies\nV a 1 e ę e\n"
 		dictionary.read "N 100 pies/a\nV 100 chce/a INF\nV 30 jeść OBJ(4)"
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(1)} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 		assert_equal 'chcę jeść psa', sentence.write
 
 		srand 1
 		dictionary.read("N 100 pies\nV 100 chce INF\nV 30 przejść REFL")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('pies chce się przejść', sentence.write)
 
 		# infitinive with preposition
 		srand 1
 		dictionary.read "N 100 they\nV 100 want INF(to)\nV 30 eat"
-		sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('they want to eat', sentence.write)
 	end
 
@@ -732,19 +725,19 @@ A y 115 0 ymi .
 		dictionary = Dictionary.new
 		dictionary.read("N 100 flower\nV 100 is ADJ\nA 100 beautiful")
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('flower is beautiful', sentence.write)
 
 		dictionary.read("N 100 flower\nV 100 is ADJ TAKES_NO(BAD)\nA 100 beautiful SEMANTIC(GOOD)\nA 100 ugly SEMANTIC(BAD)")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 			assert_equal('flower is beautiful', sentence.write)
 		end
 
 		# what if we implicitly set noun
 		dictionary.read("V 100 jesteśmy ADJ\nA 100 dobry/a")
 		grammar.read_rules("A a 111 y zy y")
-		sentence = SentenceWrapper.new(dictionary,grammar,'${VERB(11)} ${OBJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(11)} ${OBJ}')
 		assert_equal('jesteśmy dobrzy', sentence.write)
 	end
 
@@ -754,7 +747,7 @@ A y 115 0 ymi .
 		# adjective 'this' should never be chosen as object for 'is' because 'this' is marked as NOT_AS_OBJ
 		dictionary.read("N 100 flower\nV 100 is ADJ\nA 10 beautiful\nA 100 this NOT_AS_OBJ")
 		10.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${NOUN} ${VERB} ${OBJ}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 			assert_equal('flower is beautiful', sentence.write)
 		end
 	end
@@ -766,7 +759,7 @@ A y 115 0 ymi .
 		dictionary = Dictionary.new
 		dictionary.read("N 100 people \nV 100 become ADJ \nA 100 sick\n")
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'what ${SUBJ} ${VERB}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'what ${SUBJ} ${VERB}')
 		assert_equal('what people become', sentence.write)
 	end
 
@@ -776,25 +769,23 @@ A y 115 0 ymi .
 
 		srand 7
 		draw = rand
-		sentence = SentenceWrapper.new(dictionary,'grammar','')
-		default_other_choice = sentence.other_word_chance
+		default_other_choice = @conf.other_word_chance
 		assert draw < default_other_choice && draw < 0.5, "got #{draw} >= #{default_other_choice}"
 		srand 3
 		draw = rand
 		assert draw > 0.5, "got #{draw}"
 
+		@conf.other_word_chance = 0.5
 		srand 3
-		sentence = SentenceWrapper.new(dictionary,'grammar','${OTHER}')
-		sentence.other_word_chance = 0.5
+		sentence = Sentence.new(dictionary,'grammar',@conf,'${OTHER}')
 		assert_equal('', sentence.write)
 
 		srand 7
-		sentence = SentenceWrapper.new(dictionary,'grammar','${OTHER}')
+		sentence = Sentence.new(dictionary,'grammar',@conf,'${OTHER}')
 		assert_equal('some other', sentence.write)
 
 		srand 7
-		sentence = SentenceWrapper.new(dictionary,'grammar','${OTHER}')
-		sentence.other_word_chance = 0.5
+		sentence = Sentence.new(dictionary,'grammar',@conf,'${OTHER}')
 		assert_equal('some other', sentence.write)
 	end
 
@@ -804,36 +795,36 @@ A y 115 0 ymi .
 
 		dictionary.read "N 100 beast\nV 100 smiles\nD 100 horribly"
 		3.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${ADV}')
 			assert_equal 'beast smiles horribly', sentence.write
 		end
 
 		dictionary.read "N 100 beast SEMANTIC(EVIL)\nV 100 smiles\nD 100 horribly\nD 100 lovely NOT_WITH(EVIL)"
 		3.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${ADV}')
 			assert_equal 'beast smiles horribly', sentence.write
 		end
 		dictionary.read "N 100 beast SEMANTIC(EVIL,BEAST)\nV 100 smiles\nD 100 horribly\nD 100 lovely NOT_WITH(EVIL,HORRIBLE)"
 		3.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${ADV}')
 			assert_equal 'beast smiles horribly', sentence.write
 		end
 
 		dictionary.read "N 100 beast SEMANTIC(EVIL)\nV 100 smiles\nD 100 horribly\nD 100 lovely ONLY_WITH(CUTE)"
 		3.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${ADV}')
 			assert_equal 'beast smiles horribly', sentence.write
 		end
 		dictionary.read "N 100 beast\nV 100 smiles\nD 100 horribly\nD 100 lovely ONLY_WITH(CUTE)"
 		3.times do
-			sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${VERB} ${ADV}')
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${ADV}')
 			assert_equal 'beast smiles horribly', sentence.write
 		end
 	end
 
 	def test_handle_empty_dictionary
 		dictionary = Dictionary.new
-		sentence = SentenceWrapper.new(dictionary,'grammar','${NOUN} ${ADJ} ${VERB}')
+		sentence = Sentence.new(dictionary,'grammar',@conf,'${NOUN} ${ADJ} ${VERB}')
 		assert_equal('', sentence.write.strip)
 	end
 
@@ -844,11 +835,11 @@ A y 115 0 ymi .
 		subject = Noun.new('bar',[],0,1)
 		grammar = PolishGrammar.new
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${SUBJ2} ${SUBJ3}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${SUBJ2} ${SUBJ3}')
 		sentence.subject = subject
 		assert_equal('bar foo foo', sentence.write)
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'${SUBJ} ${ADJ}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${ADJ}')
 		sentence.subject = subject
 		assert_equal('bar cool', sentence.write)
 	end
@@ -860,18 +851,19 @@ A y 115 0 ymi .
 		dictionary.read "N 10 wilk\nV 10 słysz/a\nV 10 węsz/a\nA 10 głodn/a"
 		implicit = Noun.new('psy',[],0,1,{},PLURAL)
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
+		sentence = Sentence.new(dictionary,grammar,@conf,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
 		sentence.implicit_subject = implicit
 		dictionary.set_indices VERB, [0,1]
 		assert_equal 'i słyszą, jak wilk węszy', sentence.write
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
+		@conf.object_adj_chance = 1
+		sentence = Sentence.new(dictionary,grammar,@conf,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
 		sentence.implicit_subject = implicit
-		sentence.object_adj_chance = 1
 		dictionary.set_indices VERB, [0,1]
 		assert_equal 'i głodne słyszą, jak wilk węszy', sentence.write
 
-		sentence = SentenceWrapper.new(dictionary,grammar,'to ${SUBJ(NE)}')
+		@conf.object_adj_chance = 0
+		sentence = Sentence.new(dictionary,grammar,@conf,'to ${SUBJ(NE)}')
 		sentence.implicit_subject = implicit
 		assert_match /to \w+/, sentence.write
 	end
@@ -885,9 +877,9 @@ N  10 "foo"
 		END
 		dictionary.read(dictionary_text)
 		10.times do
-			assert_equal('foo', SentenceWrapper.new(dictionary,grammar,'${NOUN}').write)
-			assert_equal('foo', SentenceWrapper.new(dictionary,grammar,'${SUBJ(NE)}').write)
-			assert_equal('', SentenceWrapper.new(dictionary,grammar,'${SUBJ(EMPTY)}').write)
+			assert_equal('foo', Sentence.new(dictionary,grammar,@conf,'${NOUN}').write)
+			assert_equal('foo', Sentence.new(dictionary,grammar,@conf,'${SUBJ(NE)}').write)
+			assert_equal('', Sentence.new(dictionary,grammar,@conf,'${SUBJ(EMPTY)}').write)
 		end
 
 	end
@@ -902,7 +894,7 @@ V 100 verb1 OBJ(4)
 		END
 		dictionary.read(dictionary_text)
 		10.times do
-			assert_equal('verb1 noun2', SentenceWrapper.new(dictionary,grammar,'${VERB(2)} ${OBJ}').write)
+			assert_equal('verb1 noun2', Sentence.new(dictionary,grammar,@conf,'${VERB(2)} ${OBJ}').write)
 		end
 
 		# test OBJ_FREQ
@@ -913,7 +905,7 @@ V 100 verb1 OBJ(4)
 		END
 		dictionary.read(dictionary_text)
 		10.times do
-			assert_equal('verb1 noun2', SentenceWrapper.new(dictionary,grammar,'${VERB(2)} ${OBJ}').write)
+			assert_equal('verb1 noun2', Sentence.new(dictionary,grammar,@conf,'${VERB(2)} ${OBJ}').write)
 		end
 
 		dictionary_text = <<-END
@@ -922,7 +914,7 @@ N  10 noun2
 		END
 		dictionary.read(dictionary_text)
 		10.times do
-			assert_equal('noun2', SentenceWrapper.new(dictionary,grammar,'${SUBJ}').write)
+			assert_equal('noun2', Sentence.new(dictionary,grammar,@conf,'${SUBJ}').write)
 		end
 
 		dictionary_text = <<-END
@@ -930,7 +922,7 @@ N 100 noun1 ONLY_OBJ
 		END
 		dictionary.read(dictionary_text)
 		10.times do
-			assert_equal('noun1', SentenceWrapper.new(dictionary,grammar,'${SUBJ(IG_ONLY)}').write)
+			assert_equal('noun1', Sentence.new(dictionary,grammar,@conf,'${SUBJ(IG_ONLY)}').write)
 		end
 	end
 end

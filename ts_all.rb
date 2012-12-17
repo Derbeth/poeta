@@ -4,6 +4,7 @@ require 'test/unit'
 # Currently tests do not work with jruby-1.6.8 because of the difference in behaviour of srand()
 # jruby-1.7.0 works fine
 
+require './tc_configuration'
 require './tc_sentence_splitter'
 require './tc_grammar'
 require './tc_word'

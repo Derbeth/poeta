@@ -20,7 +20,6 @@ class SentenceError < RuntimeError
 end
 
 class Sentence
-	attr_reader :double_adj_chance, :double_noun_chance, :other_word_chance, :object_adj_chance
 	attr_reader :text, :subject, :pattern
 	attr_reader :debug_text
 
@@ -38,34 +37,6 @@ class Sentence
 		# set of all nouns used in a sentence, including also objects (contrary to @indexed_nouns)
 		@nouns = []
 		@adjectives = []
-		self.other_word_chance = DEFAULT_OTHER_CHANCE
-		self.double_adj_chance = DEFAULT_DBL_ADJ_CHANCE
-		self.double_noun_chance = DEFAULT_DBL_NOUN_CHANCE
-		self.object_adj_chance = DEFAULT_OBJ_ADJ_CHANCE
-	end
-
-	def other_word_chance=(chance)
-		validate_chance(chance)
-		@other_word_chance = chance
-	end
-
-	def double_adj_chance=(chance)
-		validate_chance(chance)
-		@double_adj_chance = chance
-	end
-
-	def double_noun_chance=(chance)
-		validate_chance(chance)
-		@double_noun_chance = chance
-	end
-
-	def object_adj_chance=(chance)
-		validate_chance(chance)
-		@object_adj_chance = chance
-	end
-
-	def validate_chance(chance)
-		raise ArgumentError, "chance should be 0.0 and 1.0, but got #{chance}" if chance < 0.0 || chance > 1.0
 	end
 
 	def Sentence.validate_pattern(pattern)
@@ -138,10 +109,6 @@ class Sentence
 
 	MAX_ATTR_RECUR = 3
 	DBL_NOUN_RECUR = 1
-	DEFAULT_OTHER_CHANCE = 0.3
-	DEFAULT_DBL_ADJ_CHANCE = 0.3
-	DEFAULT_DBL_NOUN_CHANCE = 0.2
-	DEFAULT_OBJ_ADJ_CHANCE = 0.3
 
 	def handle_subject(full_match,index,options)
 		subject_index, norm_index = self.class.read_index(full_match,index)
@@ -206,7 +173,7 @@ class Sentence
 		raise "no noun for #{full_match}" unless @indexed_nouns.include? noun_index
 		noun = @indexed_nouns[noun_index]
 		return '' if noun == nil || noun.get_property(:no_adjective)
-		return '' if noun_index == 1 && @subject && @implicit_subject && !check_chance(object_adj_chance)
+		return '' if noun_index == 1 && @subject && @implicit_subject && !check_chance(@conf.object_adj_chance)
 
 		_handle_adjective(noun, parsed_opts)
 	end
@@ -230,7 +197,7 @@ class Sentence
 		form = {:case=>gram_case, :gender=>noun.gender, :number=>number, :animate => noun.animate}
 		inflected = _common_handle_word_with_attributes(adjective, form)
 
-		if adjective.double && check_chance(double_adj_chance)
+		if adjective.double && check_chance(@conf.double_adj_chance)
 			inflected += ' ' + _handle_adjective(noun, adj_opts, true)
 		end
 
@@ -244,7 +211,7 @@ class Sentence
 
 		inflected = _common_handle_word_with_attributes(noun, form, allow_recur)
 
-		if allow_recur > 0 && !inflected.empty? && check_chance(double_noun_chance)
+		if allow_recur > 0 && !inflected.empty? && check_chance(@conf.double_noun_chance)
 			attribute = handle_noun_object(noun, NounObject.new(GENITIVE), DBL_NOUN_RECUR)
 			inflected = @grammar.join_attribute_noun(inflected, attribute) unless attribute.empty?
 		end
@@ -352,7 +319,7 @@ class Sentence
 		# in order to avoid assigning first object adjective to the
 		# noun attribute added to the object
 		adj_text = nil
-		adj_chance = @adjectives.empty?  ? object_adj_chance : object_adj_chance/2
+		adj_chance = @adjectives.empty?  ? @conf.object_adj_chance : @conf.object_adj_chance/2
 		if check_chance(adj_chance)
 			adj_text = _handle_adjective(object, {:case=>object_spec.case})
 		end
@@ -418,7 +385,7 @@ class Sentence
 	end
 
 	def handle_other(full_match,index,options)
-		return '' unless check_chance(@other_word_chance)
+		return '' unless check_chance(@conf.other_word_chance)
 
 		other_word = @dictionary.get_random(Grammar::OTHER)
 		other_word ? other_word.text : ''
