@@ -8,19 +8,18 @@ class SentenceSplitter
 	end
 
 	def split(text)
-		t = text.dup
-		t = remove_unneeded_spaces(t)
+		text = remove_unneeded_spaces(text)
 
 		index = nil
 		if text.length > @conf.max_line_length
-			index = split_index(t)
+			index = split_index(text)
 		end
 
 		parts = nil
 		if index
-			parts = [ t[0...index], t[index+1,t.size-1] ]
+			parts = [ text[0...index], text[index+1,text.size-1] ]
 		else
-			parts = [t]
+			parts = [text]
 		end
 
 		parts.map { |p| remove_marks(p) }
@@ -47,6 +46,7 @@ class SentenceSplitter
 		return split_index if split_index
 
 		stop_sign = text.include?('|') ? '|' : ' '
+		stop_sign = stop_sign[0] # workaround for Ruby 1.8 problems
 		half_len = text.length.div 2
 
 		if text[half_len] == stop_sign
