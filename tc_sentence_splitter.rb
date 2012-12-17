@@ -43,6 +43,22 @@ class SentenceSplitterTest < Test::Unit::TestCase
 		assert_equal ['aaaaaa,', 'bbbb, ccc'], @splitter.split('aaaaaa, | bbbb, | ccc')
 	end
 
+	def test_typography
+		@conf.max_line_length = 10
+		# should not leave dangling single-letter words like 'w' at the end
+		assert_equal ['na dworcu', 'w KutnieKutnieKutnie'], @splitter.split('na dworcu w KutnieKutnieKutnie')
+
+		# check that this does not prevent sentences to be splitted
+		['a b c d e f g h', 'A B C D E F G, H', '1, B C D E F G H'].each do |s|
+			parts = @splitter.split(s)
+			assert parts.size > 1, "Too long string needs to be splitted: #{parts}"
+			parts.each do |p|
+				assert p.size > 2, "Very suboptimal split: #{parts.inspect}"
+			end
+			puts "test_typography: Splitted into #{parts}"
+		end
+	end
+
 	def test_does_not_modify_arg
 		@conf.max_line_length = 5
 		str = 'aaaa bbbb'
