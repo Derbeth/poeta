@@ -33,6 +33,7 @@ N b 2        a   y a
 N b 3,6      ła  le   ła
 N b 3,6      ara erze ara/3 # ofiara -> ofierze
 N b 3,6      ra  rze  ra
+N b 3,6      sta ście sta
 N b 3,6      ta  cie  ta
 N b 3,6      cha sze  cha # mucha -> musze
 N b 3,6      a   ie   [npsz]a
@@ -104,22 +105,32 @@ N d 16        e   ach e
 N d 16        o   ach o
 
 # 93 m, sad, wał, mur, dąb, sen, chrzest, kwiat wiatr
-N e 1,4       0  0    .
-N e 2         0  u    .
-N e 3         0  owi  .
-N e 5         0  em   .
-N e 6,7       0  zie  d
-N e 6,7       0  ze   r
-N e 6,7       st ście st
-N e 6,7       at ecie iat # kwiat
-N e 6,7       t  cie  t
-N e 6,7       0  ie   [bnpsz]
-N e 6,7       0  u    ch # oddech
-N e 11,14,17  0  y    .
-N e 12        0  ów   .
-N e 13        0  om   .
-N e 15        0  ami  .
-N e 16        0  ach  .
+N e 1,4       0   0      .
+N e 2         ób  obu    ób # grób
+N e 2         0   u      .
+N e 3         ób  obowi  ób
+N e 3         0   owi    .
+N e 5         ób  obem   ób
+N e 5         0   em     .
+N e 6,7       0   zie    d
+N e 6,7       0   ze     r
+N e 6,7       st  ście   st
+N e 6,7       at  ecie   iat # kwiat
+N e 6,7       t   cie    t
+N e 6,7       ób  obie   ób
+N e 6,7       0   ie     [bnpsz]
+N e 6,7       0   u      ch # oddech
+N e 6,7       ł   le     ł
+N e 11,14,17  ób  oby    ób
+N e 11,14,17  0   y      .
+N e 12        ób  obów   ób
+N e 12        0   ów     .
+N e 13        ób  obom   ób
+N e 13        0   om     .
+N e 15        ób  obami  ób
+N e 15        0   ami    .
+N e 16        ób  obach  ób
+N e 16        0   ach    .
 
 # 2 m, szatan, hiszpan
 N f 2,4    0 a .
@@ -602,7 +613,9 @@ V 6 112 [iy]ć cie   [iy]ć
 
 # koniugacja VIIa, widzieć cierpieć i VIIb, leżeć, milczeć
 V 7  1 ieć zę   sieć/m
-V 7  1 ieć ę    ieć
+V 7  1 ieć ę    ieć/c
+V 7  1 ieć ę    dzieć
+V 7  1 eć  ę    ieć
 V 7  1 eć  ę    eć
 V 7  2 ieć esz  ieć/c # chcieć
 V 7  2 eć  sz   ieć
@@ -621,11 +634,16 @@ V 7 12 eć  cie  ieć
 V 7 12 eć  icie eć/a
 V 7 12 eć  ycie eć
 V 7 13 ieć zą   sieć/m
-V 7 13 ieć ą    ieć
+V 7 13 ieć ą    ieć/c
+V 7 13 ieć ą    dzieć
+V 7 13 eć  ą    ieć
 V 7 13 eć  ą    eć
 V 7 102 ieć iej    ieć/c
 V 7 111 ieć iejmy  ieć/c
 V 7 112 ieć iejcie ieć/c
+V 7 102 ieć 0      ieć
+V 7 111 ieć my     ieć
+V 7 112 ieć cie    ieć
 V 7 102 eć 0    eć
 V 7 111 eć my   eć
 V 7 112 eć cie  eć

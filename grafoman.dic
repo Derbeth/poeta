@@ -12,7 +12,9 @@ N  20 łaska/r f
 N  20 mleko/p n SUFFIX(matki)
 N  50 myśl/n f
 N  50 myśl/n f Pl
+N 100 nieszczęście/d n
 N 100 los/e m nan
+N  50 ocean/e m nan ATTR(2) # ocean nieszczęścia
 N 100 oddech/e m nan
 N 100 owoc/c1 m Pl nan
 N  50 piekło/d n Pl nan
@@ -22,14 +24,17 @@ N 100 raj/c m nan
 N 100 ruch/e m nan
 N 100 sens/e m ATTR(2) # sens istnienia
 N  50 smak/g m nan
+N 100 smutek/g m nan
 N  10 sumienie/d n nan
 N   5 sumienie/d n Pl nan
+N 100 szczęście/d n
 N  50 ślad/e m nan
 N  50 świt/e m nan
 N  50 tajemnica/l f ATTR(2) # tajemnica istnienia
 N  50 tajemnica/l f Pl
 N 100 tchnienie/d n
 N 100 warga/r f Pl
+N  50 wspomnienie/d n Pl
 N  20 zamek/g m Pl nan SUFFIX(z piasku)
 N 100 życie/d n
 
@@ -81,8 +86,11 @@ A 100 dziwny/a
 A  50 jego     POSS
 A  30 jej      POSS
 A 100 ludzki/b
+A  30 mój/e    POSS
+A  10 naiwny/a
 A  50 niemy/a
 A  50 nieskończony/a
+A  50 niewinny/a
 A  50 nieznajomy/a
 A 100 nieznany/a
 A  50 nowy/a
@@ -109,6 +117,7 @@ D  20 bezpowrotnie
 D 100 ciężko
 D  10 kusząco
 D 100 leniwie
+D  25 naiwnie
 D  50 nieśmiało
 D  10 podstępnie
 D 100 po~kres
@@ -131,6 +140,7 @@ O 100 ale
 O 200 choć
 O 300 gdy
 O 100 gdyż
+O  75 "i tylko"
 O  50 jakże
 O 100 jednak
 O  50 jeszcze

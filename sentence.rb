@@ -214,6 +214,7 @@ class Sentence
 		if allow_recur > 0 && !inflected.empty? && check_chance(@conf.double_noun_chance)
 			attribute = handle_noun_object(noun, NounObject.new(GENITIVE), DBL_NOUN_RECUR)
 			inflected = @grammar.join_attribute_noun(inflected, attribute) unless attribute.empty?
+			@conf.logger.debug "Noun noun: #{noun} #{attribute} -> #{inflected}"
 		end
 
 		inflected

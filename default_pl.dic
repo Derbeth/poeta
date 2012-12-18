@@ -1,19 +1,36 @@
+N  10 absurd/e m nan
 N 100 ból/c m nan
+N 100 ciemność/n f
 N 100 cierpienie/d n
+N  25 grób/e m nan
 N 100 grzech/e m nan
 N 100 kara/b2 f
 N 100 krew/n f
 N  25 kruk/v m nan
 N  25 kruk/v m nan Pl
+N 100 nieszczęście/d n
+N 100 płomień/o1 m nan
 N  50 poczucie/d n SUFFIX(winy)
+N 100 porażka/r f
 N  20 przeczucie/d n
+N  50 przemijanie/d n
 N 100 pustka/r f
 N 100 słońce/d n
 N 100 spojrzenie/d n
+N  25 szał/e m nan
 N 100 szatan/f m
+N 100 tęsknota/b f
 N 100 upadek/g m nan
 N 100 wina/b1 f
+N  50 wspomnienie/d n
+N 100 zbrodnia/h f
+N 100 zemsta/b f
 
+N 200 "" m   PERSON(1) NO_ADJ ONLY_SUBJ # ja
+N 200 ja/0 m PERSON(1) NO_ADJ ONLY_OBJ
+N 200 "" m   PERSON(2) NO_ADJ ONLY_SUBJ # ty
+
+V 100 cierpieć/7 NOT_WITH_W(cierpienie)
 V 100 dotykać/1 OBJ(4)
 V  25 gnić/A
 V 100 kłamać/9
@@ -22,24 +39,47 @@ V  50 pluć/A OBJ(na,4)
 V 100 płakać/9
 V 100 płonąć/5b
 V  50 skrywać/1 OBJ(4)
+V  50 śnić/6 OBJ(o,6) # not 6 and not 6b, but nothing better ATM
 V  50 tracić/6b OBJ(4)
 V  50 uciekać/1
 V 100 umierać/1
 V 100 walczyć/6 OBJ(z,5)
 V 100 widzieć/7 OBJ(4)
 
+A 100 bezradny/a
 A 100 czarny/a
+A 100 krwawy/a
 A 100 martwy/a
+A  30 mój/e POSS
 A 100 mroczny/a
 A 100 nieznośny/a
 A 100 obcy/a
+A 100 ponury/a
+A 100 posępny/a
+A  10 przerażający/a
+A 100 samotny/a
+A  25 skrwawiony/a
+A 100 szalony/a
+A  50 wyklęty/a
 A 100 zapomniany/a
 A 100 zdradziecki/b
 
 D  50 bezpowrotnie
+D 100 często
+D  25 łapczywie
+D 100 niepewnie
+D  50 nieporadnie
+D 100 "ostatni raz"
+D  50 pewnie
+D  50 płacząc
+D 150 powoli
+D  25 pozornie
 D 100 szybko
-D 100 tu
+D  50 tu
+D 100 ukradkiem
 D 100 wciąż
+D 100 wściekle
+D  25 zaciekle
 D 100 zawsze
 
 O 200 a
@@ -48,6 +88,7 @@ O 100 ale
 O 200 choć
 O 300 gdy
 O 100 gdyż
+O  20 "i tylko"
 O  50 jakże
 O  50 jeszcze
 O 100 kiedy
