@@ -290,7 +290,12 @@ module Grammar
 	class GermanGrammar < GenericGrammar
 		include SimpleReflexiveVerbsHandler
 
-		# TODO implement joined_attribute_noun
+		protected
+		def joined_attribute_noun(main_noun, attribute_noun)
+			# TODO implement this the correct way
+			main_noun + ' des ' + attribute_noun
+		end
+
 		private
 		def reflexive_word
 			'sich'

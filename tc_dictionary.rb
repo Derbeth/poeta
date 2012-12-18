@@ -246,6 +246,12 @@ O 100 "разве, что"
 		assert_equal 'разве, что', dict.get_random(OTHER).text
 	end
 
+	def test_non_breakable_space
+		dict = Dictionary.new
+		dict.read "D 100 od~razu"
+		assert_equal 'od~razu', dict.get_random(ADVERB).text
+	end
+
 	private
 
 	def word_semantic(text, semantic)

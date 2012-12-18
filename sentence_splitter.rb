@@ -37,7 +37,7 @@ class SentenceSplitter
 
 	def remove_marks(text)
 		t = text.dup
-		t.gsub!(/[|^]/, ' ')
+		t.gsub!(/[|~^]/, ' ')
 		t
 	end
 
