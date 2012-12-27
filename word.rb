@@ -336,6 +336,7 @@ module Grammar
 		end
 	end
 
+	# Also can have properties: :not_as_object, :only_singular, :only_plural
 	class Adjective < Word
 		attr_reader :attributes, :double
 
@@ -356,6 +357,8 @@ module Grammar
 					when 'NOT_AS_OBJ' then general_props[:not_as_object] = true
 					when 'DOUBLE' then double = true
 					when 'POSS' then double = true
+					when 'ONLY_SING' then general_props[:only_singular] = true
+					when 'ONLY_PL' then general_props[:only_plural] = true
 					when /^ATTR\(([^)]+)\)$/
 						opts = $1
 						object_case, preposition = nil, nil

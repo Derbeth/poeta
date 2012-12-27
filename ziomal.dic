@@ -10,6 +10,7 @@ N 100 buch/i m ONLY_OBJ SEMANTIC(OK)
 N  10 dzielnica/l f OBJ_FREQ(100) SEMANTIC(OK,RZĄDZONY)
 N 100 dzień/o1 m nan
 N  50 dziwka/r f SEMANTIC(POLICJA)
+N  10 dziwka/r f Pl SEMANTIC(POLICJA)
 N  10 efekt/e m nan ATTR(2) OBJ_FREQ(40) # "efekt zmian"
 N 150 ekipa/b f SEMANTIC(OK,ZIOM,RZĄDZONY)
 N 100 głos/e m nan SEMANTIC(PŁYNIE)
@@ -35,7 +36,7 @@ N 100 pięść/n f SEMANTIC(OK,ZIOM)
 N 100 policja/h f SEMANTIC(POLICJA)
 N  10 polityka/r f OBJ_FREQ(50) SEMANTIC(POLITYKA,RZĄDZONY)
 N  10 przyczyna/b1 f ATTR(2) OBJ_FREQ(50) # "przyczyna buntu"
-N   3 porozumienie/d n Pl nan SUFFIX(ponad podziałami) OBJ_FREQ(6)
+N   3 porozumienie/d n SUFFIX(ponad podziałami) OBJ_FREQ(6)
 N  50 prawo/p n
 N  10 pretekst/e m nan ONLY_OBJ
 N  10 przekaz/e m nan SEMANTIC(OK,ZIOM,PŁYNIE)
@@ -74,7 +75,7 @@ V  30 iść/c OBJ(po,6)
 V  30 iść/c OBJ(na,4)
 V 100 jechać/9 OBJ(po,6)
 V  20 kablować/4 NOT_WITH(ZIOM)
-V 100 lecieć/7
+V 100 lecieć/7a
 V 100 mieć/1 OBJ(4) NOT_WITH(MODAL)
 V  70 mieć/1 OBJ(4) SUFFIX(w dupie) NOT_WITH(MODAL) TAKES_NO(ZIOM) TAKES_NO_W(buch,dziwka,pięść)
 V 100 milczeć/7
@@ -116,6 +117,7 @@ A 100 dobry/a NOT_WITH(POLICJA)
 A 100 hardkorowy/a NOT_WITH(POLICJA)
 A 100 hiphopowy/a NOT_WITH(POLICJA) NOT_WITH_W(hip-hop,rap)
 A 100 jebany/a NOT_WITH(ZIOM)
+A 200 każdy/a ONLY_SING DOUBLE NOT_AS_OBJ
 A  40 killer NOT_WITH(POLICJA)
 A 200 kolejny/a
 A 100 krótki/b
@@ -146,6 +148,7 @@ A 120 szczery/a NOT_WITH(POLICJA)
 A 200 taki/b DOUBLE
 A 200 ten/c DOUBLE NOT_AS_OBJ
 A 200 uliczny/a NOT_WITH(POLICJA) NOT_WITH_W(ulica)
+A 200 wszystki/b1 ONLY_PL DOUBLE NOT_AS_OBJ
 A 100 zajebisty/a NOT_WITH(POLICJA)
 A  50 zwyczajny/a
 

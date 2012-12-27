@@ -116,22 +116,7 @@ class Sentence
 		if subject_index == 1 && @subject
 			noun = @subject
 		else
-			semantic_chooser = parsed_opts[:context_props] ?
-				@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props])) :
-				nil
-			noun = @dictionary.get_random_subject do |counted_frequency,word|
-				new_frequency = if parsed_opts[:not_empty] && word.text.empty?
-					0
-				elsif parsed_opts[:empty] && !word.text.empty?
-					0
-				elsif parsed_opts[:ignore_only]
-					word.frequency
-				else
-					counted_frequency
-				end
-
-				semantic_chooser ? semantic_chooser.call(new_frequency,word) : new_frequency
-			end
+			noun = get_random_subject(parsed_opts)
 			@indexed_nouns[subject_index] = noun
 		end
 		@subject ||= noun
@@ -146,19 +131,7 @@ class Sentence
 		noun_index, norm_index = self.class.read_index(full_match,index)
 		parsed_opts = self.class.parse_common_noun_options(options)
 
-		semantic_chooser = parsed_opts[:context_props] ?
-			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props])) :
-			nil
-
-		noun = @dictionary.get_random(Grammar::NOUN) do |frequency, word|
-			if word.text.empty?
-				0
-			elsif semantic_chooser
-				semantic_chooser.call(frequency,word)
-			else
-				frequency
-			end
-		end
+		noun = get_random_standalone_noun(parsed_opts)
 
 		@indexed_nouns[noun_index] = noun
 		return '' unless noun
@@ -181,14 +154,7 @@ class Sentence
 	# handled adj_opts: :case, :number
 	def _handle_adjective(noun, adj_opts={}, exclude_double=false)
 		semantic_counter = @dictionary.semantic_chooser(noun)
-		if exclude_double
-			freq_counter = lambda do |freq,candidate|
-				candidate.double ? 0 : semantic_counter.call(freq,candidate)
-			end
-		else
-			freq_counter = semantic_counter
-		end
-		adjective = @dictionary.get_random(Grammar::ADJECTIVE, &freq_counter)
+		adjective = @dictionary.get_random_adjective(noun, exclude_double, &semantic_counter)
 		return '' unless adjective
 
 		@adjectives << adjective
@@ -251,20 +217,7 @@ class Sentence
 			form = {:number=>noun.number,:person=>noun.person}
 		end
 
-		semantic_chooser = if noun
-			@dictionary.semantic_chooser(noun)
-		elsif parsed_opts[:context_props]
-			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props]))
-		else
-			nil
-		end
-
-		verb = @dictionary.get_random_verb_as_predicate do |freq,word|
-			if parsed_opts[:only] && word.text != parsed_opts[:only]
-				freq = 0
-			end
-			semantic_chooser ? semantic_chooser.call(freq,word) : freq
-		end
+		verb = get_random_verb_as_predicate(noun, parsed_opts)
 		return '' unless verb
 		@verbs[norm_index] = verb
 		verb.inflect(@grammar,form)
@@ -398,6 +351,59 @@ class Sentence
 		freq_counter = noun ? @dictionary.semantic_chooser(noun) : nil
 		adverb = @dictionary.get_random(Grammar::ADVERB, &freq_counter)
 		adverb ? adverb.text : ''
+	end
+
+	def get_random_subject(parsed_opts)
+		semantic_chooser = parsed_opts[:context_props] ?
+			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props])) :
+			nil
+
+		@dictionary.get_random_subject do |counted_frequency,word|
+			new_frequency = if parsed_opts[:not_empty] && word.text.empty?
+				0
+			elsif parsed_opts[:empty] && !word.text.empty?
+				0
+			elsif parsed_opts[:ignore_only]
+				word.frequency
+			else
+				counted_frequency
+			end
+
+			semantic_chooser ? semantic_chooser.call(new_frequency,word) : new_frequency
+		end
+	end
+
+	def get_random_standalone_noun(parsed_opts)
+		semantic_chooser = parsed_opts[:context_props] ?
+			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props])) :
+			nil
+
+		@dictionary.get_random(Grammar::NOUN) do |frequency, word|
+			if word.text.empty?
+				0
+			elsif semantic_chooser
+				semantic_chooser.call(frequency,word)
+			else
+				frequency
+			end
+		end
+	end
+
+	def get_random_verb_as_predicate(noun, parsed_opts)
+		semantic_chooser = if noun
+			@dictionary.semantic_chooser(noun)
+		elsif parsed_opts[:context_props]
+			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props]))
+		else
+			nil
+		end
+
+		@dictionary.get_random_verb_as_predicate do |freq,word|
+			if parsed_opts[:only] && word.text != parsed_opts[:only]
+				freq = 0
+			end
+			semantic_chooser ? semantic_chooser.call(freq,word) : freq
+		end
 	end
 
 	# full_match - like ${NOUN} or ${VERB2} or ${VERB5.1}

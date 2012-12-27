@@ -280,6 +280,18 @@ class AdjectiveTest < Test::Unit::TestCase
 		Adjective.parse('good',[],100,'NOTEXIST')
 	end
 
+	def test_parse_only_plural_singular
+		adjective = Adjective.parse('good',['F'],100,'')
+		assert !adjective.get_property(:only_plural)
+		assert !adjective.get_property(:only_singular)
+		adjective = Adjective.parse('good',['F'],100,'ONLY_PL')
+		assert_equal true, adjective.get_property(:only_plural)
+		assert !adjective.get_property(:only_singular)
+		adjective = Adjective.parse('good',['F'],100,'ONLY_SING')
+		assert !adjective.get_property(:only_plural)
+		assert_equal true, adjective.get_property(:only_singular)
+	end
+
 	def test_parse_attribute
 		adjective = Adjective.parse('good', [], 100, 'ADJ')
 		assert_equal 0, adjective.attributes.size

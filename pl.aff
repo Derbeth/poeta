@@ -452,26 +452,28 @@ A a 211,311     y   e    y
 A a 214,314     y   e    y
 A a 217,317     y   e    y
 
-A b 102,202          0  ego i
-A b 103,203          0  emu i
-A b 104              0  ego i
-A b 105,205          0  m   i
-A b 106,206          0  m   i
-A b 201,204          0  e   i
-A b 207              0  e   i
-A b 301,307          0  a   ni
-A b 301,307          i  a   i
-A b 302,303,306      0  ej  i
-A b 304,305          0  ą   ni
-A b 304,305          i  ą   i
-A b 111,117          ki cy ki
-A b 211,311,214,314  0  e   i
-A b 217,317          0  e   i
-A b 112,212,312      0  ch  i
-A b 114              0  ch  i
-A b 113,213,313      0  m   i
-A b 115,215,315      0  mi  i
-A b 116,216,316      0  ch  i
+# b1 - wszystki
+A b 102,202          0   ego  i
+A b 103,203          0   emu  i
+A b 104              0   ego  i
+A b 105,205          0   m    i
+A b 106,206          0   m    i
+A b 201,204          0   e    i
+A b 207              0   e    i
+A b 301,307          0   a    ni
+A b 301,307          i   a    i
+A b 302,303,306      0   ej   i
+A b 304,305          0   ą    ni
+A b 304,305          i   ą    i
+A b 111,117          tki cy   tki
+A b 111,117          ki  cy   ki
+A b 211,311,214,314  0   e    i
+A b 217,317          0   e    i
+A b 112,212,312      0   ch   i
+A b 114              0   ch   i
+A b 113,213,313      0   m    i
+A b 115,215,315      0   mi   i
+A b 116,216,316      0   ch   i
 
 # ten
 A c 102,202          n  go en
@@ -614,6 +616,7 @@ V 6 112 [iy]ć cie   [iy]ć
 # koniugacja VIIa, widzieć cierpieć i VIIb, leżeć, milczeć
 V 7  1 ieć zę   sieć/m
 V 7  1 ieć ę    ieć/c
+V 7  1 ieć ę    ieć/a
 V 7  1 ieć ę    dzieć
 V 7  1 eć  ę    ieć
 V 7  1 eć  ę    eć
@@ -634,19 +637,23 @@ V 7 12 eć  cie  ieć
 V 7 12 eć  icie eć/a
 V 7 12 eć  ycie eć
 V 7 13 ieć zą   sieć/m
-V 7 13 ieć ą    ieć/c
 V 7 13 ieć ą    dzieć
+V 7 13 ieć ą    ieć/c
+V 7 13 ieć ą    ieć/a
 V 7 13 eć  ą    ieć
 V 7 13 eć  ą    eć
-V 7 102 ieć iej    ieć/c
-V 7 111 ieć iejmy  ieć/c
-V 7 112 ieć iejcie ieć/c
-V 7 102 ieć 0      ieć
-V 7 111 ieć my     ieć
-V 7 112 ieć cie    ieć
-V 7 102 eć 0    eć
-V 7 111 eć my   eć
-V 7 112 eć cie  eć
+V 7 102 ieć  iej    ieć/c
+V 7 111 ieć  iejmy  ieć/c
+V 7 112 ieć  iejcie ieć/c
+V 7 102 cieć ć      cieć
+V 7 102 ieć  0      ieć
+V 7 111 cieć ćmy    cieć
+V 7 111 ieć  my     ieć
+V 7 112 cieć ćcie   cieć
+V 7 112 ieć  cie    ieć
+V 7 102 eć   0      eć
+V 7 111 eć   my     eć
+V 7 112 eć   cie    eć
 
 # koniugacja IX, kłamać, mazać; z->ż, s->sz, r->rz
 V 9  1 ać  ię    [m]ać

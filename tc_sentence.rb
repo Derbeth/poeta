@@ -152,6 +152,42 @@ class SentenceTest < Test::Unit::TestCase
 		end
 	end
 
+	def test_only_singular_adjective_forbids
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 10 cats Pl\nA 10 every ONLY_SING\nA 10 nice\n"
+		5.times do
+			sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
+			assert_equal 'nice cats', sentence.write # not 'every cats'
+		end
+	end
+
+	def test_only_singular_adjective_accepts
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 10 cat\nA 10 every ONLY_SING\n"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
+		assert_equal 'every cat', sentence.write
+	end
+
+	def test_only_plural_adjective_forbids
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 10 cat\nA 10 all ONLY_PL\nA 10 nice\n"
+		5.times do
+			sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
+			assert_equal 'nice cat', sentence.write # not 'all cat'
+		end
+	end
+
+	def test_only_plural_adjective_accepts
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 10 cats Pl\nA 10 all ONLY_PL\n"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
+		assert_equal 'all cats', sentence.write
+	end
+
 	def test_handle_no_adjective
 		dictionary_text = "N 100 nobody\nA 100 cool"
 		dictionary = Dictionary.new
@@ -751,7 +787,7 @@ A y 115 0 ymi .
 			assert_equal('flower is beautiful', sentence.write)
 		end
 	end
-	
+
 	# verb requires an object but sentence pattern explicitly omits object
 	# sentence should be written without object
 	def test_no_object_verb_object

@@ -44,7 +44,7 @@ Adjective
         A 100 this DOUBLE
         A 100 short
 
-  may produce "this short memory".
+  may produce "this short memory" (or "this memory").
 
 * `NOT_AS_OBJ`
 
@@ -52,7 +52,21 @@ Adjective
 
         A 100 this NOT_AS_OBJ
 
-  prevents appearing things like "cat becomes these".
+  prevents appearing things like "cat becomes this".
+
+* `ONLY_PL`
+
+  Allows the adjective to be only used with plural nouns. Example:
+       A 100 all ONLY_PL
+
+  prevents appearing things like "all cat".
+
+* `ONLY_SING`
+
+  Allows the adjective to be only used with singular nouns. Example:
+       A 100 every ONLY_SING
+
+  prevents appearing things like "every cats".
 
 * `POSS`
 
