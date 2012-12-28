@@ -145,7 +145,7 @@ class Sentence
 		parsed_opts = self.class.parse_adjective_options(options)
 		raise "no noun for #{full_match}" unless @indexed_nouns.include? noun_index
 		noun = @indexed_nouns[noun_index]
-		return '' if noun == nil || noun.get_property(:no_adjective)
+		return '' if noun == nil
 		return '' if noun_index == 1 && @subject && @implicit_subject && !check_chance(@conf.object_adj_chance)
 
 		_handle_adjective(noun, parsed_opts)
@@ -153,6 +153,7 @@ class Sentence
 
 	# handled adj_opts: :case, :number
 	def _handle_adjective(noun, adj_opts={}, exclude_double=false)
+		return '' if noun.get_property(:no_adjective) # TODO add test case for adjective for object with NO_ADJ
 		semantic_counter = @dictionary.semantic_chooser(noun)
 		adjective = @dictionary.get_random_adjective(noun, exclude_double, &semantic_counter)
 		return '' unless adjective

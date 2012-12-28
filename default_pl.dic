@@ -29,6 +29,7 @@ N 100 zemsta/b f
 N 200 "" m   PERSON(1) NO_ADJ ONLY_SUBJ # ja
 N 200 ja/0 m PERSON(1) NO_ADJ ONLY_OBJ
 N 200 "" m   PERSON(2) NO_ADJ ONLY_SUBJ # ty
+# TODO on
 
 V 100 cierpieć/7 NOT_WITH_W(cierpienie)
 V 100 dotykać/1 OBJ(4)

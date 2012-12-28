@@ -4,7 +4,7 @@ N 0 12  we   us    we
 N 0 12  they them  they
 
 # regular nouns
-N a 11 0  s     .
+N a 11,12 0  s     .
 
 # special verbs
 V 0 1          be  am   be

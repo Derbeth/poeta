@@ -26,6 +26,7 @@ N  10 prophet/a
 N  10 prophet/a  Pl
 N 100 silence/a      TAKES_NO_W(silent)
 N 100 sin/a
+N  10 sin/a      Pl
 N 100 sorrow/a
 N  30 sun/a
 N 100 tear/a     Pl
@@ -40,6 +41,7 @@ N 100 we/0       Pl  NO_ADJ PERSON(1)
 N 100 they/0     Pl  NO_ADJ
 N 100 you/0          NO_ADJ PERSON(2)
 N 100 you/0      Pl  NO_ADJ PERSON(2)
+N 100 it             NO_ADJ
 
 V 100 become/a    ADJ
 V  50 burn/a      OBJ(2)
@@ -57,14 +59,18 @@ V 100 shine/a
 V  10 take/a      OBJ(2)
 V 100 torture/a   OBJ(2)
 V  40 try/a       INF(to) TAKES_NO(MODAL) SEMANTIC(MODAL)
+# TODO fix 'that love is *my*'
 
+A 100 all         ONLY_PL DOUBLE NOT_AS_OBJ
 A 100 burning
 A 100 cold
 A 100 dark
 A 100 dead        NOT_WITH_W(death)
 A  30 deadly      NOT_WITH_W(death)
+A  50 each        ONLY_SING DOUBLE NOT_AS_OBJ
 A  50 endless
 A 100 eternal
+A  50 every       ONLY_SING DOUBLE NOT_AS_OBJ
 A  30 fallen
 A 100 false
 A 100 forbidden
@@ -104,6 +110,7 @@ D 100 madly
 D 100 silently
 D 100 slowly
 
+O 100 and
 O   5 alas
 O 100 although
 O 100 as
