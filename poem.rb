@@ -86,6 +86,7 @@ class Poem
  5 ${SUBJ(NE,IG_ONLY)} ${ADJ}
 10 ${VERB(1)} ${OBJ}
  5 ${VERB(11)} ${OBJ}
+ 4 ${VERB(2,IMP)} ${OBJ}
 10 ***
  		END
 		title_sentence_mgr.read(title_sentences_defs)

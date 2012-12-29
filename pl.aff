@@ -107,11 +107,15 @@ N d 16        o   ach o
 # 93 m, sad, wał, mur, dąb, sen, chrzest, kwiat wiatr
 N e 1,4       0   0      .
 N e 2         ób  obu    ób # grób
+N e 2         ód  odu    ód
 N e 2         0   u      .
 N e 3         ób  obowi  ób
+N e 3         ód  odowi  ód
 N e 3         0   owi    .
 N e 5         ób  obem   ób
+N e 5         ód  odem   ód
 N e 5         0   em     .
+N e 6,7       ód  odzie  ód
 N e 6,7       0   zie    d
 N e 6,7       0   ze     r
 N e 6,7       st  ście   st
@@ -122,14 +126,19 @@ N e 6,7       0   ie     [bnpsz]
 N e 6,7       0   u      ch # oddech
 N e 6,7       ł   le     ł
 N e 11,14,17  ób  oby    ób
+N e 11,14,17  ód  ody    ód
 N e 11,14,17  0   y      .
 N e 12        ób  obów   ób
+N e 12        ód  odów   ód
 N e 12        0   ów     .
 N e 13        ób  obom   ób
+N e 13        ód  odom   ód
 N e 13        0   om     .
 N e 15        ób  obami  ób
+N e 15        ód  odami  ód
 N e 15        0   ami    .
 N e 16        ób  obach  ób
+N e 16        ód  odach  ód
 N e 16        0   ach    .
 
 # 2 m, szatan, hiszpan
@@ -642,18 +651,21 @@ V 7 13 ieć ą    ieć/c
 V 7 13 ieć ą    ieć/a
 V 7 13 eć  ą    ieć
 V 7 13 eć  ą    eć
-V 7 102 ieć  iej    ieć/c
-V 7 111 ieć  iejmy  ieć/c
-V 7 112 ieć  iejcie ieć/c
-V 7 102 cieć ć      cieć
-V 7 102 ieć  0      ieć
-V 7 111 cieć ćmy    cieć
-V 7 111 ieć  my     ieć
-V 7 112 cieć ćcie   cieć
-V 7 112 ieć  cie    ieć
-V 7 102 eć   0      eć
-V 7 111 eć   my     eć
-V 7 112 eć   cie    eć
+V 7 102 ieć   iej    ieć/c
+V 7 111 ieć   iejmy  ieć/c
+V 7 112 ieć   iejcie ieć/c
+V 7 102 cieć  ć      cieć
+V 7 102 dzieć dź     dzieć
+V 7 102 ieć   0      ieć
+V 7 111 cieć  ćmy    cieć
+V 7 111 dzieć dźmy   dzieć
+V 7 111 ieć   my     ieć
+V 7 112 cieć  ćcie   cieć
+V 7 112 dzieć dźcie  dzieć
+V 7 112 ieć   cie    ieć
+V 7 102 eć    0      eć
+V 7 111 eć    my     eć
+V 7 112 eć    cie    eć
 
 # koniugacja IX, kłamać, mazać; z->ż, s->sz, r->rz
 V 9  1 ać  ię    [m]ać
