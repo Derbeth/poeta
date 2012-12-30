@@ -108,12 +108,15 @@ N d 16        o   ach o
 N e 1,4       0   0      .
 N e 2         ób  obu    ób # grób
 N e 2         ód  odu    ód
+N e 2         en  nu     sen
 N e 2         0   u      .
 N e 3         ób  obowi  ób
 N e 3         ód  odowi  ód
+N e 3         en  nowi   sen
 N e 3         0   owi    .
 N e 5         ób  obem   ób
 N e 5         ód  odem   ód
+N e 5         en  nem    sen
 N e 5         0   em     .
 N e 6,7       ód  odzie  ód
 N e 6,7       0   zie    d
@@ -122,23 +125,29 @@ N e 6,7       st  ście   st
 N e 6,7       at  ecie   iat # kwiat
 N e 6,7       t   cie    t
 N e 6,7       ób  obie   ób
+N e 6,7       sen śnie   sen
 N e 6,7       0   ie     [bnpsz]
 N e 6,7       0   u      ch # oddech
 N e 6,7       ł   le     ł
 N e 11,14,17  ób  oby    ób
 N e 11,14,17  ód  ody    ód
+N e 11,14,17  en  ny     sen
 N e 11,14,17  0   y      .
 N e 12        ób  obów   ób
 N e 12        ód  odów   ód
+N e 12        en  nów    sen
 N e 12        0   ów     .
 N e 13        ób  obom   ób
 N e 13        ód  odom   ód
+N e 13        en  nom    sen
 N e 13        0   om     .
 N e 15        ób  obami  ób
 N e 15        ód  odami  ód
+N e 15        en  nami   sen
 N e 15        0   ami    .
 N e 16        ób  obach  ób
 N e 16        ód  odach  ód
+N e 16        en  nach   sen
 N e 16        0   ach    .
 
 # 2 m, szatan, hiszpan
@@ -474,7 +483,8 @@ A b 301,307          i   a    i
 A b 302,303,306      0   ej   i
 A b 304,305          0   ą    ni
 A b 304,305          i   ą    i
-A b 111,117          tki cy   tki
+A b 111,117          tki cy   tki/1
+A b 111,117          tki tcy  tki
 A b 111,117          ki  cy   ki
 A b 211,311,214,314  0   e    i
 A b 217,317          0   e    i
@@ -571,21 +581,30 @@ V 4 112 [io]wać ujcie  [io]wać
 # Vb: wysunąć
 # Vc: obrosnąć
 V 5   1 ąć    ę       nąć
+V 5   1 ć     ę       nić # śnić, kpić
 V 5   2 snąć  śniesz  snąć
 V 5   2 ąć    iesz    nąć
+V 5   2 ć     sz      nić
 V 5   3 snąć  śnie    snąć
 V 5   3 ąć    ie      nąć
+V 5   3 ć     0       nić
 V 5  11 snąć  śniemy  snąć
 V 5  11 ąć    iemy    nąć
+V 5  11 ć     my      nić
 V 5  12 snąć  śniemy  snąć
 V 5  12 ąć    iecie   nąć
+V 5  12 ć     cie     nić
 V 5  13 ć     0       nąć
+V 5  13 ć     ą       nić
 V 5 102 nąć   ń       nąć/b
 V 5 111 nąć   ńmy     nąć/b
 V 5 112 nąć   ńcie    nąć/b
 V 5 102 nąć   nij     nąć
+V 5 102 ć     j       nić
 V 5 111 nąć   nijmy   nąć
+V 5 111 ć     jmy     nić
 V 5 112 nąć   nijcie  nąć
+V 5 112 ć     jcie    nić
 V 5 102 snąć  śnij    snąć
 V 5 111 snąć  śnijmy  snąć
 V 5 112 snąć  śnijcie snąć
@@ -618,6 +637,9 @@ V 6 112 dzić  dźcie dzić
 V 6 102 cić   ć     cić
 V 6 111 cić   ćmy   cić
 V 6 112 cić   ćcie  cić
+V 6 102 nić   ń     nić
+V 6 111 nić   ńmy   nić
+V 6 112 nić   ńcie  nić
 V 6 102 [iy]ć 0     [iy]ć
 V 6 111 [iy]ć my    [iy]ć
 V 6 112 [iy]ć cie   [iy]ć
