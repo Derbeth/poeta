@@ -901,7 +901,7 @@ A y 115 0 ymi .
 		@conf.object_adj_chance = 0
 		sentence = Sentence.new(dictionary,grammar,@conf,'to ${SUBJ(NE)}')
 		sentence.implicit_subject = implicit
-		assert_match /to \w+/, sentence.write
+		assert_match(/to \w+/, sentence.write)
 	end
 
 	def test_empty_nouns

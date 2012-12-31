@@ -3,7 +3,7 @@
 require 'test/unit'
 
 require './dictionary'
-require './test_helper'
+require './test/test_helper'
 
 include Grammar
 
