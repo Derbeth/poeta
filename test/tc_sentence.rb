@@ -189,18 +189,30 @@ class SentenceTest < Test::Unit::TestCase
 	end
 
 	def test_handle_no_adjective
-		dictionary_text = "N 100 nobody\nA 100 cool"
 		dictionary = Dictionary.new
-		dictionary.read(dictionary_text)
 		grammar = GenericGrammar.new
 
+		dictionary.read "N 100 nobody\nA 100 cool"
 		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
-		assert_equal('cool nobody', sentence.write)
+		assert_equal 'cool nobody', sentence.write
 
-		dictionary_text = "N 100 nobody NO_ADJ\nA 100 cool"
-		dictionary.read(dictionary_text)
+		dictionary.read "N 100 nobody NO_ADJ\nA 100 cool"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
+		assert_equal 'nobody', sentence.write
+	end
 
-		assert_equal('nobody', sentence.write)
+	def test_handle_no_adjective_in_object
+		dictionary = Dictionary.new
+		grammar = GenericGrammar.new
+		@conf.object_adj_chance = 1
+
+		dictionary.read "N 10 music\nA 10 good\nV 10 listen OBJ(to,2)"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(2)} ${OBJ}')
+		assert_equal 'listen to good music', sentence.write
+
+		dictionary.read "N 10 me NO_ADJ\nA 10 good\nV 10 listen OBJ(to,2)"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(2)} ${OBJ}')
+		assert_equal 'listen to me', sentence.write
 	end
 
 	def test_handle_animate_inanimate

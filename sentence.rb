@@ -153,7 +153,7 @@ class Sentence
 
 	# handled adj_opts: :case, :number
 	def _handle_adjective(noun, adj_opts={}, exclude_double=false)
-		return '' if noun.get_property(:no_adjective) # TODO add test case for adjective for object with NO_ADJ
+		return '' if noun.get_property(:no_adjective)
 		semantic_counter = @dictionary.semantic_chooser(noun)
 		adjective = @dictionary.get_random_adjective(noun, exclude_double, &semantic_counter)
 		return '' unless adjective
