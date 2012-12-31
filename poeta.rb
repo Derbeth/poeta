@@ -57,6 +57,7 @@ sentences_file = dictionary
 dictionary_file += '.dic' if dictionary_file !~ /\.dic$/
 sentences_file += '.cfg' if sentences_file !~ /\.cfg$/
 sentences_file = "#{default_name}.cfg" unless File.exists?(sentences_file)
+title_sentences_file = 'titles.cfg'
 raise "#{dictionary_file} does not exist" unless File.exists?(dictionary_file)
 raise "#{sentences_file} does not exist" unless File.exists?(sentences_file)
 
@@ -70,13 +71,15 @@ dictionary = SmartRandomDictionary.new(5)
 File.open(dictionary_file) { |f| dictionary.read(f) }
 sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
 File.open(sentences_file) { |f| sentence_mgr.read(f) }
+title_sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
+File.open(title_sentences_file) { |f| title_sentence_mgr.read(f) }
 
 if forced_seed
 	srand(forced_seed)
 else
 	srand
 end
-poem = Poem.new(dictionary,grammar,sentence_mgr,conf)
+poem = Poem.new(sentence_mgr,title_sentence_mgr,conf)
 puts poem.text
 
 if debug
