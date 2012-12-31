@@ -59,7 +59,7 @@ V 100 walczyć/6 OBJ(z,5)
 V 100 widzieć/7 OBJ(4)
 
 A 100 bezradny/a
-N 100 chory/a
+A 100 chory/a
 A 100 czarny/a
 A 100 krwawy/a
 A 100 martwy/a
@@ -75,6 +75,7 @@ A 100 samotny/a
 A 500 słuszny/a ONLY_WITH_W(kara)
 A  25 skrwawiony/a
 A 100 szalony/a
+A 200 tępy/a ONLY_WITH_W(ból)
 A  50 wyklęty/a
 A  25 zagubiony/a
 A 100 zapomniany/a

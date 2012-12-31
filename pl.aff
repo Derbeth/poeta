@@ -581,30 +581,30 @@ V 4 112 [io]wać ujcie  [io]wać
 # Vb: wysunąć
 # Vc: obrosnąć
 V 5   1 ąć    ę       nąć
-V 5   1 ć     ę       nić # śnić, kpić
+V 5   1 ć     ę       [np]ić # śnić, kpić
 V 5   2 snąć  śniesz  snąć
 V 5   2 ąć    iesz    nąć
-V 5   2 ć     sz      nić
+V 5   2 ć     sz      [np]ić
 V 5   3 snąć  śnie    snąć
 V 5   3 ąć    ie      nąć
-V 5   3 ć     0       nić
+V 5   3 ć     0       [np]ić
 V 5  11 snąć  śniemy  snąć
 V 5  11 ąć    iemy    nąć
-V 5  11 ć     my      nić
+V 5  11 ć     my      [np]ić
 V 5  12 snąć  śniemy  snąć
 V 5  12 ąć    iecie   nąć
-V 5  12 ć     cie     nić
+V 5  12 ć     cie     [np]ić
 V 5  13 ć     0       nąć
-V 5  13 ć     ą       nić
+V 5  13 ć     ą       [np]ić
 V 5 102 nąć   ń       nąć/b
 V 5 111 nąć   ńmy     nąć/b
 V 5 112 nąć   ńcie    nąć/b
 V 5 102 nąć   nij     nąć
-V 5 102 ć     j       nić
+V 5 102 ć     j       [np]ić
 V 5 111 nąć   nijmy   nąć
-V 5 111 ć     jmy     nić
+V 5 111 ć     jmy     [np]ić
 V 5 112 nąć   nijcie  nąć
-V 5 112 ć     jcie    nić
+V 5 112 ć     jcie    [np]ić
 V 5 102 snąć  śnij    snąć
 V 5 111 snąć  śnijmy  snąć
 V 5 112 snąć  śnijcie snąć
