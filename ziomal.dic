@@ -41,12 +41,12 @@ N  50 prawo/p n
 N  10 pretekst/e m nan ONLY_OBJ
 N  10 przekaz/e m nan SEMANTIC(OK,ZIOM,PŁYNIE)
 N 100 rap/e m nan SEMANTIC(OK,ZIOM,PŁYNIE)
-N 100 skręt/m m SEMANTIC(OK,ZIOM)
+N  20 skręt/m m OBJ_FREQ(100) SEMANTIC(OK,ZIOM)
 N  10 styl/c m nan OBJ_FREQ(50)
 N  10 szansa/b f OBJ_FREQ(50)
 N  10 szmal/c m nan OBJ_FREQ(100)
 N 100 temat/e m nan ONLY_OBJ
-N  10 teren/e OBJ_FREQ(100)
+N  10 teren/e m nan OBJ_FREQ(100)
 N 150 ulica/l f SEMANTIC(RZĄDZONY)
 N  50 ulica/l f Pl SEMANTIC(RZĄDZONY)
 N  20 wojna/b f
@@ -55,37 +55,37 @@ N   7 wojna/b f ATTR(przeciw,3)
 N 100 załoga/r f SEMANTIC(OK,ZIOM)
 N  10 zasada/b f Pl OBJ_FREQ(100)
 N  20 zmiana/b2 f OBJ_FREQ(100)
-N 200 "" m PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM)    # ja
-N 150 "" m PERSON(2) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM)    # ty
-N 200 "" m Pl PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM) # my
+N 200 "" m    PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM)    # ja
+N 150 "" m    PERSON(2) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM)    # ty
+N 200 "" m Pl PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM)    # my
 
 # TODO rym
 
 V 100 brać/b OBJ(4)
-V  50 być/c OBJ(5) SEMANTIC(MODAL) NOT_WITH(MODAL,POLICJA) TAKES_NO(POLICJA)
-V  50 być/c OBJ(5) SEMANTIC(MODAL) NOT_WITH(MODAL,ZIOM) TAKES_NO(ZIOM)
+V  50 być/c OBJ(5) NOT_AS_OBJ NOT_WITH(POLICJA) TAKES_NO(POLICJA)
+V  50 być/c OBJ(5) NOT_AS_OBJ NOT_WITH(ZIOM) TAKES_NO(ZIOM)
 V  25 być/c ADJ NOT_WITH(POLICJA) TAKES_NO(POLICJA)  # ekipa jest zajebista
 V  25 być/c ADJ NOT_WITH(ZIOM) TAKES_NO(ZIOM)        # komercha jest chujowa
-V  80 chcieć/7c INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  80 chcieć/7c INF NOT_AS_OBJ
 V  30 dawać/A OBJ(3) OBJ(4)
 V  30 donosić/6b NOT_WITH(ZIOM)
 V 100 iść/c
-V  40 iść/c INF TAKES_NO(MODAL)
+V  40 iść/c INF
 V  30 iść/c OBJ(po,6)
 V  30 iść/c OBJ(na,4)
 V 100 jechać/9 OBJ(po,6)
 V  20 kablować/4 NOT_WITH(ZIOM)
 V 100 lecieć/7a
-V 100 mieć/1 OBJ(4) NOT_WITH(MODAL)
-V  70 mieć/1 OBJ(4) SUFFIX(w dupie) NOT_WITH(MODAL) TAKES_NO(ZIOM) TAKES_NO_W(buch,dziwka,pięść)
+V 100 mieć/1 OBJ(4)
+V  70 mieć/1 OBJ(4) SUFFIX(w dupie) TAKES_NO(ZIOM) TAKES_NO_W(buch,dziwka,pięść)
 V 100 milczeć/7
-V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  80 musieć/7m INF NOT_AS_OBJ
 V  40 nakręcać/1 OBJ(4)
 V  20 napierdalać/1
 V  60 napierdalać/1 REFL OBJ(z,5)
 V  30 napierdalać/1 OBJ(5) OBJ(w,4) # napierdala kamieniem w policję
 V  50 nawijać/1
-V 100 nienawidzić/6b OBJ(2) TAKES_NO(ZIOM) NOT_WITH(MODAL)
+V 100 nienawidzić/6b OBJ(2) NOT_AS_OBJ TAKES_NO(ZIOM)
 V 100 pierdolić/6b OBJ(4) TAKES_NO(ZIOM)
 V 200 płynąć/5b ONLY_WITH(PŁYNIE)
 V 100 popierdalać/1
@@ -102,7 +102,7 @@ V  50 uderzać/1 OBJ(na,4)
 V  50 widzieć/7 OBJ(4)
 V  70 wpadać/1 OBJ(na,4)
 V  40 wznosić/6 OBJ(4)
-V  50 zaczynać/1 INF TAKES_NO(MODAL)
+V  50 zaczynać/1 INF
 V  10 zaczynać/1 REFL
 V 100 zapierdalać/1
 V 100 zapalać/1 OBJ(4)

@@ -76,19 +76,19 @@ V 100 drżeć/7
 V 100 kochać/1 OBJ(4)
 V 100 leżeć/7m
 V  80 lubić/6 OBJ(4)
-V  20 lubić/6 INF
+V  20 lubić/6 INF NOT_AS_OBJ
 V 100 pałać/1 OBJ(5)
 V 100 patrzeć/7 OBJ(na,4)
 V  70 płonąć/5b
 V  30 płonąć/5b OBJ(z,2) TAKES_NO(PERSON)
 V  80 pragnąć/5 OBJ(2)
-V  20 pragnąć/5 INF
+V  20 pragnąć/5 INF NOT_AS_OBJ
 V 100 rozbierać/1 OBJ(4)
 V 100 rozbudzać/1 OBJ(4)
 V 100 rozpalać/1 OBJ(4)
 V 100 szukać/1 OBJ(2)
 V  80 uwielbiać/1 OBJ(4)
-V  20 uwielbiać/1 INF
+V  20 uwielbiać/1 INF NOT_AS_OBJ
 
 D 100 cicho
 D  50 "coraz mocniej"

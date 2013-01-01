@@ -51,24 +51,24 @@ N  50 oni/0 m Pl   NO_NOUN_NOUN NO_ADJ
 
 V 100 brać/b OBJ(4)
 V  25 być/c ADJ
-V  80 chcieć/7c INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  80 chcieć/7c INF NOT_AS_OBJ
 V  50 dogonić/6 OBJ(4)
 V 100 ginąć/5b
 V  25 kłamać/9
 V 100 milczeć/7
-V  80 musieć/7m INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  80 musieć/7m INF NOT_AS_OBJ
 V  50 myśleć/7a OBJ(o,6)
 V  25 niszczyć/6 OBJ(4)
 V  50 opuszczać/1 OBJ(4)
 V  20 pluć/A OBJ(na,4)
 V 100 płonąć/5b
 V 100 płynąć/5b
-V  20 pomagać/1 INF TAKES_NO(MODAL) SEMANTIC(MODAL)  # pomaga kłamać
-V  25 pomagać/1 OBJ(3) INF # pomaga mi zasnąć
-V 100 próbować/4 INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  20 pomagać/1        INF NOT_AS_OBJ # pomaga kłamać
+V  25 pomagać/1 OBJ(3) INF NOT_AS_OBJ # pomaga mi zasnąć
+V 100 próbować/4 INF NOT_AS_OBJ
 V 100 rozkwitać/1
 V   1 sprawiać/1  # only for .cfg
-V  50 stawać/A REFL OBJ(5) SEMANTIC(MODAL)
+V  50 stawać/A REFL OBJ(5) NOT_AS_OBJ
 V  50 uciekać/1
 V  25 wypełniać/1 OBJ(4)
 V  25 zabierać/1 OBJ(4)

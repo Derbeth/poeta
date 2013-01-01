@@ -24,6 +24,7 @@ V 100 brennen/a
 V 100 hören/a        OBJ(4)
 V 100 kommen/a
 V 100 lügen/a
+V 100 müssen/m       INF NOT_AS_OBJ
 V 100 nehmen/a       OBJ(4)
 V  50 schreien/a
 V 100 spielen/a      OBJ(mit,3)

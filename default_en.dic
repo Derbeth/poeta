@@ -45,20 +45,20 @@ N 100 it             NO_ADJ
 
 V 100 become/a    ADJ
 V  50 burn/a      OBJ(2)
-V 100 cannot      INF TAKES_NO(MODAL) SEMANTIC(MODAL)
-V  10 could       INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V 100 cannot      INF NOT_AS_OBJ
+V  10 could       INF NOT_AS_OBJ
 V 100 die/a
 V 100 be/0        ADJ
 V 100 kill/a      OBJ(2)
 V  50 lie/a       NOT_WITH_W(lie)
-V  30 long/a      OBJ(for,2) SEMANTIC(MODAL)
-V 100 must        INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  30 long/a      OBJ(for,2) NOT_AS_OBJ
+V 100 must        INF NOT_AS_OBJ
 V  10 scream/a
 V 100 see/a       OBJ(2)
 V 100 shine/a
 V  10 take/a      OBJ(2)
 V 100 torture/a   OBJ(2)
-V  40 try/a       INF(to) TAKES_NO(MODAL) SEMANTIC(MODAL)
+V  40 try/a       INF(to) NOT_AS_OBJ
 # TODO fix 'that love is *my*'
 
 A 100 all         ONLY_PL DOUBLE NOT_AS_OBJ

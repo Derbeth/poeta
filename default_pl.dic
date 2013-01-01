@@ -47,11 +47,13 @@ V  25 gnić/A
 V 100 kłamać/9
 V  25 kpić/5 OBJ(z,2)
 V 100 krzyczeć/7
+V  80 musieć/7m INF NOT_AS_OBJ
 V  25 niszczyć/6 OBJ(4)
 V  50 pluć/A OBJ(na,4)
 V 100 płakać/9
 V  20 płakać/9 OBJ(po,6)
 V 100 płonąć/5b
+V  20 pragnąć/5 INF NOT_AS_OBJ
 V  50 ranić/6 OBJ(4)
 V  50 skrywać/1 OBJ(4)
 V  50 śnić/5 OBJ(o,6)
