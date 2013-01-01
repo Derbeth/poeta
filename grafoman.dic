@@ -38,16 +38,16 @@ N  50 wspomnienie/d n Pl
 N  20 zamek/g m Pl nan SUFFIX(z piasku)
 N 100 życie/d n
 
-N 200 "" m PERSON(1) NO_ADJ ONLY_SUBJ # ja
-N 200 ja/0 m NO_ADJ ONLY_OBJ
-N 200 "" m PERSON(2) NO_ADJ ONLY_SUBJ # ty
-N  50 ty/0 m NO_ADJ ONLY_OBJ
-N  50 ty/0 f NO_ADJ ONLY_OBJ
-N 200 "" m Pl PERSON(1) NO_ADJ ONLY_SUBJ # my
-N  50 my/0 m Pl NO_ADJ ONLY_OBJ
-N  10 "" m Pl PERSON(2) NO_ADJ ONLY_SUBJ # wy
-N  50 wy/0 m Pl NO_ADJ ONLY_OBJ
-N  50 oni/0 m Pl NO_ADJ
+N 200 ""    m      PERSON(1)    NO_ADJ ONLY_SUBJ # ja
+N 200 ja/0  m                   NO_ADJ ONLY_OBJ
+N 200 ""    m      PERSON(2)    NO_ADJ ONLY_SUBJ # ty
+N  50 ty/0  m                   NO_ADJ ONLY_OBJ
+N  50 ty/0  f                   NO_ADJ ONLY_OBJ
+N 200 ""    m Pl   PERSON(1)    NO_ADJ ONLY_SUBJ # my
+N  50 my/0  m Pl                NO_ADJ ONLY_OBJ
+N  10 ""    m Pl   PERSON(2)    NO_ADJ ONLY_SUBJ # wy
+N  50 wy/0  m Pl                NO_ADJ ONLY_OBJ
+N  50 oni/0 m Pl   NO_NOUN_NOUN NO_ADJ
 
 V 100 brać/b OBJ(4)
 V  25 być/c ADJ
@@ -66,6 +66,7 @@ V 100 płynąć/5b
 V  20 pomagać/1 INF TAKES_NO(MODAL) SEMANTIC(MODAL)  # pomaga kłamać
 V  25 pomagać/1 OBJ(3) INF # pomaga mi zasnąć
 V 100 próbować/4 INF TAKES_NO(MODAL) SEMANTIC(MODAL)
+V 100 rozkwitać/1
 V   1 sprawiać/1  # only for .cfg
 V  50 stawać/A REFL OBJ(5) SEMANTIC(MODAL)
 V  50 uciekać/1

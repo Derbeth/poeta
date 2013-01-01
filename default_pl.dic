@@ -3,6 +3,7 @@ N 100 ból/c m nan
 N  50 ciało/p n Pl
 N 100 ciemność/n f
 N 100 cierpienie/d n
+N  50 czeluść/n f
 N 100 głód/e m nan
 N  25 grób/e m nan
 N 100 grzech/e m nan
@@ -59,8 +60,10 @@ V 100 walczyć/6 OBJ(z,5)
 V 100 widzieć/7 OBJ(4)
 
 A 100 bezradny/a
+A 200 bolesny/a ONLY_WITH_W(grzech,porażka,tęsknota,upadek,wspomnienie)
 A 100 chory/a
 A 100 czarny/a
+A  50 czerwony/a
 A 100 krwawy/a
 A 100 martwy/a
 A  30 mój/e POSS
