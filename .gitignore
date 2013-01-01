@@ -1,3 +1,6 @@
+coverage/*
 doc/*
 
 *.swp
+
+Gemfile.lock

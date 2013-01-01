@@ -1,4 +1,10 @@
 #!/usr/bin/ruby -w
+
+require 'simplecov'
+SimpleCov.start do
+  add_filter "/test/"
+end
+
 require 'test/unit'
 
 # Currently tests do not work with jruby-1.6.8 because of the difference in behaviour of srand()

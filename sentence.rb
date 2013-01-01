@@ -306,7 +306,7 @@ class Sentence
 				verb.text == word.text ? 0 : semantic_counter.call(freq,word)
 			end
 			object_verb = @dictionary.get_random_verb_as_object(&freq_counter)
-			next if (verb.text == object_verb.text)
+			next if (object_verb.nil? || verb.text == object_verb.text)
 			break
 		end
 		return '' unless object_verb

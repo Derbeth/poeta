@@ -8,6 +8,12 @@ require './test/test_helper'
 include Grammar
 
 class PoemTest < Test::Unit::TestCase
+	def test_empty
+		conf = PoetryConfiguration.new
+		conf.verses_number = 0
+		assert_equal '', Poem.new('sentence_mgr', 'title_sentence_mgr', conf).text
+	end
+
 	def test_write
 		srand
 		conf = PoetryConfiguration.new

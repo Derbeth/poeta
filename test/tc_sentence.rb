@@ -774,14 +774,6 @@ A y 115 0 ymi .
 		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('pies chce jeść', sentence.write)
 
-		# check that ONLY_OBJ works for verbs
-		srand
-		dictionary.read "N 100 pies\nV 100 chce INF\nV 30 jeść ONLY_OBJ"
-		10.times do
-			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
-			assert_equal 'pies chce jeść', sentence.write
-		end
-
 		# infinitive taking object itself
 		srand 1
 		grammar.read_rules "N a 4 ies sa ies\nV a 1 e ę e\n"
@@ -799,6 +791,26 @@ A y 115 0 ymi .
 		dictionary.read "N 100 they\nV 100 want INF(to)\nV 30 eat"
 		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('they want to eat', sentence.write)
+	end
+
+	def test_handle_infinitive_object_only_obj
+		grammar = PolishGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 100 pies\nV 100 chce INF\nV 30 jeść ONLY_OBJ"
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
+			assert_equal 'pies chce jeść', sentence.write
+		end
+	end
+
+	def test_handle_infinitive_object_obj_freq
+		grammar = PolishGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 100 pies\nV 100 chce INF\nV 0 jeść OBJ_FREQ(30)"
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
+			assert_equal 'pies chce jeść', sentence.write
+		end
 	end
 
 	def test_handle_infinitive_object_not_as_object

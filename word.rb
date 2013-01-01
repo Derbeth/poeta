@@ -254,6 +254,11 @@ module Grammar
 					when 'ADJ' then objects << AdjectiveObject.new
 					when /^SUFFIX\(([^)]+)\)$/
 						suffix = $1
+					when /^OBJ_FREQ/
+						unless part =~ /^OBJ_FREQ\((\d+)\)$/
+							raise VerbError, "illegal format of OBJ_FREQ in #{line}"
+						end
+						general_props[:obj_freq] = $1.to_i
 					when /^OBJ\(([^)]+)\)$/
 						opts = $1
 						object_case, preposition = nil, nil
