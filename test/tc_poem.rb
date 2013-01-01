@@ -10,9 +10,6 @@ include Grammar
 class PoemTest < Test::Unit::TestCase
 	def test_write
 		srand
-		dictionary = Dictionary.new
-		dictionary.read "N 10 apple\nN 10 boy\nV 10 lies"
-		grammar = GenericGrammar.new
 		conf = PoetryConfiguration.new
 		conf.verses_number = 2
 		conf.implicit_subject_chance = 0
