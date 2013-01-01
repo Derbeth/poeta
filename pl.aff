@@ -270,37 +270,46 @@ N n 16                  0  ach   l
 
 # 82 m, dzień, cień, modrzew, bal, gwóźdź, tułów, mięsień, mebel, pień, węgiel
 N o 2    zień nia   zień
+N o 2    ień  nia   ień/1 # ogień
 N o 2    ń    nia   ń
 N o 2    0    ia    w
 N o 2    0    a     .
 N o 3    zień niowi zień
+N o 3    ień  nia   ień/1
 N o 3    ń    niowi ń
 N o 3    0    iowi  w
 N o 3    0    owi   .
 N o 5    zień niem  zień
+N o 5    ień  niem  ień/1
 N o 5    ń    niem  ń
 N o 5    0    iem   w
 N o 5    0    em    .
 N o 6,7  zień niu   zień
+N o 6,7  ień  niu   ień/1
 N o 6,7  ń    niu   ń
 N o 6,7  0    iu    w
 N o 6,7  0    u     .
 N o 11,14,17  zień ni  zień/1 # dzień -> dni
 N o 11,14,17  zień nie zień   # tydzień -> tygodnie
+N o 11,14,17  ień  nie ień/1
 N o 11,14,17  ń    nie ń
 N o 11,14,17  0    ie  w
 N o 12        zień ni  zień
+N o 12        ień  ni  ień/1
 N o 12        ń    ni  ń
 N o 12        0    i   .
 N o 13        zień niom zień
+N o 13        ień  niom ień/1
 N o 13        ń    niom ń
 N o 13        0    iom  w
 N o 13        0    om   .
 N o 15        zień niami zień
+N o 15        ień  niami ień/1
 N o 15        ń    niami ń
 N o 15        0    iami  w
 N o 15        0    ami   .
 N o 16        zień niach zień
+N o 16        ień  niach ień/1
 N o 16        ń    niach ń
 N o 16        0    iach  w
 N o 16        0    ach   .

@@ -2,6 +2,7 @@ N  10 absurd/e m nan
 N 100 ból/c m nan
 N  50 ciało/p n Pl
 N 100 ciemność/n f
+N 100 cień/o m nan
 N 100 cierpienie/d n
 N  50 czeluść/n f
 N 100 głód/e m nan
@@ -14,6 +15,7 @@ N  25 kruk/v m nan Pl
 N 100 los/e m nan
 N 100 nieszczęście/d n
 N 100 noc/k f
+N  50 ogień/o1 m nan
 N 100 płomień/o1 m nan
 N  50 poczucie/d n SUFFIX(winy)
 N 100 porażka/r f
@@ -69,6 +71,7 @@ A 100 martwy/a
 A  30 mój/e POSS
 A 100 mroczny/a
 A 200 niepomszczony/a ONLY_WITH_W(zbrodnia)
+A  50 nieunikniony/a
 A 100 nieznośny/a
 A 100 obcy/a
 A 100 ponury/a
@@ -92,7 +95,7 @@ D 100 często
 D  25 łapczywie
 D 100 niepewnie
 D  50 nieporadnie
-D 100 "ostatni raz"
+D 100 ostatni~raz
 D  50 pewnie
 D  50 płacząc
 D 150 powoli
@@ -118,7 +121,7 @@ O  50 jakże
 O  50 jeszcze
 O 100 kiedy
 O 100 oto
-O  10 "poza tym"
+O  10 poza~tym
 O  20 ponownie
 O 100 skoro
 O  50 "spójrz tylko, jak"
