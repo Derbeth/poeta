@@ -293,7 +293,7 @@ class Sentence
 	# for the first noun
 	def noun_noun_forbidden?(main_noun, attribute_noun)
 		[main_noun, attribute_noun].each do |noun|
-			return true if noun.person != 3
+			return true if noun.person != 3 || noun.get_property(:no_noun_noun)
 		end
 		false
 	end

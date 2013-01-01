@@ -83,6 +83,7 @@ module Grammar
 		end
 	end
 
+	# options: :no_adjective, :only_subj, :only_obj
 	class Noun < Word
 		attr_reader :animate,:gender, :number, :person,:attributes
 		STRING2GENDER = {'m'=>MASCULINE,'n'=>NEUTER,'f'=>FEMININE}
@@ -110,6 +111,7 @@ module Grammar
 					when /^SUFFIX\(([^)]+)\)$/
 						suffix = $1
 					when 'NO_ADJ' then general_props[:no_adjective] = true
+					when 'NO_NOUN_NOUN' then general_props[:no_noun_noun] = true
 					when 'ONLY_SUBJ' then general_props[:only_subj] = true
 					when 'ONLY_OBJ' then general_props[:only_obj] = true
 					when /^OBJ_FREQ/
@@ -224,6 +226,7 @@ module Grammar
 		end
 	end
 
+	# Can have properties: :only_obj, :not_as_object
 	class Verb < Word
 		attr_reader :objects, :reflexive
 
@@ -260,6 +263,7 @@ module Grammar
 						end
 						objects << NounObject.new(object_case, preposition)
 					when 'ONLY_OBJ' then general_props[:only_obj] = true
+					when 'NOT_AS_OBJ' then general_props[:not_as_object] = true
 					else
 						puts "warn: unknown option '#{part}' for '#{text}'"
 				end

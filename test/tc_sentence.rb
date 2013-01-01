@@ -286,12 +286,22 @@ class SentenceTest < Test::Unit::TestCase
 		end
 	end
 
+	# see also test_double_noun_forbidden_combinations
 	def test_noun_attribute_forbidden_combinations
 		dictionary = Dictionary.new
 		grammar = GenericGrammar.new
-		dictionary.read "N 10 licence ATTR(to,2)\nN 10 kill\nN 10 we Pl PERSON(1)"
 
+		dictionary.read "N 10 licence ATTR(to,2)\nN 10 kill\nN 10 we Pl PERSON(1)"
+		# forbids 'licence to we'
 		possible = ['this licence to kill', 'this kill', 'this we']
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,@conf,'this ${NOUN}')
+			assert_includes(possible, sentence.write)
+		end
+
+		dictionary.read "N 10 licence ATTR(to,2)\nN 10 kill\nN 10 he NO_NOUN_NOUN"
+		# forbids 'licence to he'
+		possible = ['this licence to kill', 'this kill', 'this he']
 		10.times do
 			sentence = Sentence.new(dictionary,grammar,@conf,'this ${NOUN}')
 			assert_includes(possible, sentence.write)
@@ -694,6 +704,7 @@ A y 115 0 ymi .
 		end
 	end
 
+	# see also test_noun_attribute_forbidden_combinations
 	def test_double_noun_forbidden_combinations
 		grammar = EnglishGrammar.new
 		dictionary = Dictionary.new
@@ -712,6 +723,14 @@ A y 115 0 ymi .
 			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
 			text = sentence.write
 			assert_includes ['eagle', 'I'], text
+		end
+
+		dictionary.read "N 100 eagle\nN 100 he NO_NOUN_NOUN"
+		@conf.double_noun_chance = 1
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
+			text = sentence.write
+			assert_includes ['eagle', 'he'], text
 		end
 	end
 
@@ -766,6 +785,17 @@ A y 115 0 ymi .
 		dictionary.read "N 100 they\nV 100 want INF(to)\nV 30 eat"
 		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 		assert_equal('they want to eat', sentence.write)
+	end
+
+	def test_handle_infinitive_object_not_as_object
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 10 dogs\nV 10 must INF NOT_AS_OBJ\nV 10 cannot INF NOT_AS_OBJ\nV 10 eat"
+		possible = ['dogs must eat', 'dogs cannot eat', 'dogs eat']
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
+			assert_include possible, sentence.write
+		end
 	end
 
 	def test_handle_adjective_object
@@ -914,6 +944,8 @@ A y 115 0 ymi .
 		sentence = Sentence.new(dictionary,grammar,@conf,'to ${SUBJ(NE)}')
 		sentence.implicit_subject = implicit
 		assert_match(/to \w+/, sentence.write)
+
+		# TODO forbidding implicit subject
 	end
 
 	def test_empty_nouns

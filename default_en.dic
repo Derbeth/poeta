@@ -38,7 +38,7 @@ N  50 war/a
 
 N 100 I/0            NO_ADJ PERSON(1)
 N 100 we/0       Pl  NO_ADJ PERSON(1)
-N 100 they/0     Pl  NO_ADJ
+N 100 they/0     Pl  NO_ADJ NO_NOUN_NOUN
 N 100 you/0          NO_ADJ PERSON(2)
 N 100 you/0      Pl  NO_ADJ PERSON(2)
 N 100 it             NO_ADJ

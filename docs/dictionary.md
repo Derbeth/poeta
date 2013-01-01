@@ -91,6 +91,14 @@ Noun
 
   Makes the noun never take an adjective.
 
+* `NO_NOUN_NOUN`
+
+  Makes the noun never take noun attribute or be used as a noun attribute. Example:
+
+        N 100 they NO_NOUN_NOUN
+
+  prevents appearing things like "they's sea" or "sea of they".
+
 * `OBJ_FREQ(f)`
 
 * `ONLY_OBJ`
@@ -98,6 +106,10 @@ Noun
 * `ONLY_SUBJ`
 
 * `PERSON(p)`
+
+  Sets noun person (1-3). Additionally works as `NO_NOUN_NOUN`. Example:
+
+        N 100 you Pl PERSON(2)
 
 * `SUFFIX(suf)`
 
@@ -107,7 +119,7 @@ Noun
 
         N 100 dog SUFFIX(on a lead)
 
-  may produce "dog on a lead"
+  may produce "dog on a lead".
 
 Verb
 ----
@@ -120,7 +132,7 @@ Verb
         V 100 become/1 ADJ
         A 100 lost
 
-  may produce "he becomes lost"
+  may produce "he becomes lost".
 
 * `INF`
 
@@ -133,6 +145,14 @@ Verb
         V 100 must INF
 
   may produce "he must listen"
+
+* `NOT_AS_OBJ`
+
+  Makes the verb never be chosen as infinitive object. Example:
+
+        V 100 must NOT_AS_OBJ
+
+  prevents appearing things like "needs to must".
 
 * `OBJ(case)`
 

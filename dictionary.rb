@@ -5,9 +5,6 @@ require './word'
 require './randomized_choice'
 
 module Grammar
-	OBJECT_ONLY = 'OO' # TODO unused
-	NO_NOUN_NOUN = 'NO_NOUN_NOUN' # TODO unused
-
 	class Dictionary
 		include Enumerable
 
@@ -114,6 +111,8 @@ module Grammar
 			get_random(VERB) do |frequency, word|
 				if word.get_property(:obj_freq)
 					frequency = word.get_property(:obj_freq)
+				elsif word.get_property(:not_as_object)
+					frequency = 0
 				end
 				counter.call(frequency,word)
 			end
@@ -247,6 +246,10 @@ module Grammar
 				index = super(freq_array,speech_part)
 				break unless @remembered_indices[speech_part].include?(index)
 			end
+# 			if speech_part == NOUN
+# 				rem = @remembered_indices[speech_part].map {|i| @words[speech_part][i].text }.join(',')
+# 				puts "chosen #{@words[speech_part][index]}, remembered [#{rem}]"
+# 			end
 			@remembered_indices[speech_part].push(index)
 			@remembered_indices[speech_part].shift if @remembered_indices[speech_part].size > @max_size
 			index
