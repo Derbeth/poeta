@@ -26,7 +26,7 @@ class Sentence
 	def initialize(dictionary,grammar,conf,pattern)
 		@dictionary,@grammar,@conf,@pattern = dictionary,grammar,conf,pattern.strip
 		@logger = @conf.logger
-		
+
 		@subject = nil
 		@implicit_subject = false
 		@forced_subject_number = nil
@@ -39,10 +39,10 @@ class Sentence
 		@adjectives = []
 	end
 
-	def Sentence.validate_pattern(pattern)
+	def validate
 		# check that after replacing all placeholders there are no unclosed
 		# placeholders left
-		reduced_text = pattern.clone
+		reduced_text = @pattern.clone
 		Sentences::PARTS.each { |p| reduced_text.gsub!(match_token(p), '') }
 		if reduced_text =~ /\$\{\S+/
 			raise SentenceError, "syntax error near '#{$&}' - cannot handle this placeholder"
@@ -50,17 +50,17 @@ class Sentence
 
 		noun_occurs = {}
 		[Sentences::SUBJECT, Sentences::NOUN].each do |part|
-			pattern.scan(match_token(part)) do |full_match,index,options|
+			@pattern.scan(match_token(part)) do |full_match,index,options|
 				noun_index, norm_index = read_index(full_match,index)
 				noun_occurs[noun_index] ||= 0
 				noun_occurs[noun_index] += 1
 			end
 		end
 		[Sentences::VERB, Sentences::ADJECTIVE, Sentences::OBJECT].each do |part|
-			pattern.scan(match_token(part)) do |full_match,index,options|
+			@pattern.scan(match_token(part)) do |full_match,index,options|
 				noun_index, norm_index = read_index(full_match,index)
 				if part == Sentences::VERB
-					parsed = parse_verb_options(options)
+					parsed = parse_verb_options(options, full_match)
 					if parsed[:form]
 						noun_occurs[noun_index] ||= 0
 						noun_occurs[noun_index] += 1
@@ -104,15 +104,15 @@ class Sentence
 	end
 
 	private
-	
+
 	include ChanceChecker
 
 	MAX_ATTR_RECUR = 3
 	DBL_NOUN_RECUR = 1
 
 	def handle_subject(full_match,index,options)
-		subject_index, norm_index = self.class.read_index(full_match,index)
-		parsed_opts = self.class.parse_common_noun_options(options)
+		subject_index, norm_index = read_index(full_match,index)
+		parsed_opts = parse_common_noun_options(options, full_match)
 		if subject_index == 1 && @subject
 			noun = @subject
 		else
@@ -128,8 +128,8 @@ class Sentence
 	end
 
 	def handle_noun(full_match,index,options)
-		noun_index, norm_index = self.class.read_index(full_match,index)
-		parsed_opts = self.class.parse_common_noun_options(options)
+		noun_index, norm_index = read_index(full_match,index)
+		parsed_opts = parse_common_noun_options(options, full_match)
 
 		noun = get_random_standalone_noun(parsed_opts)
 
@@ -141,8 +141,8 @@ class Sentence
 	end
 
 	def handle_adjective(full_match,index,options)
-		noun_index, norm_index = self.class.read_index(full_match,index)
-		parsed_opts = self.class.parse_adjective_options(options)
+		noun_index, norm_index = read_index(full_match,index)
+		parsed_opts = parse_adjective_options(options, full_match)
 		raise "no noun for #{full_match}" unless @indexed_nouns.include? noun_index
 		noun = @indexed_nouns[noun_index]
 		return '' if noun == nil
@@ -201,13 +201,13 @@ class Sentence
 	end
 
 	def handle_verb(full_match,index,options)
-		noun_index, norm_index = self.class.read_index(full_match,index)
+		noun_index, norm_index = read_index(full_match,index)
 		@verbs_text[norm_index] ||= _handle_verb(full_match,noun_index,norm_index,options)
 	end
 
 	def _handle_verb(full_match,noun_index,norm_index,options)
 		noun = nil
-		parsed_opts = self.class.parse_verb_options(options)
+		parsed_opts = parse_verb_options(options, full_match)
 		if parsed_opts[:form]
 			form = parsed_opts[:form]
 			@forced_subject_number = form[:number] if form[:number]
@@ -225,7 +225,7 @@ class Sentence
 	end
 
 	def handle_object(full_match,index,options)
-		noun_index, norm_index = self.class.read_index(full_match,index)
+		noun_index, norm_index = read_index(full_match,index)
 		verb = @verbs[norm_index]
 		raise "no verb for #{full_match}" unless verb
 		_handle_object(verb, noun_index)
@@ -347,7 +347,7 @@ class Sentence
 	end
 
 	def handle_adverb(full_match,index,options)
-		noun_index, norm_index = self.class.read_index(full_match,index)
+		noun_index, norm_index = read_index(full_match,index)
 		noun = @indexed_nouns[noun_index]
 		freq_counter = noun ? @dictionary.semantic_chooser(noun) : nil
 		adverb = @dictionary.get_random(Grammar::ADVERB, &freq_counter)
@@ -356,7 +356,7 @@ class Sentence
 
 	def get_random_subject(parsed_opts)
 		semantic_chooser = parsed_opts[:context_props] ?
-			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props])) :
+			@dictionary.semantic_chooser(fake_word_with_semantic parsed_opts[:context_props]) :
 			nil
 
 		@dictionary.get_random_subject do |counted_frequency,word|
@@ -376,7 +376,7 @@ class Sentence
 
 	def get_random_standalone_noun(parsed_opts)
 		semantic_chooser = parsed_opts[:context_props] ?
-			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props])) :
+			@dictionary.semantic_chooser(fake_word_with_semantic parsed_opts[:context_props]) :
 			nil
 
 		@dictionary.get_random(Grammar::NOUN) do |frequency, word|
@@ -391,27 +391,36 @@ class Sentence
 	end
 
 	def get_random_verb_as_predicate(noun, parsed_opts)
-		semantic_chooser = if noun
-			@dictionary.semantic_chooser(noun)
-		elsif parsed_opts[:context_props]
-			@dictionary.semantic_chooser(Word.new('', [], parsed_opts[:context_props]))
+		semantic_chooser = if noun || parsed_opts[:context_props]
+			@dictionary.semantic_chooser(merge_with_semantic_opts(noun, parsed_opts[:context_props]))
 		else
 			nil
 		end
 
 		@dictionary.get_random_verb_as_predicate do |freq,word|
-			if parsed_opts[:only] && word.text != parsed_opts[:only]
-				freq = 0
-			end
 			semantic_chooser ? semantic_chooser.call(freq,word) : freq
 		end
+	end
+
+	def fake_word_with_semantic(opts)
+		Word.new('', [], opts)
+	end
+
+	def merge_with_semantic_opts(word, context_opts)
+		merged_opts = {}
+		SEMANTIC_OPTS.values.each do |opt|
+			word_vals = word ? word.get_property(opt) : nil
+			context_vals = context_opts ? context_opts[opt] : nil
+			merged_opts[opt] = (word_vals || []) + (context_vals || []) if word_vals || context_vals
+		end
+		fake_word_with_semantic(merged_opts)
 	end
 
 	# full_match - like ${NOUN} or ${VERB2} or ${VERB5.1}
 	# index_match - number matched from full_match, like '', '2', '5.1'
 	# returns pair: [subject_index,normalized_index_match]
 	# here: [1, '1'], [2, '2'] and [5, '5.1']
-	def Sentence.read_index(full_match,index_match)
+	def read_index(full_match,index_match)
 		dot_part = nil
 		if index_match
 			index_match.strip!
@@ -446,38 +455,38 @@ class Sentence
 	end
 
 	# given block will receive single unparsed opt and parsed opts hash
-	def self.option_parsing(opts, &block)
+	def option_parsing(opts, full_match, &block)
 		parsed = {}
 		context_props = {}
-		semantic_opts = {'SEMANTIC'=>:semantic, 'NOT_WITH'=>:not_with, 'ONLY_WITH'=>:only_with,
-			'TAKES_NO'=>:takes_no, 'TAKES_ONLY'=>:takes_only}
 		if opts && !opts.empty?
 			opts.split(/, */).each do |opt|
 				catch :next_opt do
-					semantic_opts.each do |string,name|
+					SEMANTIC_OPTS.each do |string,name|
 						if opt =~ /^#{string} +(.+)/
 							context_props[name] ||= []
 							context_props[name] << $1
 							throw :next_opt
 						end
 					end
-					if opt =~ /^ONLY +(\S+)/
-						parsed[:only] = $1
-						throw :next_opt
-					end
 
 					block.call(opt, parsed)
 				end
 			end
 		end
-		parsed[:context_props] = context_props unless context_props.empty?
+		unless context_props.empty?
+			parsed[:context_props] = context_props
+			err_msg = @dictionary.validate_word(fake_word_with_semantic context_props)
+			if err_msg
+				puts "warn: #{full_match} - #{err_msg}"
+			end
+		end
 		parsed
 	end
 
 	# parses verb options and returns a hash with parsed elements
 	# hash keys: :form => hash with verb form
-	def self.parse_verb_options(opts)
-		self.option_parsing(opts) do |opt, parsed|
+	def parse_verb_options(opts, full_match)
+		option_parsing(opts, full_match) do |opt, parsed|
 			case opt
 				when 'INF' then parsed[:form] = {:infinitive => true}
 				when 'IMP' then
@@ -496,8 +505,8 @@ class Sentence
 		end
 	end
 
-	def self.parse_adjective_options(opts)
-		self.option_parsing(opts) do |opt, parsed|
+	def parse_adjective_options(opts, full_match)
+		option_parsing(opts, full_match) do |opt, parsed|
 			number_i,gram_case = Integer(opt).divmod(10)
 			raise "invalid case: #{gram_case}" unless CASES.include?(gram_case)
 			parsed[:case]=gram_case
@@ -505,8 +514,8 @@ class Sentence
 		end
 	end
 
-	def self.parse_common_noun_options(opts)
-		result = self.option_parsing(opts) do |opt, parsed|
+	def parse_common_noun_options(opts, full_match)
+		result = option_parsing(opts, full_match) do |opt, parsed|
 			case opt
 				when /^\d+$/ then
 					parsed[:case] = Integer(opt)
@@ -518,7 +527,7 @@ class Sentence
 			end
 		end
 		if result[:not_empty] && result[:empty]
-			puts "warn: nonsense combination: NE and EMPTY"
+			puts "warn: #{full_match} nonsense combination: NE and EMPTY"
 		end
 		result
 	end

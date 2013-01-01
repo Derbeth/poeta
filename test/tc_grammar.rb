@@ -22,24 +22,24 @@ class PolishGrammarTest < Test::Unit::TestCase
 		rule3 = Rule.new('t','cie','t','A')
 		rule4 = Rule.new('a', 'ie', '[bcnp]a', 'A')
 		rule5 = Rule.new('', 'u', '[^bcnp]', 'A')
-		
+
 		assert(!rule1.matches?('bug'))
 		assert(!rule1.matches?('bug','a'))
 		assert(rule1.matches?('bug','A'))
-		
+
 		assert(!rule2.matches?('bug'))
 		assert(!rule2.matches?('bug','a'))
 		assert(rule2.matches?('bug','A'))
-		
+
 		assert(!rule3.matches?('bug'))
 		assert(rule3.matches?('kot','A'))
-		
+
 		assert_equal('buga', rule1.inflect('bug', 'A'))
 		assert_equal('buga', rule1.inflect('bug', 'B', 'A'))
 		assert_equal('buga', rule1.inflect('bug', 'A', 'B'))
 		assert_equal('bugu', rule2.inflect('bug', 'A'))
 		assert_equal('bug', rule3.inflect('bug', 'A'))
-		
+
 		assert_equal('kocie', rule3.inflect('kot', 'A'))
 
 		assert(rule4.matches?('lipa', 'A'))

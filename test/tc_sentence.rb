@@ -17,7 +17,7 @@ class SentenceTest < Test::Unit::TestCase
 		@conf.object_adj_chance = 0
 		@conf.double_noun_chance = 0
 	end
-	
+
 	def test_trim
 		dictionary_text = 'N 100 foo'
 		dictionary = Dictionary.new
@@ -347,7 +347,7 @@ D 10 schnell
 		assert_equal 'Kinder spielen leise mit Hund und laufen schnell nach Haus', sentence.write
 	end
 
-	def test_handle_semantic
+	def test_semantic_in_dictionary
 		grammar = PolishGrammar.new
 		dictionary = Dictionary.new
 		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good ONLY_WITH(GOOD)\n")
@@ -436,7 +436,11 @@ D 10 schnell
 		dictionary.read("N 100 policja SEMANTIC(NOT_COOL)\nV 100 rymuje NOT_WITH(NOT_COOL)\nV 10 idzie")
 		sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB}');
 		assert_equal('policja idzie', sentence.write)
+	end
 
+	def test_semantic_in_sentence_def
+		grammar = PolishGrammar.new
+		dictionary = Dictionary.new
 		dictionary.read("N 100 ziomy\nN 100 policja SEMANTIC(POLICJA)\nV 100 idziesz\nV 100 donosisz NOT_WITH(ZIOM)")
 		10.times do
 			sentence = Sentence.new(dictionary, grammar, @conf, 'spoko jak ${SUBJ(TAKES_NO POLICJA)}')
@@ -449,6 +453,25 @@ D 10 schnell
 			assert_equal('idziesz', sentence.write)
 		end
 	end
+	
+	def test_force_word_in_sentence_def
+		grammar = GenericGrammar.new
+		dictionary = ControlledDictionary.new
+		dictionary.read "N 100 ice\nN 100 fire\nV 100 burn\nV 100 fly"
+		10.times do
+			sentence = Sentence.new(dictionary, grammar, @conf, 'cool as ${NOUN(TAKES_ONLY_W ice)}')
+			assert_equal 'cool as ice', sentence.write
+			sentence = Sentence.new(dictionary, grammar, @conf, 'cool as ${NOUN(TAKES_NO_W fire)}')
+			assert_equal 'cool as ice', sentence.write
+			sentence = Sentence.new(dictionary, grammar, @conf, '${VERB(2,TAKES_ONLY_W fly)}')
+			assert_equal 'fly', sentence.write
+			sentence = Sentence.new(dictionary, grammar, @conf, '${VERB(2,TAKES_NO_W fly)}')
+			assert_equal 'burn', sentence.write
+			sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB(TAKES_ONLY_W burn)}')
+			dictionary.set_indices NOUN, [1]
+			assert_equal 'fire burn', sentence.write
+		end
+	end
 
 	def test_handle_verb
 		dictionary = Dictionary.new
@@ -458,7 +481,7 @@ D 10 schnell
 
 		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB}')
 		assert_equal('lipy rosną', sentence.write)
-		
+
 		dictionary.read("N 100 lipy f Pl\nV 100 rosnąć/a REFLEXIVE")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB}')
 		assert_equal('lipy rosną się', sentence.write)
@@ -496,15 +519,6 @@ D 10 schnell
 		assert_equal 'uderz lipę', sentence.write
 		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(IMP,11)} ${OBJ}')
 		assert_equal 'uderzmy lipę', sentence.write
-	end
-
-	def test_handle_verb_only
-		grammar = GermanGrammar.new
-		grammar.read_rules "V a 13 0 en ."
-		dictionary = Dictionary.new
-		dictionary.read "N 10 Hunden Pl\nV 5 bell/a\nV 10 lauf/a\nV 10 wart/a\nV 10 denk/a"
-		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB(ONLY bell)}')
-		assert_equal 'Hunden bellen', sentence.write
 	end
 
 	def test_handle_object
@@ -576,7 +590,7 @@ D 10 schnell
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies goni kota', sentence.write)
 	end
-	
+
 	def test_two_objects_and_subject_different
 		grammar = GenericGrammar.new
 		dictionary = Dictionary.new

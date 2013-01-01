@@ -3,6 +3,12 @@
 require './grammar'
 
 module Grammar
+	SEMANTIC_OPTS = {'SEMANTIC'=>:semantic,
+		'ONLY_WITH'=>:only_with, 'NOT_WITH'=>:not_with,
+		'ONLY_WITH_W'=>:only_with_word, 'NOT_WITH_W'=>:not_with_word,
+		'TAKES_ONLY'=>:takes_only, 'TAKES_NO'=>:takes_no,
+		'TAKES_ONLY_W'=>:takes_only_word, 'TAKES_NO_W'=>:takes_no_word}
+
 	class Word
 		attr_reader :text, :gram_props, :frequency
 
@@ -44,6 +50,10 @@ module Grammar
 			@general_props[prop_name]
 		end
 
+		def to_s
+			"Word(#{text} p=#{@general_props.inspect})"
+		end
+
 		protected
 		attr_reader :general_props
 
@@ -52,11 +62,6 @@ module Grammar
 		def self.parse(line,global_props,&block)
 			line.strip! if line
 			if line && !line.empty?
-				semantic_opts = {'SEMANTIC'=>:semantic,
-					'ONLY_WITH'=>:only_with, 'NOT_WITH'=>:not_with,
-					'ONLY_WITH_W'=>:only_with_word, 'NOT_WITH_W'=>:not_with_word,
-					'TAKES_ONLY'=>:takes_only, 'TAKES_NO'=>:takes_no,
-					'TAKES_ONLY_W'=>:takes_only_word, 'TAKES_NO_W'=>:takes_no_word}
 				escaped = []
 				last_e = -1
 				# ignore whitespaces inside brackets by escaping what's inside
@@ -64,7 +69,7 @@ module Grammar
 				line.split(/\s+/).each do |part|
 					catch(:process_next_part) do
 						part.gsub!(/\$(\d+)/) { escaped[$1.to_i] }
-						semantic_opts.each_pair do |string,name|
+						SEMANTIC_OPTS.each_pair do |string,name|
 							if part =~ /^#{string}\(([^)]+)\)$/
 								global_props[name] ||= []
 								global_props[name] += $1.split(/, */)

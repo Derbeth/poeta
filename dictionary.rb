@@ -162,12 +162,59 @@ module Grammar
 					puts "error: #{e.message}"
 				end
 			end
+			validate
 		end
 
 		def each
 			@words.values.each do |word_list|
 				word_list.each { |e| yield e }
 			end
+		end
+
+		# Checks if the word is correct in context of this dictionary.
+		# Does not check word type-specific constraints (for example
+		# does not check if a word is a correct noun etc.), rather it
+		# checks things like whether semantic properties of the word
+		# make sense (for example, if the word does not require
+		# existence of words not defined in the dictionary).
+		#
+		# The method *cannot* assume that the tested word is included
+		# in the dictionary.
+		#
+		# The method *should not* output anything to logs.
+		#
+		# Returns error message or nil if the word is correct.
+		def validate_word(checked_word)
+			SEMANTIC_OPTS.each do |prop_str,prop|
+				next if prop == :semantic
+				prop_val = checked_word.get_property(prop)
+				next if prop_val.nil?
+				return "#{prop} without values" if prop_val.empty?
+
+				matcher, err_msg = nil, nil
+				case prop
+					when :only_with, :not_with, :takes_only, :takes_no
+						matcher = lambda { |w| !((w.get_property(:semantic) || []) & prop_val).empty? }
+						err_msg = "no word with semantics #{prop_val.inspect}"
+					when :only_with_word, :takes_only_word, :not_with_word, :takes_no_word
+						matcher = lambda { |w| prop_val.include?(w.text) }
+						err_msg = "no word with text #{prop_val.inspect}"
+					else
+						raise "unhandled semantic opt: #{prop}"
+				end
+
+				found = false
+				self.each do |word|
+					next if word == checked_word
+					if matcher.call(word)
+						found = true
+						break
+					end
+				end
+
+				return err_msg unless found
+			end
+			nil
 		end
 
 		protected
@@ -177,6 +224,18 @@ module Grammar
 			index = ByFrequencyChoser.choose_random_index(freq_array)
 # 			puts "random #{speech_part}: #{index}"
 			index
+		end
+
+		# validates the dictionary, printing warnings to standard output
+		def validate
+			@words.keys.sort.each do |speech_part|
+				@words[speech_part].sort.each do |word|
+					err_msg = validate_word(word)
+					if err_msg
+						puts "warn: #{speech_part} '#{word.text}' - #{err_msg}"
+					end
+				end
+			end
 		end
 
 		private

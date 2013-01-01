@@ -58,7 +58,7 @@ class SentenceBuilder
 	def initialize(dictionary,grammar,conf,pattern,frequency)
 		@dictionary,@grammar,@conf,@pattern,@frequency = dictionary,grammar,conf,pattern,frequency
 		raise "invalid frequency: #{frequency}" if frequency < 0
-		Sentence.validate_pattern(pattern)
+		create_sentence.validate
 	end
 
 	def create_sentence

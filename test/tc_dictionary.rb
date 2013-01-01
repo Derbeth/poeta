@@ -33,7 +33,7 @@ A 50 "strasznie mocny"
 		assert_equal('Dictionary', dict.to_s)
 	end
 
-	def test_get_random
+	def test_get_random_and_each
 		srand
 		# deliberately used different order of speech parts here to assure word order is not important
 		input = <<-END
@@ -54,6 +54,11 @@ N 0 też nigdy
 		dict = Dictionary.new
 		dict.read(input)
 		assert_equal('Dictionary; 1x adjective, 1x adverb, 5x noun, 1x other, 1x verb', dict.to_s)
+
+		count = 0
+		dict.each { count += 1 }
+		assert_equal 9, count, "Each does not iterate over all words"
+
 		100.times() do
 			noun = dict.get_random(NOUN)
 			assert_not_equal('nigdy', noun.text)
@@ -252,10 +257,70 @@ O 100 "разве, что"
 		assert_equal 'od~razu', dict.get_random(ADVERB).text
 	end
 
+	def test_validate_word_from_dictionary
+		dict = Dictionary.new
+		dict.read "N 10 dog\nN 10 devil SEMANTIC(BAD)"
+		dict.each { |w| assert_nil dict.validate_word(w), "should report valid: #{w}" }
+
+		dict.read <<-END
+V 10 like OBJ(2)  TAKES_ONLY(cute)     # this is semantic cute, not word 'cute'
+V 10 throw OBJ(2) TAKES_ONLY_W(stone)
+V 10 hate OBJ(2)  TAKES_NO(LOVELY)
+V 10 think OBJ(2) TAKES_NO_W(thought)
+A 10 stoned       ONLY_WITH(DRUGGED)
+V 10 shine        ONLY_WITH_W(sun)
+A 10 cute         NOT_WITH(UGLY)
+D 10 fast         NOT_WITH_W(snail)
+		END
+		dict.each { |w| assert_not_nil dict.validate_word(w), "should report invalid: #{w}" }
+
+		dict.read <<-END
+N 10 devil SEMANTIC(BAD)
+N 10 angel SEMANTIC(GOOD)
+N 10 children
+
+V 10 like TAKES_ONLY(GOOD)
+V 10 help TAKES_ONLY_W(children)
+V 10 hate TAKES_NO(BAD)
+V 10 fight TAKES_NO_W(children)
+
+A 10 good     NOT_WITH(BAD)
+A 10 devlish  NOT_WITH_W(devil)
+A 10 helpful  ONLY_WITH(HELPFUL,GOOD)
+A 10 guardian ONLY_WITH_W(angels,angel)
+		END
+		dict.each { |w| assert_nil dict.validate_word(w), "should report valid: #{w}" }
+	end
+
+	def test_validate_word_itself
+		dict = Dictionary.new
+		dict.read "V 10 help SEMANTIC(GOOD) TAKES_ONLY(GOOD)"
+		dict.each { |w| assert_not_nil dict.validate_word(w), "should report invalid: #{w}" }
+	end
+
+	def test_validate_word_outside_dictionary
+		dict = Dictionary.new
+		dict.read "N 10 devil SEMANTIC(BAD)"
+		assert_nil     dict.validate_word(Word.new('bad', [], {:only_with => ['BAD']}))
+		assert_not_nil dict.validate_word(Word.new('good', [], {:only_with => ['GOOD']}))
+		assert_not_nil dict.validate_word(Word.new('good', [], {:only_with => []}))
+	end
+
+	def test_validate_word_multiple_constraints
+		dict = Dictionary.new
+		# NOT_WITH is satisfied, but ONLY_WITH_W is not
+		dict.read "N 10 devil SEMANTIC(BAD)\nN 10 angel SEMANTIC(GOOD)\nA 10 good NOT_WITH(BAD) ONLY_WITH_W(girl)"
+		assert_not_nil dict.validate_word(dict.get_random(ADJECTIVE))
+
+		# both NOT_WITH and ONLY_WITH are satisfied
+		dict.read "N 10 devil SEMANTIC(BAD)\nN 10 angel SEMANTIC(GOOD)\nA 10 good NOT_WITH(BAD) ONLY_WITH(GOOD)"
+		assert_nil dict.validate_word(dict.get_random(ADJECTIVE))
+	end
+
 	private
 
 	def word_semantic(text, semantic)
-		Word.new(text, {}, {:semantic => semantic})
+		Word.new(text, [], {:semantic => semantic})
 	end
 end
 
