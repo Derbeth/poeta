@@ -113,13 +113,16 @@ class Sentence
 	def handle_subject(full_match,index,options)
 		subject_index, norm_index = read_index(full_match,index)
 		parsed_opts = parse_common_noun_options(options, full_match)
-		if subject_index == 1 && @subject
+		if subject_index == 1 && @subject && !(@implicit_subject && parsed_opts[:no_implicit])
 			noun = @subject
 		else
 			noun = get_random_subject(parsed_opts)
 			@indexed_nouns[subject_index] = noun
 		end
-		@subject ||= noun
+		@subject = noun if subject_index == 1
+		if @implicit_subject && parsed_opts[:no_implicit]
+			@implicit_subject = false
+		end
 		return '' if subject_index == 1 && @subject && @implicit_subject && !parsed_opts[:not_empty]
 		return '' unless noun
 		gram_case = parsed_opts[:case] || NOMINATIVE
@@ -523,6 +526,7 @@ class Sentence
 				when 'NE' then parsed[:not_empty] = true
 				when 'EMPTY' then parsed[:empty] = true
 				when 'IG_ONLY' then parsed[:ignore_only] = true
+				when 'NO_IMPL' then parsed[:no_implicit] = true
 				else puts "warn: unknown noun option #{opt}"
 			end
 		end

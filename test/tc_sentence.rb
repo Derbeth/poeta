@@ -941,11 +941,13 @@ A y 115 0 ymi .
 
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${SUBJ2} ${SUBJ3}')
 		sentence.subject = subject
-		assert_equal('bar foo foo', sentence.write)
+		assert_equal 'bar foo foo', sentence.write
+		assert_equal 'bar', sentence.subject.text
 
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${ADJ}')
 		sentence.subject = subject
-		assert_equal('bar cool', sentence.write)
+		assert_equal 'bar cool', sentence.write
+		assert_equal 'bar', sentence.subject.text
 	end
 
 	def test_set_implicit_subject
@@ -959,19 +961,25 @@ A y 115 0 ymi .
 		sentence.implicit_subject = implicit
 		dictionary.set_indices VERB, [0,1]
 		assert_equal 'i słyszą, jak wilk węszy', sentence.write
+		assert_equal 'psy', sentence.subject.text
 
 		@conf.object_adj_chance = 1
 		sentence = Sentence.new(dictionary,grammar,@conf,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
 		sentence.implicit_subject = implicit
 		dictionary.set_indices VERB, [0,1]
 		assert_equal 'i głodne słyszą, jak wilk węszy', sentence.write
+		assert_equal 'psy', sentence.subject.text
 
 		@conf.object_adj_chance = 0
 		sentence = Sentence.new(dictionary,grammar,@conf,'to ${SUBJ(NE)}')
 		sentence.implicit_subject = implicit
-		assert_match(/to \w+/, sentence.write)
+		assert_equal 'to psy', sentence.write
+		assert_equal 'psy', sentence.subject.text
 
-		# TODO forbidding implicit subject
+		sentence = Sentence.new(dictionary,grammar,@conf,'to ${SUBJ(NE,NO_IMPL)}')
+		sentence.implicit_subject = implicit
+		assert_equal 'to wilk', sentence.write
+		assert_equal 'wilk', sentence.subject.text
 	end
 
 	def test_empty_nouns
