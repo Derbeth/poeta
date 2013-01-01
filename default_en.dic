@@ -21,7 +21,7 @@ N 100 life/a
 N 100 love/a
 N 100 madness/a      TAKES_NO_W(insane)
 N  50 nobody         NO_ADJ OBJ_FREQ(10)
-N 100 pain/a         TAKES_NO(pain)
+N 100 pain/a         TAKES_NO_W(painful)
 N  10 prophet/a
 N  10 prophet/a  Pl
 N 100 silence/a      TAKES_NO_W(silent)

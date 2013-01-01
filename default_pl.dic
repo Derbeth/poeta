@@ -16,7 +16,7 @@ N 100 los/e m nan
 N 100 nieszczęście/d n
 N 100 noc/k f
 N  50 ogień/o1 m nan
-N 100 płomień/o1 m nan
+N 100 płomień/o m nan
 N  50 poczucie/d n SUFFIX(winy)
 N 100 porażka/r f
 N  20 przeczucie/d n
@@ -87,7 +87,7 @@ A 200 tępy/a ONLY_WITH_W(ból)
 A  50 wyklęty/a
 A  25 zagubiony/a
 A 100 zapomniany/a
-A 500 zasłużony/a ONLY_WITH(kara)
+A 500 zasłużony/a ONLY_WITH_W(kara)
 A 100 zdradziecki/b
 A 100 zwodniczy/a
 
