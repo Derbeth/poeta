@@ -58,7 +58,7 @@ Adjective
 
   Allows the adjective to be only used with plural nouns. Example:
 
-       A 100 all ONLY_PL
+        A 100 all ONLY_PL
 
   prevents appearing things like "all cat".
 
@@ -66,7 +66,7 @@ Adjective
 
   Allows the adjective to be only used with singular nouns. Example:
 
-       A 100 every ONLY_SING
+        A 100 every ONLY_SING
 
   prevents appearing things like "every cats".
 
