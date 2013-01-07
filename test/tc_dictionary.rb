@@ -317,6 +317,60 @@ A 10 guardian ONLY_WITH_W(angels,angel)
 		assert_nil dict.validate_word(dict.get_random(ADJECTIVE))
 	end
 
+	def test_validate_grammar_no_rule_is_not_error
+		grammar = GenericGrammar.new
+		grammar.read_rules "N A 2 a e a"
+		dict = Dictionary.new
+		dict.read "N 10 noga"
+		assert_equal [], dict.validate_with_grammar(grammar)
+	end
+
+	def test_validate_grammar_no_such_rule
+		grammar = GenericGrammar.new
+		grammar.read_rules "N A 2 a e a"
+		dict = Dictionary.new
+		dict.read "N 10 noga/A\nN 10 toga/B"
+		errors = dict.validate_with_grammar(grammar)
+		assert_equal 1, errors.size
+		assert_equal 'toga', errors.first[:word]
+		assert_not_nil errors.first[:message]
+	end
+
+	def test_validate_grammar_word_does_not_match_rule
+		grammar = GenericGrammar.new
+		grammar.read_rules "N A 2 0 i .\nN B 11 a i a"
+		dict = Dictionary.new
+		dict.read "N 10 kolano/A\nN 10 wino/B"
+		errors = dict.validate_with_grammar(grammar)
+		assert_equal 1, errors.size
+		assert_equal 'wino', errors.first[:word]
+		assert_not_nil errors.first[:message]
+	end
+
+	def test_validate_grammar_many_errors
+		grammar = GenericGrammar.new
+		grammar.read_rules "N A 2 a e a"
+		dict = Dictionary.new
+		dict.read "N 10 kolano/A\nN 10 toga/B"
+		errors = dict.validate_with_grammar(grammar)
+		assert_equal 2, errors.size
+		kolano_error = errors.find { |err| err[:word] == 'kolano' }
+		toga_error =   errors.find { |err| err[:word] == 'toga' }
+		assert_not_nil kolano_error[:message]
+		assert_not_nil toga_error[:message]
+	end
+
+	def test_validate_with_grammar_wrong_speech_part
+		grammar = GenericGrammar.new
+		grammar.read_rules "N A 2 a e a"
+		dict = Dictionary.new
+		dict.read "A 10 tania/a"
+		errors = dict.validate_with_grammar(grammar)
+		assert_equal 1, errors.size
+		assert_equal 'tania', errors.first[:word]
+		assert_not_nil errors.first[:message]
+	end
+
 	private
 
 	def word_semantic(text, semantic)

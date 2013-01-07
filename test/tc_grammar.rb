@@ -135,6 +135,32 @@ N f 1 f f f
 		grammar_text = "N a a a b c"
 		assert_raise(RuntimeError) { grammar.read_rules(grammar_text) }
 	end
+	
+	def test_has_rule_for
+		grammar = PolishGrammar.new
+		grammar.read_rules <<-END
+N a 3  ga dze  ga
+N a 3  a  e    a
+N a 13 ki kom  ki
+
+N b 2 0 a .
+
+N c 2 o a o/1
+
+A a 3 0 emu i
+		END
+		assert grammar.has_rule_for?(NOUN, 'noga', 'a')
+		assert grammar.has_rule_for?(NOUN, 'nuta', 'a')
+		assert grammar.has_rule_for?(NOUN, 'foki', 'a')
+		assert !grammar.has_rule_for?(NOUN, 'nogi', 'a')
+		assert !grammar.has_rule_for?(NOUN, 'noga')
+		assert grammar.has_rule_for?(NOUN, 'noga', 'b')
+		assert grammar.has_rule_for?(NOUN, 'nog', 'b')
+		assert !grammar.has_rule_for?(NOUN, 'jajo', 'c')
+		assert grammar.has_rule_for?(NOUN, 'jajo', 'c', '1')
+		assert !grammar.has_rule_for?(VERB, 'noga', 'b')
+		assert grammar.has_rule_for?(ADJECTIVE, 'głupi', 'a')
+	end
 
 	def test_adjective
 		grammar_text = <<-END

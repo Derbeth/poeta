@@ -74,6 +74,16 @@ Adjective
 
   Marks the adjective as possessive. This marks it automatically as 'double' as well.
 
+* `SUFFIX(suf)`
+
+  Always adds a suffix (may contain spaces, so consist of many words) after the adjective.
+  While the adjective is a subject to inflexion, the suffix never is.
+  Example:
+
+        A 100 knowing SUFFIX(of nothing)
+
+  may produce "knowing of nothing".
+
 Noun
 ----
 

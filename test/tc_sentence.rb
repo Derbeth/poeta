@@ -128,12 +128,18 @@ class SentenceTest < Test::Unit::TestCase
 		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${ADJ} ${SUBJ}')
 		assert_equal('prosta dobra pora', sentence.write)
 
-		# adjective with an object
+		# adjective with an attribute
 		dictionary.read "N 100 kibic m\nN 100 szczęście/a f\nA 100 pijany/a ATTR(z,2)"
 		dictionary.set_indices NOUN, [0, 1]
 		grammar.read_rules("N a 2 e a e")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${ADJ}')
 		assert_equal('kibic pijany ze szczęścia', sentence.write)
+
+		# adjective with a suffix
+		dictionary.read "N 100 kibice m Pl\nA 100 pijany/a SUFFIX(ze szczęścia)"
+		grammar.read_rules("A a 111 y i y")
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${ADJ}')
+		assert_equal('kibice pijani ze szczęścia', sentence.write)
 	end
 
 	def test_double_adjective

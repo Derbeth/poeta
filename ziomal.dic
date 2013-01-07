@@ -149,6 +149,7 @@ A 200 taki/b DOUBLE
 A 200 ten/c DOUBLE NOT_AS_OBJ
 A 200 uliczny/a NOT_WITH(POLICJA) NOT_WITH_W(ulica)
 A 200 wszystki/b1 ONLY_PL DOUBLE NOT_AS_OBJ
+A  30 wyjęty/a SUFFIX(spod prawa) NOT_WITH(POLICJA)
 A 100 zajebisty/a NOT_WITH(POLICJA)
 A  50 zwyczajny/a
 

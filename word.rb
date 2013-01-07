@@ -164,7 +164,7 @@ module Grammar
 		end
 
 		def to_s
-			"Noun(#{text} n=#{number})"
+			"Noun(#{text}#{@suffix} n=#{number})"
 		end
 
 		private
@@ -354,18 +354,19 @@ module Grammar
 	class Adjective < Word
 		attr_reader :attributes, :double
 
-		def initialize(text,gram_props,frequency,double=false,attributes=[],general_props={})
+		def initialize(text,gram_props,frequency,double=false,attributes=[],general_props={},suffix=nil)
 			super(text,gram_props,general_props,frequency)
 			if attributes.size > 1
 				raise AdjectiveError, "not allowed to have more than 1 attribute"
 			end
-			@attributes,@double=attributes,double
+			@attributes,@double,@suffix=attributes,double,suffix
 		end
 
 		def Adjective.parse(text,gram_props,frequency,line)
 			general_props = {}
 			double = false
 			attributes = []
+			suffix = nil
 			Word.parse(line,general_props) do |part|
 				case part
 					when 'NOT_AS_OBJ' then general_props[:not_as_object] = true
@@ -373,6 +374,8 @@ module Grammar
 					when 'POSS' then double = true
 					when 'ONLY_SING' then general_props[:only_singular] = true
 					when 'ONLY_PL' then general_props[:only_plural] = true
+					when /^SUFFIX\(([^)]+)\)$/
+						suffix = $1
 					when /^ATTR\(([^)]+)\)$/
 						opts = $1
 						object_case, preposition = nil, nil
@@ -389,7 +392,7 @@ module Grammar
 					else puts "warn: unknown option #{part}"
 				end
 			end
-			Adjective.new(text,gram_props,frequency,double,attributes,general_props)
+			Adjective.new(text,gram_props,frequency,double,attributes,general_props,suffix)
 		rescue GramObjectError, AdjectiveError => e
 			raise ParseError, e.message
 		end
@@ -415,11 +418,13 @@ module Grammar
 		end
 
 		def inflect(grammar,form)
-			return grammar.inflect_adjective(text,form,*gram_props)
+			inflected = grammar.inflect_adjective(text,form,*gram_props)
+			inflected += ' ' + @suffix if (@suffix)
+			inflected
 		end
 
 		def to_s
-			"Adjective(#{text})"
+			"Adjective(#{text}#{@suffix})"
 		end
 
 		private

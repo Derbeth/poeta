@@ -217,6 +217,25 @@ module Grammar
 			nil
 		end
 
+		# finds words in dictionary that don't work well with the given grammar.
+		# For example, words having grammar properties that don't match the grammar rules
+		# and as result the word cannot be inflected, although it seems the intention of
+		# the author was to have the word inflected.
+		# returns a list like
+		#   [{:word => 'wrong word', :message => 'error message'}, ...]
+		def validate_with_grammar(grammar)
+			errors = []
+			@words.each do |speech_part, list|
+				list.each do |word|
+					unless word.gram_props.empty? || grammar.has_rule_for?(speech_part, word.text, *word.gram_props)
+						errors << {:word=>word.text,
+							:message=>"#{speech_part} '#{word.text}' has no matching rule in grammar"}
+					end
+				end
+			end
+			errors
+		end
+
 		protected
 
 		# returns index of random word or -1 if none can be selected

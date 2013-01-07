@@ -323,6 +323,13 @@ class AdjectiveTest < Test::Unit::TestCase
 		assert_equal('dobry', adj.inflect(grammar,{:gender=>MASCULINE, :case=>ACCUSATIVE, :animate=>false}))
 		assert_equal('dobrego', adj.inflect(grammar,{:gender=>MASCULINE, :case=>ACCUSATIVE, :animate=>true}))
 	end
+
+	def test_suffix
+		adj = Adjective.parse('wyjęty',%w{a},100,"SUFFIX(spod prawa)")
+		grammar = PolishGrammar.new
+		grammar.read_rules "A a 102 y ego y"
+		assert_equal 'wyjętego spod prawa', adj.inflect(grammar, {:gender=>MASCULINE, :case => 2})
+	end
 end
 
 class OtherWordTest < Test::Unit::TestCase

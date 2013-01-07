@@ -74,6 +74,11 @@ File.open(sentences_file) { |f| sentence_mgr.read(f) }
 title_sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
 File.open(title_sentences_file) { |f| title_sentence_mgr.read(f) }
 
+errors = dictionary.validate_with_grammar(grammar)
+unless errors.empty?
+	errors.each { |err| conf.logger.warn "warn: #{err[:message]}" }
+end
+
 if forced_seed
 	srand(forced_seed)
 else

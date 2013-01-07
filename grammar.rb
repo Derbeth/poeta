@@ -128,6 +128,15 @@ module Grammar
 			end
 		end
 
+		def has_rule_for?(speech_part, word, *gram_props)
+			@rules[speech_part].each do |form, rules|
+				rules.each do |rule|
+					return true if rule.matches?(word,*gram_props)
+				end
+			end
+			false
+		end
+
 		def inflect_noun(noun,form,*gram_props)
 			raise ":case has to be passed '#{form[:case]}'" unless form[:case]
 			form_id = form[:case]
@@ -209,7 +218,7 @@ module Grammar
 			end
 			nil
 		end
-
+		
 		def adjective_form_id(form)
 			gram_case = form[:case]
 			number = form[:number] || 1
