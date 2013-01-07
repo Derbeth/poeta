@@ -3,11 +3,11 @@
 N  50 agresja/h f
 N  10 banda/s f
 N  50 bit/m m SEMANTIC(OK,PŁYNIE)
-N  50 boisko/q n ONLY_OBJ SEMANTIC(OK)
-N  10 blok/g m nan OBJ_FREQ(20)
-N  10 blok/g m nan Pl OBJ_FREQ(20)
+N  50 boisko/q n ONLY_OBJ SEMANTIC(OK,WPADANY)
+N  10 blok/g m nan    OBJ_FREQ(20) SEMANTIC(WPADANY)
+N  10 blok/g m nan Pl OBJ_FREQ(20) SEMANTIC(WPADANY)
 N 100 buch/i m ONLY_OBJ SEMANTIC(OK)
-N  10 dzielnica/l f OBJ_FREQ(100) SEMANTIC(OK,RZĄDZONY)
+N  10 dzielnica/l f OBJ_FREQ(100) SEMANTIC(OK,RZĄDZONY,WPADANY)
 N 100 dzień/o1 m nan
 N  50 dziwka/r f SEMANTIC(POLICJA)
 N  10 dziwka/r f Pl SEMANTIC(POLICJA)
@@ -17,19 +17,19 @@ N 100 głos/e m nan SEMANTIC(PŁYNIE)
 N  50 hasło/p n
 N  50 hip-hop/e m nan SEMANTIC(OK,ZIOM,PŁYNIE)
 N  50 honor/e m nan SEMANTIC(OK,ZIOM)
-N  50 impreza/b f OBJ_FREQ(100) SEMANTIC(OK,RZĄDZONY)
+N  50 impreza/b f OBJ_FREQ(100) SEMANTIC(OK,RZĄDZONY,WPADANY)
 N  50 jazda/b f SEMANTIC(OK,ZIOM)
 N  10 kasa/b f OBJ_FREQ(100)
 N  10 klasa/b f SEMANTIC(OK,ZIOM)
 N  50 komercha/b f SEMANTIC(POLICJA)
-N  10 konfident/j m SEMANTIC(POLICJA)
+N  10 konfident/j m                  SEMANTIC(POLICJA)
 N  10 konfident/j m Pl OBJ_FREQ(100) SEMANTIC(POLICJA)
 N  50 krew/n f SEMANTIC(PŁYNIE)
 N 200 ludzie/a m Pl
 N 100 małolat/j1 m SEMANTIC(OK)
-N 100 miasto/p n SEMANTIC(RZĄDZONY)
-N  50 miejsce/d n
-N  50 miejsce/d n ATTR(2) # "miejsce agresji"
+N 100 miasto/p n SEMANTIC(RZĄDZONY,WPADANY)
+N  50 miejsce/d n         SEMANTIC(WPADANY)
+N  50 miejsce/d n ATTR(2) SEMANTIC(WPADANY) # "miejsce agresji"
 N  10 numer/e m nan OBJ_FREQ(50)
 N  50 ofiara/b3 f ATTR(2)
 N 100 pięść/n f SEMANTIC(OK,ZIOM)
@@ -46,8 +46,8 @@ N  10 styl/c m nan OBJ_FREQ(50)
 N  10 szansa/b f OBJ_FREQ(50)
 N  10 szmal/c m nan OBJ_FREQ(100)
 N 100 temat/e m nan ONLY_OBJ
-N  10 teren/e m nan OBJ_FREQ(100)
-N 150 ulica/l f SEMANTIC(RZĄDZONY)
+N  10 teren/e m nan OBJ_FREQ(100) SEMANTIC(WPADANY)
+N 150 ulica/l f    SEMANTIC(RZĄDZONY,WPADANY)
 N  50 ulica/l f Pl SEMANTIC(RZĄDZONY)
 N  20 wojna/b f
 N  33 wojna/b f ATTR(z,5)
@@ -100,7 +100,7 @@ V  10 trzymać/1 OBJ(2) REFL
 V  50 trzymać/1 OBJ(4) ONLY_WITH(OK) TAKES_ONLY_W(klasa) # ekipa trzyma klasę
 V  50 uderzać/1 OBJ(na,4)
 V  50 widzieć/7 OBJ(4)
-V  70 wpadać/1 OBJ(na,4)
+V  70 wpadać/1 OBJ(na,4) TAKES_ONLY(WPADANY)
 V  40 wznosić/6 OBJ(4)
 V  50 zaczynać/1 INF
 V  10 zaczynać/1 REFL

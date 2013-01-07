@@ -135,7 +135,7 @@ N f 1 f f f
 		grammar_text = "N a a a b c"
 		assert_raise(RuntimeError) { grammar.read_rules(grammar_text) }
 	end
-	
+
 	def test_has_rule_for
 		grammar = PolishGrammar.new
 		grammar.read_rules <<-END

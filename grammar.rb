@@ -218,7 +218,7 @@ module Grammar
 			end
 			nil
 		end
-		
+
 		def adjective_form_id(form)
 			gram_case = form[:case]
 			number = form[:number] || 1
