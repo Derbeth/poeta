@@ -1,4 +1,5 @@
 require 'logger'
+require 'yaml'
 
 class PoetryConfiguration
 	attr_accessor :verses_number
@@ -27,6 +28,45 @@ class PoetryConfiguration
 			"#{msg}\n"
 		end
 		self.debug = false
+	end
+
+	# Reads configuration from given source (file, stream, string).
+	# Returns false if the configuration is in wrong format, true if it is in
+	# good format (even if nothing was read).
+	def read(source)
+		loaded = YAML.load(source)
+		return true if loaded == false
+		unless loaded.respond_to?(:each_pair)
+			source_desc = source.respond_to?(:path) ? source.path : 'unknown source'
+			@logger.error "Wrong format of options in #{source_desc}. Expected simple key-value hash in YAML format"
+			return false
+		end
+
+		loaded.each_pair do |key, value|
+			attr_name = key.to_sym
+			setter = :"#{key}="
+			if !TRANSIENT_ATTRIBUTES.include?(attr_name) && respond_to?(setter)
+				begin
+					send(setter, value)
+				rescue
+					@logger.error "Invalid value of option '#{key}' (#{value}): #{$!}"
+				end
+			else
+				@logger.warn "Unknown option '#{key}' (value: '#{value}')"
+			end
+		end
+		true
+	end
+
+	# Returns human-readable summary of the configuration
+	def summary
+		result = {}
+		instance_variables().each do |name|
+			if name.to_s =~ /^@(.*)_chance$/
+				result[$1.to_sym] = self.instance_variable_get(name)
+			end
+		end
+		result.inspect
 	end
 
 	def debug=(val)
@@ -64,6 +104,8 @@ class PoetryConfiguration
 	end
 
 	private
+
+	TRANSIENT_ATTRIBUTES = [:logger]
 
 	def validate_chance(chance)
 		raise ArgumentError, "chance should be 0.0 and 1.0, but got #{chance}" if chance < 0.0 || chance > 1.0

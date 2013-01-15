@@ -16,6 +16,9 @@ debug = false
 forced_seed = nil
 conf = PoetryConfiguration.new
 
+GRAMMAR_FOR_LANGS = {'de' => GermanGrammar, 'en' => EnglishGrammar, 'pl' => PolishGrammar}
+GRAMMAR_FOR_LANGS.default = GenericGrammar
+
 OptionParser.new do |opts|
 	opts.banner = "Usage: poeta.rb [options] [dictionary]"
 
@@ -58,14 +61,16 @@ dictionary_file += '.dic' if dictionary_file !~ /\.dic$/
 sentences_file += '.cfg' if sentences_file !~ /\.cfg$/
 sentences_file = "#{default_name}.cfg" unless File.exists?(sentences_file)
 title_sentences_file = 'titles.cfg'
-raise "#{dictionary_file} does not exist" unless File.exists?(dictionary_file)
-raise "#{sentences_file} does not exist" unless File.exists?(sentences_file)
-
-GRAMMAR_FOR_LANGS = {'de' => GermanGrammar, 'en' => EnglishGrammar, 'pl' => PolishGrammar}
-grammar_class = GRAMMAR_FOR_LANGS[language] || GenericGrammar
-grammar = grammar_class.new
 grammar_file = "#{language}.aff"
-raise "#{grammar_file} does not exist" unless File.exists?(grammar_file)
+general_config_file = 'poetry.yml'
+dictionary_config_file = "#{dictionary}.yml"
+
+[dictionary_file, sentences_file, title_sentences_file, grammar_file].each do |file|
+	raise "#{file} does not exist" unless File.exists?(file)
+end
+
+grammar = GRAMMAR_FOR_LANGS[language].new
+
 File.open(grammar_file) { |f| grammar.read_rules(f) }
 dictionary = SmartRandomDictionary.new(5)
 File.open(dictionary_file) { |f| dictionary.read(f) }
@@ -73,6 +78,12 @@ sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
 File.open(sentences_file) { |f| sentence_mgr.read(f) }
 title_sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
 File.open(title_sentences_file) { |f| title_sentence_mgr.read(f) }
+
+used_config_files = []
+[general_config_file, dictionary_config_file].each do |file|
+	next unless File.exists?(file)
+	File.open(file) { |f| conf.read(f) && used_config_files << file }
+end
 
 errors = dictionary.validate_with_grammar(grammar)
 unless errors.empty?
@@ -84,11 +95,18 @@ if forced_seed
 else
 	srand
 end
-poem = Poem.new(sentence_mgr,title_sentence_mgr,conf)
-puts poem.text
+
+begin
+	poem = Poem.new(sentence_mgr,title_sentence_mgr,conf)
+	puts poem.text
+rescue
+	puts 'Error: ', $!.inspect, $@
+end
 
 if debug
 	puts
-	puts "dictionary: #{dictionary_file} sentences: #{sentences_file} grammar: #{grammar_class}"
+	puts "dictionary: #{dictionary_file} sentences: #{sentences_file} grammar: #{grammar.class}"
+	puts "config files: #{used_config_files.join(' ')}"
+	puts "configuration: #{conf.summary}"
 	puts "rand seed: #{srand}"
 end
