@@ -6,7 +6,7 @@ require './dictionary'
 
 include Grammar
 
-dict_file = nil
+dictionary = nil
 language = 'pl'
 only_list = false
 direct_input = nil
@@ -18,7 +18,7 @@ OptionParser.new do |opts|
 		language = l
 	end
 	opts.on("-d", "--dict DICTIONARY", "Open dictionary other than default") do |d|
-		dict_file = d
+		dictionary = d
 	end
 	opts.on("-o", "--list-only", "Only lists found words, does not inflect them") do |d|
 		only_list = true
@@ -34,9 +34,9 @@ OptionParser.new do |opts|
 	end
 end.parse!
 
-dict_file ||= "default_#{language}"
+dictionary ||= "default_#{language}"
 
-dict_file += '.dic' unless dict_file =~ /\.dic/
+dict_file = "dictionaries/#{dictionary}.dic"
 
 dictionary = Dictionary.new
 if direct_input
@@ -54,7 +54,7 @@ end
 raise "Please provide words to list" if words_to_list.size == 0
 
 grammar = PolishGrammar.new
-File.open("#{language}.aff") { |f| grammar.read_rules(f) }
+File.open("languages/#{language}.aff") { |f| grammar.read_rules(f) }
 
 words_to_list.each do |to_find|
 	mask = to_find.gsub(/\*/, '.*')

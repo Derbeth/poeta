@@ -54,16 +54,13 @@ else
 	default_name
 end
 
-dictionary_file = dictionary
-sentences_file = dictionary
-
-dictionary_file += '.dic' if dictionary_file !~ /\.dic$/
-sentences_file += '.cfg' if sentences_file !~ /\.cfg$/
-sentences_file = "#{default_name}.cfg" unless File.exists?(sentences_file)
+dictionary_file = "dictionaries/#{dictionary}.dic"
+sentences_file = "dictionaries/#{dictionary}.cfg"
+sentences_file = "dictionaries/#{default_name}.cfg" unless File.exists?(sentences_file)
 title_sentences_file = 'titles.cfg'
-grammar_file = "#{language}.aff"
+grammar_file = "languages/#{language}.aff"
 general_config_file = 'poetry.yml'
-dictionary_config_file = "#{dictionary}.yml"
+dictionary_config_file = "dictionaries/#{dictionary}.yml"
 
 [dictionary_file, sentences_file, title_sentences_file, grammar_file].each do |file|
 	raise "#{file} does not exist" unless File.exists?(file)
