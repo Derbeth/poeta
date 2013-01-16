@@ -87,6 +87,8 @@ class Sentence
 		@text.gsub!(/ {2,}/, ' ')
 		@text.gsub!(/ +([.?!,])/, '\1')
 		@text
+	rescue
+		raise raise $!, "error writing '#{@pattern}': #{$!}", $!.backtrace
 	end
 
 	# Forces the sentence to use the given noun as the first subject.
