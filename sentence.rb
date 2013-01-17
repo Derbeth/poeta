@@ -407,8 +407,9 @@ class Sentence
 		end
 	end
 
-	def fake_word_with_semantic(opts)
-		Word.new('', [], opts)
+	def fake_word_with_semantic(opts, text=nil)
+		text ||= ''
+		Word.new(text, [], opts)
 	end
 
 	def merge_with_semantic_opts(word, context_opts)
@@ -418,7 +419,7 @@ class Sentence
 			context_vals = context_opts ? context_opts[opt] : nil
 			merged_opts[opt] = (word_vals || []) + (context_vals || []) if word_vals || context_vals
 		end
-		fake_word_with_semantic(merged_opts)
+		fake_word_with_semantic(merged_opts, word ? word.text : nil)
 	end
 
 	# full_match - like ${NOUN} or ${VERB2} or ${VERB5.1}

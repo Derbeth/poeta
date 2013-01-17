@@ -354,7 +354,8 @@ D 10 schnell
 	end
 
 	def test_semantic_in_dictionary
-		grammar = PolishGrammar.new
+		grammar = GenericGrammar.new
+		grammar.read_rules "N a 11 0 s ."
 		dictionary = Dictionary.new
 		dictionary.read("N 100 work SEMANTIC(GOOD)\nA 100 good ONLY_WITH(GOOD)\n")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
@@ -388,6 +389,18 @@ D 10 schnell
 		10.times do
 			sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
 			assert_equal('good work', sentence.write)
+		end
+		
+		# noun -> verb
+		dictionary.read "N 10 bird/a\nV 10 flies ONLY_WITH_W(bird)\n"
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB}')
+			assert_equal('bird flies', sentence.write)
+		end
+		dictionary.read "N 10 bird/a Pl\nV 10 fly ONLY_WITH_W(bird)\n"
+		10.times do
+			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB}')
+			assert_equal('birds fly', sentence.write)
 		end
 
 		# verb -> noun object
