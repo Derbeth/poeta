@@ -1,37 +1,44 @@
 # chłopcy
 N  50 człowiek/a1 m
-N 100 dziewczyna/b1 f SEMANTIC(DZIUNIA)
-N 100 myśl/n f Pl OBJ_FREQ(10)
-N 100 noc/k f SEMANTIC(PORA,RZECZ)
-N 100 publika/r f
-N 100 wieczór m nan SEMANTIC(PORA,RZECZ)
+N 100 dziewczyna/b1 f           SEMANTIC(DZIUNIA)
+N  50 impreza/b f OBJ_FREQ(100) SEMANTIC(RZECZ)
+N  50 myśl/n f Pl OBJ_FREQ(10)
+N 100 noc/k f                   SEMANTIC(GORĄCY,PORA,RZECZ)
+N 100 publika/r f               SEMANTIC(GORĄCY)
+N 100 wieczór m nan             SEMANTIC(PORA,RZECZ)
 
-N 200 "" m      PERSON(1) NO_ADJ  ONLY_SUBJ SEMANTIC(ZIOMAL)    # ja
-N 300 "" m      PERSON(2) NO_ADJ  ONLY_SUBJ SEMANTIC(ZIOMAL)    # ty
-N 200 ona/0 f ONLY_OBJ SEMANTIC(DZIUNIA)
+N 200 "" m      PERSON(1) NO_ADJ  ONLY_SUBJ   SEMANTIC(ZIOMAL)    # ja
+N 300 "" m      PERSON(2) NO_ADJ  ONLY_SUBJ   SEMANTIC(ZIOMAL)    # ty
+N 200 ona/0 f ONLY_OBJ NO_ADJ NO_NOUN_NOUN    SEMANTIC(DZIUNIA)
 
-V 100 balować/4 NOT_WITH(RZECZ)
-V 100 bawić/6 REFL NOT_WITH(RZECZ)
-V 100 bujać/1 OBJ(4) ONLY_WITH(ZIOMAL) TAKES_ONLY(DZIUNIA)
+V 100 balować/4                       NOT_WITH(RZECZ)
+V 100 bawić/6 REFL                    NOT_WITH(RZECZ)
+V 100 bujać/1 OBJ(4)                  ONLY_WITH(ZIOMAL) TAKES_ONLY(DZIUNIA)
+V 100 bujać/1 REFL SUFFIX(po mieście) ONLY_WITH(ZIOMAL)
 V 100 być/c ADJ
-# TODO Będziesz mą królewą
-V 100 kochać/1 OBJ(4)
-V 600 krążyć/6 SUFFIX(w głowie) ONLY_WITH_W(myśl)
-V 100 nadchodzić/6 ONLY_WITH(PORA)
-V 100 pragnąć/5 INF NOT_AS_OBJ
-V 100 zaczynać/1 INF NOT_WITH(RZECZ)
-V 100 zaczynać/1 REFL ONLY_WITH(PORA)
-V 100 szaleć NOT_WITH(RZECZ)
+V  10 być/c OBJ(5) # jesteś mą królewną
+V  50 kochać/1 OBJ(4)                 ONLY_WITH(ZIOMAL) TAKES_NO(ZIOMAL) # prevent 'ziom kochasz mnie'
+V  50 kochać/1 OBJ(4)                 NOT_WITH(ZIOMAL)                   # no restriction
+V 500 krążyć/6 SUFFIX(w głowie)       ONLY_WITH_W(myśl)
+V 100 nadchodzić/6                    ONLY_WITH(PORA)
+V 100 pragnąć/5  INF NOT_AS_OBJ       NOT_WITH(RZECZ)
+V 100 tańczyć/6                       NOT_WITH(RZECZ)
+V 100 zaczynać/1 INF NOT_AS_OBJ       NOT_WITH(RZECZ)
+V 100 zaczynać/1 REFL NOT_AS_OBJ      ONLY_WITH(PORA)
+V 100 szaleć/A NOT_WITH(RZECZ)
 
-A 100 fajny/a ONLY_WITH(DZIUNIA)
-A 100 gorący/a ONLY_WITH(DZIUNIA)
+A 100 fajny/a             ONLY_WITH(DZIUNIA)
+A 100 gorący/a            ONLY_WITH(DZIUNIA,GORĄCY)
 A 100 mój/e POSS
-A 100 zajebisty/a NOT_WITH(RZECZ)
-A 100 zarąbisty/a NOT_WITH(RZECZ)
+A 100 odjazdowy/a         ONLY_WITH(DZIUNIA)
+A 200 ten/c DOUBLE NOT_AS_OBJ
+A 100 zajebisty/a         NOT_WITH(RZECZ)
+A 100 zarąbisty/a         NOT_WITH(RZECZ)
 
-D 100 "całą noc"
-D 100 dzisiaj
-D 100 dziś
+D  50 "całą noc"
+D  50 "cały wieczór"
+D  50 dzisiaj
+D  50 dziś
 D 100 fajnie
 D 100 ostro
 D 100 teraz
@@ -40,7 +47,7 @@ D 100 znowu
 
 O 100 "je je je"
 O 100 ooo
-O 100 "a teraz"
+O 100 a~teraz
 
 # http://teksty.org/boys,a-teraz-lapy-w-gore,tekst-piosenki
 # http://teksty.org/boys,bawmy-sie,tekst-piosenki
