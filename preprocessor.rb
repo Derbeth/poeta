@@ -5,9 +5,10 @@ require './randomized_choice'
 module Poeta
 	# preprocessor accepting a subset of commands known to C preprocessor
 	class Preprocessor
-		def initialize
+		def initialize(conf)
+			@conf = conf
 			@vars = {}
-			@functions = {'CHANCE' => lambda { |chance| ch = chance.to_f ; validate_chance(ch) && check_chance(ch) } }
+			@functions = {'CHANCE' => lambda { |chance| ch = chance.to_f ; validate_chance(ch) ; check_chance(ch) ? 1 : 0 } }
 		end
 
 		# Returns processed source.
@@ -60,7 +61,7 @@ module Poeta
 					handle_endif
 					accepted = true
 				else
-					puts "#@source:#@line_no:warn: preprocessor cannot handle command '#{line}'"
+					@conf.logger.error "#@source:#@line_no:warn: preprocessor cannot handle command '#{line}'"
 			end
 			accepted
 		end
@@ -72,19 +73,20 @@ module Poeta
 			elsif body =~ /^\s*(\w+)\s*\(([^)]+)\)\s*$/
 				func_name = $1
 				unless @functions.include?(func_name)
-					puts "#@source:#@line_no:error: preprocessor: no function with name '#{func_name}'"
+					@conf.logger.error "#@source:#@line_no:error: preprocessor: no function with name '#{func_name}'"
 					return false
 				end
 				args = $2.split(',').map { |s| s.strip }
 				begin
 					@vars[name] = @functions[func_name].call(*args)
+					@conf.logger.debug "preprocessor: defined #{name} as #{@vars[name]}"
 					true
 				rescue
-					puts "#@source:#@line_no:error: invalid call: '#{body}'; reason: #{$!}"
+					@conf.logger.error "#@source:#@line_no:error: invalid call: '#{body}'; reason: #{$!}"
 					false
 				end
 			else
-				puts "#@source:#@line_no:error: preprocessor: cannot define variable with value '#{body}'"
+				@conf.logger.error "#@source:#@line_no:error: preprocessor: cannot define variable with value '#{body}'"
 				false
 			end
 		end

@@ -2,13 +2,17 @@
 # -*- encoding: utf-8 -*-
 require 'test/unit'
 
+require './configuration'
 require './preprocessor'
 
 include Poeta
 
 class PreprocessorTest < Test::Unit::TestCase
 	def setup
-		@preprocessor = Preprocessor.new
+		srand
+		@conf = PoetryConfiguration.new
+		@conf.debug = true
+		@preprocessor = Preprocessor.new(@conf)
 	end
 
 	def test_each_line
@@ -185,6 +189,24 @@ thou
 		assert_equal "I\n", as_string(@preprocessor.process(input))
 	end
 
+	def test_set_function
+		input = <<-END
+#define SINGULAR_YOU MY_FUNC(0.5)
+I
+#if SINGULAR_YOU
+thou
+#else
+you
+#endif
+		END
+
+		@preprocessor.set_function('MY_FUNC', lambda {|chance| 1})
+		assert_equal "I\nthou\n", as_string(@preprocessor.process(input))
+		@preprocessor = Preprocessor.new(@conf)
+		@preprocessor.set_function('MY_FUNC', lambda {|chance| 0})
+		assert_equal "I\nyou\n", as_string(@preprocessor.process(input))
+	end
+
 	def test_chance_function
 		input = <<-END
 #define SINGULAR_YOU CHANCE(0.5)
@@ -196,11 +218,7 @@ you
 #endif
 		END
 
-		@preprocessor.set_function('CHANCE', lambda {|chance| 1})
-		assert_equal "I\nthou\n", as_string(@preprocessor.process(input))
-		@preprocessor = Preprocessor.new
-		@preprocessor.set_function('CHANCE', lambda {|chance| 0})
-		assert_equal "I\nyou\n", as_string(@preprocessor.process(input))
+		assert_include ["I\nthou\n", "I\nyou\n"], as_string(@preprocessor.process(input))
 	end
 
 	def test_function_wrong_name

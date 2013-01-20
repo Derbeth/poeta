@@ -5,9 +5,11 @@ require 'optparse'
 require './poem'
 require './dictionary'
 require './configuration'
+require './preprocessor'
 require './sentence_manager'
 
 include Grammar
+include Poeta
 
 version = '4.0 pre-alpha'
 dictionary = nil
@@ -67,12 +69,13 @@ dictionary_config_file = "dictionaries/#{dictionary}.yml"
 end
 
 grammar = GRAMMAR_FOR_LANGS[language].new
+preprocessor = Preprocessor.new(conf)
 
 File.open(grammar_file) { |f| grammar.read_rules(f) }
 dictionary = SmartRandomDictionary.new(5)
-File.open(dictionary_file) { |f| dictionary.read(f) }
+File.open(dictionary_file) { |f| dictionary.read(preprocessor.process(f)) }
 sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
-File.open(sentences_file) { |f| sentence_mgr.read(f) }
+File.open(sentences_file) { |f| sentence_mgr.read(preprocessor.process(f)) }
 title_sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
 File.open(title_sentences_file) { |f| title_sentence_mgr.read(f) }
 

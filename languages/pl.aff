@@ -760,6 +760,17 @@ V A 102 ć   j    ć
 V A 111 ć   jmy  ć
 V A 112 ć   jcie ć
 
+# koniugacja Xb - śmiać, wiać, grzać, lać
+V B   1 ać  eję     ać
+V B   2 ać  ejesz   ać
+V B   3 ać  eje     ać
+V B  11 ać  ejemy   ać
+V B  12 ać  ejecie  ać
+V B  13 ać  eją     ać
+V B 102 ać  ej      ać
+V B 111 ać  ejmy    ać
+V B 112 ać  ejcie   ać
+
 # niereg. - brać
 V b   1 rać iorę     brać
 V b   2 rać ierzesz  brać
