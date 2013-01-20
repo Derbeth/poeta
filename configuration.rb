@@ -8,6 +8,7 @@ class PoetryConfiguration
 	attr_accessor :lines_in_verse
 	attr_accessor :max_line_length
 	attr_reader :debug
+	attr_accessor :implicit_subj_adj
 	attr_reader :implicit_subject_chance
 	attr_reader :double_adj_chance
 	attr_reader :double_noun_chance

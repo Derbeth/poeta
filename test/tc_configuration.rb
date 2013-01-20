@@ -34,6 +34,10 @@ class PoetryConfigurationTest < Test::Unit::TestCase
 		@conf.max_line_length = @conf.max_line_length
 	end
 
+	def test_implicit_subj_adj
+		@conf.implicit_subj_adj = @conf.implicit_subj_adj
+	end
+
 	CHANCES = [:implicit_subject_chance, :double_adj_chance, :double_noun_chance,
 			:other_word_chance, :object_adj_chance]
 	CHANCES.each do |attr|

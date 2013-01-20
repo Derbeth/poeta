@@ -982,13 +982,6 @@ A y 115 0 ymi .
 		assert_equal 'i słyszą, jak wilk węszy', sentence.write
 		assert_equal 'psy', sentence.subject.text
 
-		@conf.object_adj_chance = 1
-		sentence = Sentence.new(dictionary,grammar,@conf,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
-		sentence.implicit_subject = implicit
-		dictionary.set_indices VERB, [0,1]
-		assert_equal 'i głodne słyszą, jak wilk węszy', sentence.write
-		assert_equal 'psy', sentence.subject.text
-
 		@conf.object_adj_chance = 0
 		sentence = Sentence.new(dictionary,grammar,@conf,'to ${SUBJ(NE)}')
 		sentence.implicit_subject = implicit
@@ -999,6 +992,38 @@ A y 115 0 ymi .
 		sentence.implicit_subject = implicit
 		assert_equal 'to wilk', sentence.write
 		assert_equal 'wilk', sentence.subject.text
+	end
+
+	def test_implicit_subject_adjective_allowed
+		grammar = PolishGrammar.new
+		grammar.read_rules "A a 101 0 y .\nA a 111 0 e .\nV a 3 0 y .\nV a 13 0 ą .\n"
+		dictionary = ControlledDictionary.new
+		dictionary.read "N 10 wilk\nV 10 słysz/a\nV 10 węsz/a\nA 10 głodn/a"
+		implicit = Noun.new('psy',[],0,1,{},PLURAL)
+
+		@conf.implicit_subj_adj = true
+		@conf.object_adj_chance = 1
+		sentence = Sentence.new(dictionary,grammar,@conf,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
+		sentence.implicit_subject = implicit
+		dictionary.set_indices VERB, [0,1]
+		assert_equal 'i głodne słyszą, jak wilk węszy', sentence.write
+		assert_equal 'psy', sentence.subject.text
+end
+
+	def test_implicit_subject_adjective_disallowed
+		grammar = PolishGrammar.new
+		grammar.read_rules "A a 101 0 y .\nA a 111 0 e .\nV a 3 0 y .\nV a 13 0 ą .\n"
+		dictionary = ControlledDictionary.new
+		dictionary.read "N 10 wilk\nV 10 słysz/a\nV 10 węsz/a\nA 10 głodn/a"
+		implicit = Noun.new('psy',[],0,1,{},PLURAL)
+
+		@conf.implicit_subj_adj = false
+		@conf.object_adj_chance = 1
+		sentence = Sentence.new(dictionary,grammar,@conf,'i ${ADJ} ${SUBJ} ${VERB}, jak ${SUBJ2} ${VERB2}')
+		sentence.implicit_subject = implicit
+		dictionary.set_indices VERB, [0,1]
+		assert_equal 'i słyszą, jak wilk węszy', sentence.write
+		assert_equal 'psy', sentence.subject.text
 	end
 
 	def test_empty_nouns

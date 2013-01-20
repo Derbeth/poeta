@@ -149,9 +149,13 @@ class Sentence
 		noun_index, norm_index = read_index(full_match,index)
 		parsed_opts = parse_adjective_options(options, full_match)
 		raise "no noun for #{full_match}" unless @indexed_nouns.include? noun_index
+
+		if noun_index == 1 && @subject && @implicit_subject
+			return ''  if !@conf.implicit_subj_adj || !check_chance(@conf.object_adj_chance)
+		end
+
 		noun = @indexed_nouns[noun_index]
 		return '' if noun == nil
-		return '' if noun_index == 1 && @subject && @implicit_subject && !check_chance(@conf.object_adj_chance)
 
 		_handle_adjective(noun, parsed_opts)
 	end
