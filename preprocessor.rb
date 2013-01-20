@@ -1,10 +1,13 @@
 # -*- encoding: utf-8 -*-
 
+require './randomized_choice'
+
 module Poeta
 	# preprocessor accepting a subset of commands known to C preprocessor
 	class Preprocessor
 		def initialize
 			@vars = {}
+			@functions = {'CHANCE' => lambda { |chance| ch = chance.to_f ; validate_chance(ch) && check_chance(ch) } }
 		end
 
 		# Returns processed source.
@@ -12,6 +15,7 @@ module Poeta
 		# After processing one source, the processor instance will remember
 		# all defined variables when called to process an another source.
 		def process(source)
+			@source = source.respond_to?(:path) ? source.path : 'unknown'
 			@line_no = 0
 			@outputting = true
 			out_lines = []
@@ -29,15 +33,19 @@ module Poeta
 		end
 
 		def set_function(name, func)
+			@functions[name] = func
 		end
 
 		private
+
+		include ChanceChecker
 
 		def is_from_preprocessor?(line)
 			line =~ /^#(define|if|else|endif)\b/
 		end
 
 		def parse(line)
+			line.chomp!
 			accepted = false
 			case line
 				when /^#define\s+(\w+)\s+(.+)/
@@ -45,14 +53,14 @@ module Poeta
 				when /#if\s+(\w+)/
 					handle_if($1)
 					accepted = true
-				when /#else\s+$/
+				when /#else\s*$/
 					handle_else
 					accepted = true
-				when /#endif\s+$/
+				when /#endif\s*$/
 					handle_endif
 					accepted = true
 				else
-					puts "warn: preprocessor cannot handle command '#{line}'"
+					puts "#@source:#@line_no:warn: preprocessor cannot handle command '#{line}'"
 			end
 			accepted
 		end
@@ -61,8 +69,22 @@ module Poeta
 			if body =~ /^(\d+)$/
 				@vars[name] = $1.to_i
 				true
+			elsif body =~ /^\s*(\w+)\s*\(([^)]+)\)\s*$/
+				func_name = $1
+				unless @functions.include?(func_name)
+					puts "#@source:#@line_no:error: preprocessor: no function with name '#{func_name}'"
+					return false
+				end
+				args = $2.split(',').map { |s| s.strip }
+				begin
+					@vars[name] = @functions[func_name].call(*args)
+					true
+				rescue
+					puts "#@source:#@line_no:error: invalid call: '#{body}'; reason: #{$!}"
+					false
+				end
 			else
-				puts "preprocessor: cannot define variable with value '#{body}'"
+				puts "#@source:#@line_no:error: preprocessor: cannot define variable with value '#{body}'"
 				false
 			end
 		end

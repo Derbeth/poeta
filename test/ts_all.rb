@@ -11,6 +11,7 @@ require 'test/unit'
 # jruby-1.7.0 works fine
 
 require './test/tc_configuration'
+require './test/tc_preprocessor'
 require './test/tc_sentence_splitter'
 require './test/tc_grammar'
 require './test/tc_word'

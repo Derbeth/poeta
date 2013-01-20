@@ -111,6 +111,25 @@ thou
 		assert_equal "I\nthou\n", as_string(@preprocessor.process(input))
 	end
 
+	def test_more_defines
+		input = <<-END
+#define SINGULAR_YOU 1
+#define USE_WE 0
+#define USE_THEY 1
+I
+#if SINGULAR_YOU
+thou
+#endif
+#if USE_WE
+we
+#endif
+#if USE_THEY
+they
+#endif
+		END
+		assert_equal "I\nthou\nthey\n", as_string(@preprocessor.process(input))
+	end
+
 	def test_if_else_choosing_if
 		input = <<-END
 #define SINGULAR_YOU 1
@@ -182,6 +201,52 @@ you
 		@preprocessor = Preprocessor.new
 		@preprocessor.set_function('CHANCE', lambda {|chance| 0})
 		assert_equal "I\nyou\n", as_string(@preprocessor.process(input))
+	end
+
+	def test_function_wrong_name
+		input = <<-END
+#define SINGULAR_YOU CHANCES(0.5)
+I
+#if SINGULAR_YOU
+thou
+#endif
+		END
+
+		assert_equal "I\n", as_string(@preprocessor.process(input))
+	end
+
+	def test_function_wrong_syntax
+		input = <<-END
+#define SINGULAR_YOU CHANCE(0.5
+I
+#if SINGULAR_YOU
+thou
+#endif
+		END
+
+		assert_equal "I\n", as_string(@preprocessor.process(input))
+	end
+
+	def test_function_wrong_args
+		input = <<-END
+#define SINGULAR_YOU CHANCE()
+#define USE_WE CHANCE(0.5, 3)
+I
+#if SINGULAR_YOU
+thou
+#endif
+#if USE_WE
+we
+#endif
+		END
+
+		assert_equal "I\n", as_string(@preprocessor.process(input))
+	end
+
+	def test_reading_from_wrong_file
+		input_path = File.expand_path('wrong_preprocessor_commands.c', File.dirname(__FILE__))
+		assert File.exists?(input_path)
+		assert_equal "", as_string(@preprocessor.process(File.open(input_path)))
 	end
 
 	private

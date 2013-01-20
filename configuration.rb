@@ -1,6 +1,8 @@
 require 'logger'
 require 'yaml'
 
+require './randomized_choice'
+
 class PoetryConfiguration
 	attr_accessor :verses_number
 	attr_accessor :lines_in_verse
@@ -105,10 +107,8 @@ class PoetryConfiguration
 
 	private
 
-	TRANSIENT_ATTRIBUTES = [:logger]
+	include ChanceChecker
 
-	def validate_chance(chance)
-		raise ArgumentError, "chance should be 0.0 and 1.0, but got #{chance}" if chance < 0.0 || chance > 1.0
-	end
+	TRANSIENT_ATTRIBUTES = [:logger]
 
 end

@@ -27,6 +27,10 @@ module ByFrequencyChoser
 end
 
 module ChanceChecker
+	def validate_chance(chance)
+		raise ArgumentError, "chance should be 0.0 and 1.0, but got #{chance}" if chance < 0.0 || chance > 1.0
+	end
+
 	# gets a random number in [0,1) and returns true if it smaller than given chance
 	def check_chance(chance)
 		draw = rand
