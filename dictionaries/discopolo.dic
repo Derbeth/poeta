@@ -1,6 +1,7 @@
 #define TY_DZIUNIA CHANCE(0.25)
 
 # chłopcy
+N  50 biba/b f                  SEMANTIC(RZECZ)
 N  50 człowiek/a1 m
 N 100 didżej/i m
 N 100 dziewczyna/b1 f           SEMANTIC(DZIUNIA,PERSON)
@@ -10,7 +11,8 @@ N  50 muza/b f                  SEMANTIC(RZECZ)
 N  50 myśl/n f Pl OBJ_FREQ(10)
 N 100 noc/k f                   SEMANTIC(GORĄCY,PORA,RZECZ)
 N 100 publika/r f               SEMANTIC(GORĄCY)
-N 100 wieczór/m m nan             SEMANTIC(PORA,RZECZ)
+N  50 świnka/r f                SEMANTIC(DZIUNIA)
+N 100 wieczór/m1 m nan             SEMANTIC(PORA,RZECZ)
 
 N 200 "" m      PERSON(1) NO_ADJ  ONLY_SUBJ   SEMANTIC(ZIOMAL,PERSON)    # ja
 #if TY_DZIUNIA
@@ -20,10 +22,11 @@ N 200 ty/0 f    ONLY_OBJ  NO_ADJ NO_NOUN_NOUN SEMANTIC(DZIUNIA,PERSON)
 #else
 N 300 "" m      PERSON(2) NO_ADJ  ONLY_SUBJ   SEMANTIC(ZIOMAL,PERSON)    # ty
 #endif
-N 200 ona/0 f ONLY_OBJ NO_ADJ NO_NOUN_NOUN    SEMANTIC(DZIUNIA,PERSON)
+N 100 ona/0 f OBJ_FREQ(200) NO_ADJ NO_NOUN_NOUN    SEMANTIC(DZIUNIA,PERSON)
 
 V 100 balować/4                       NOT_WITH(RZECZ)
 V 100 bawić/6 REFL                    NOT_WITH(RZECZ)
+V  50 zabawić/6 REFL                  NOT_WITH(RZECZ)
 V 100 bujać/1 OBJ(4)                  ONLY_WITH(ZIOMAL) TAKES_ONLY(DZIUNIA)
 V 100 bujać/1 REFL SUFFIX(po mieście) ONLY_WITH(ZIOMAL)
 V  80 być/c ADJ
@@ -31,27 +34,30 @@ V  50 być/c ADJ                       ONLY_WITH(DZIUNIA) TAKES_ONLY_W(mój)
 V  10 być/c OBJ(5) # jesteś mą królewną
 V  50 kochać/1 OBJ(4)                 ONLY_WITH(ZIOMAL) TAKES_NO(ZIOMAL) # prevent 'ziom kochasz mnie'
 V  50 kochać/1 OBJ(4)                 NOT_WITH(ZIOMAL)                   # no restriction
-V 500 krążyć/6 SUFFIX(w głowie)       ONLY_WITH_W(myśl)
+V 600 krążyć/6 SUFFIX(w głowie)       ONLY_WITH_W(myśl)
 V 100 nadchodzić/6                    ONLY_WITH(PORA)
-V 300 nakręcać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(impreza,publika)
-V 300 należeć/7m OBJ(do,2)            ONLY_WITH_W(impreza,noc,wieczór) TAKES_ONLY(PERSON)
+V 400 nakręcać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(biba,impreza,publika)
+V 400 należeć/7m OBJ(do,2)            ONLY_WITH_W(biba,impreza,noc,wieczór) TAKES_ONLY(PERSON)
 V 100 pragnąć/5  INF NOT_AS_OBJ       NOT_WITH(RZECZ)
-V 600 puszczać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(muza)
-V 300 rozkręcać/1 OBJ(4)              ONLY_WITH_W(didżej) TAKES_ONLY_W(impreza,publika)
-V 300 śmiać/B REFL                    ONLY_WITH(DZIUNIA)
-V 100 tańczyć/6                       NOT_WITH(RZECZ)
+V 700 puszczać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(muza)
+V 400 rozkręcać/1 OBJ(4)              ONLY_WITH_W(didżej) TAKES_ONLY_W(biba,impreza,publika)
+V 100 rządzić/6b                      ONLY_WITH_W(biba,impreza,muza)
+V 400 śmiać/B REFL                    ONLY_WITH(DZIUNIA)
+V 200 tańczyć/6                       NOT_WITH(RZECZ)
+V 100 widzieć/7 OBJ(4) NOT_AS_OBJ     ONLY_WITH(PERSON) TAKES_ONLY(PERSON)
 V 100 zaczynać/1 INF NOT_AS_OBJ       NOT_WITH(RZECZ)
 V 100 zaczynać/1 REFL NOT_AS_OBJ      ONLY_WITH(PORA)
-V 200 zapuszczać/1 SUFFIX(mocnego bita) ONLY_WITH_W(didżej)
-V 200 zarzucać/1 SUFFIX(mocy bit) ONLY_WITH_W(didżej)
+V 300 zapuszczać/1 SUFFIX(mocnego bita) ONLY_WITH_W(didżej)
+V 300 zarzucać/1 SUFFIX(mocny bit) ONLY_WITH_W(didżej)
 V 100 szaleć/A NOT_WITH(RZECZ)
 
-A 600 dobry/a             ONLY_WITH_W(didżej,impreza,muza)
+A 600 dobry/a             ONLY_WITH_W(biba,didżej,impreza,muza)
 A 100 fajny/a             ONLY_WITH(DZIUNIA)
 A 100 gorący/a            ONLY_WITH(DZIUNIA,GORĄCY)
 A 200 jedyny/a            ONLY_WITH(DZIUNIA) NOT_WITH(PLURAL)
 A 100 mój/e POSS
 A 400 nasz/d POSS         ONLY_WITH_W(didżej)
+A 100 na~ful
 A 100 odjazdowy/a         ONLY_WITH(DZIUNIA)
 A 100 odjazdowy/a         ONLY_WITH_W(impreza,noc)
 A 200 szalony/a           ONLY_WITH_W(impreza,noc)
@@ -73,6 +79,7 @@ D 100 tylko
 D 100 znowu
 
 O 100 a~teraz
+O 400 i
 O 100 "je je je"
 O 100 "la la la la"
 O 100 ooo
