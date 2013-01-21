@@ -143,6 +143,7 @@ module Grammar
 			noun_number = form[:number] || 1
 			form_id += 10 if noun_number == 2
 
+			gram_props << PREPOSITION_FORM if form[:preposition]
 			inflected = get_inflected_form(NOUN,form_id,noun,*gram_props)
 			inflected || noun
 		end
@@ -189,6 +190,11 @@ module Grammar
 		end
 
 		protected
+
+		# grammar property added to the noun's properties if the noun
+		# is used with a preposition as an object
+		PREPOSITION_FORM = 'p'
+
 		def read_forms(form_str)
 			forms = case form_str
 				when /^(\d+)-(\d+)$/

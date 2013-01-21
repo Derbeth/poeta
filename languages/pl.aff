@@ -238,13 +238,15 @@ N l 15        0 mi a
 N l 16        0 ch a
 
 # 66 m, gad, muł, tur, upiór
+# 81 m /1 kieł, wór
+N m 4         0  0     ./1
 N m 2,4       ór ora   ór
 N m 2,4       0  a     .
 N m 3         ór orowi ór
 N m 3         0  owi   .
 N m 5         ór orem  ór
 N m 5         0  em    .
-N m 6,7       ór rze   ór
+N m 6,7       ór orze  ór
 N m 6,7       t  cie   t
 N m 6,7       0  ze    r
 N m 6,7       ł  le    ł
@@ -436,9 +438,11 @@ N 0 5        ja    mną   ja
 N 0 2,4      ty    ciebie ty
 N 0 3,6      ty    tobie  ty
 N 0 5        ty    tobą   ty
-N 0 2,4      on    jego   on
+N 0 2,4      on    niego  on/p
+N 0 2,4      on    go     on
 N 0 3        on    jemu   on
 N 0 5,6      on    nim    on
+N 0 2,3      ona   niej   ona/p
 N 0 2,3      ona   jej    ona
 N 0 4        ona   ją     ona
 N 0 5        ona   nią    ona

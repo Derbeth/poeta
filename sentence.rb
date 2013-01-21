@@ -289,6 +289,7 @@ class Sentence
 		end
 
 		form = {:case=>object_spec.case}
+		form[:preposition] = object_spec.preposition if object_spec.preposition
 		inflected_object = _common_handle_noun(object, form, allow_recur-1) # -1 to prevent infinite loop danger?
 
 		inflected_object = adj_text + ' ' + inflected_object if adj_text && !adj_text.empty?

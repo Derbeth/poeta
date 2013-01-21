@@ -243,6 +243,21 @@ V a 112 ć jcie ać
 		# no form
 		assert_raise(GrammarError) { grammar.inflect_verb('zaczynać', {:imperative=>true}, false, 'a') }
 	end
+
+	def test_pronoun
+		grammar = PolishGrammar.new
+		grammar.read_rules <<-END
+N 0 2,4      on    niego  on/p
+N 0 2,4      on    jego   on
+N 0 2,3      ona   niej   ona/p
+N 0 2,3      ona   jej    ona
+		END
+
+		assert_equal 'jego', grammar.inflect_noun('on', {:case=>2}, '0')
+		assert_equal 'jej', grammar.inflect_noun('ona', {:case=>2}, '0')
+		assert_equal 'niego', grammar.inflect_noun('on', {:case=>2, :preposition=>'od'}, '0')
+		assert_equal 'niej', grammar.inflect_noun('ona', {:case=>2, :preposition=>'od'}, '0')
+	end
 end
 
 class GenericGrammarTest < Test::Unit::TestCase

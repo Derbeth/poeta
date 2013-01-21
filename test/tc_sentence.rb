@@ -234,6 +234,20 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('widzę dobrego psa', sentence.write)
 	end
 
+	def test_handle_pronoun_preposition
+		dictionary = Dictionary.new
+		grammar = PolishGrammar.new
+		grammar.read_rules "N 0 2 on niego on/p\nN 0 2 on go on"
+
+		dictionary.read "N 10 pies ONLY_SUBJ\nV 10 nienawidzi OBJ(2)\nN 10 on/0 ONLY_OBJ"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies nienawidzi go', sentence.write)
+
+		dictionary.read "N 10 pies ONLY_SUBJ\nV 10 należy OBJ(do,2)\nN 10 on/0 ONLY_OBJ"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies należy do niego', sentence.write)
+	end
+
 	def test_handle_noun_attribute
 		dictionary = Dictionary.new
 		grammar = GenericGrammar.new
