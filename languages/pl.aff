@@ -237,18 +237,27 @@ N l 13        a om a
 N l 15        0 mi a
 N l 16        0 ch a
 
-# 66 m, gad, muł, tur
-N m 2,4       0 a   .
-N m 3         0 owi .
-N m 5         0 em  .
-N m 6,7       t cie t
-N m 6,7       0 ze  r
-N m 6,7       ł le  ł
-N m 11,14,17  0 y   .
-N m 12        0 ów  .
-N m 13        0 om  .
-N m 15        0 ami .
-N m 16        0 ach .
+# 66 m, gad, muł, tur, upiór
+N m 2,4       ór ora   ór
+N m 2,4       0  a     .
+N m 3         ór orowi ór
+N m 3         0  owi   .
+N m 5         ór orem  ór
+N m 5         0  em    .
+N m 6,7       ór rze   ór
+N m 6,7       t  cie   t
+N m 6,7       0  ze    r
+N m 6,7       ł  le    ł
+N m 11,14,17  ór ory   ór
+N m 11,14,17  0  y     .
+N m 12        ór orów  ór
+N m 12        0  ów    .
+N m 13        ór orom  ór
+N m 13        0  om    .
+N m 15        ór orami ór
+N m 15        0  ami   .
+N m 16        ór orach ór
+N m 16        0  ach   .
 
 # 124 f, kość, część; 123: /1 sieć, myśl, brew
 N n 2,3,6,7,11,12,14,17 ew wi   ew
