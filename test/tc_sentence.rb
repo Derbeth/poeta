@@ -459,6 +459,10 @@ D 10 schnell
 		dictionary.read("V 1000 muszę INF TAKES_NO(MODAL)\nV 100 chcieć SEMANTIC(MODAL)\nV 30 lecieć SEMANTIC(MOVE)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
 		assert_equal('muszę lecieć', sentence.write)
+		srand
+		dictionary.read("V 1000 muszę INF TAKES_ONLY_W(rzucać)\nV 100 rzucać SUFFIX(temat) ONLY_OBJ\nV 100 pić ONLY_OBJ")
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(1)} ${OBJ}')
+		assert_equal('muszę rzucać temat', sentence.write)
 
 		# subject -> verb
 		srand 2

@@ -61,7 +61,7 @@ class SentenceSplitterTest < Test::Unit::TestCase
 
 	def test_non_breakable_space
 		@conf.max_line_length = 10
-		assert_equal ['aaaaaa', 'be cc'], @splitter.split('aaaaaa be~cc')
+		assert_equal ['aaaaaa', 'be~cc'], @splitter.split('aaaaaa be~cc')
 	end
 
 	def test_does_not_modify_arg

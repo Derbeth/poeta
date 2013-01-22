@@ -42,4 +42,28 @@ END
 		expected_text.strip!
 		assert_equal expected_text, poem.text
 	end
+
+	def test_non_breakable_space
+		srand
+		conf = PoetryConfiguration.new
+		conf.verses_number = 1
+		conf.implicit_subject_chance = 0
+
+		lines = (1..4).map { |n| "line no~#{n}" }
+		sentence_mgr = StubSentenceManager.new(*lines)
+
+		title_sentence_mgr = StubSentenceManager.new(NoSubjectSentence.new('a~title'))
+
+		poem = Poem.new(sentence_mgr, title_sentence_mgr, conf)
+		expected_text = <<-END
+"a title"
+
+line no 1
+line no 2
+line no 3
+line no 4
+END
+		expected_text.strip!
+		assert_equal expected_text, poem.text
+	end
 end

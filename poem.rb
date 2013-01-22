@@ -22,6 +22,7 @@ class Poem
 
 		@title = title
 		@text = "\"#{@title}\"\n\n#{verses.join("\n\n")}"
+		@text.gsub!('~', ' ')
 	end
 
 	def text
