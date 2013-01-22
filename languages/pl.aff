@@ -588,6 +588,17 @@ V 1 102 ć   j    ć
 V 1 111 ć   jmy  ć
 V 1 112 ć   jcie ć
 
+# koniugacja II, umieć, rozumieć, śmieć
+V 2   1 ć  m    eć
+V 2   2 ć  sz   eć
+V 2   3 ć  0    eć
+V 2  11 ć  my   eć
+V 2  12 ć  cie  eć
+V 2  13 ć  ją   eć
+V 2 102 ć  j    eć
+V 2 111 ć  jmy  eć
+V 2 112 ć  jcie eć
+
 # koniugacja IV, malować
 V 4   1 [io]wać uję    [io]wać
 V 4   2 [io]wać ujesz  [io]wać
@@ -621,15 +632,15 @@ V 5  13 ć     ą       [np]ić
 V 5 102 nąć   ń       nąć/b
 V 5 111 nąć   ńmy     nąć/b
 V 5 112 nąć   ńcie    nąć/b
+V 5 102 snąć  śnij    snąć
 V 5 102 nąć   nij     nąć
 V 5 102 ć     j       [np]ić
+V 5 111 snąć  śnijmy  snąć
 V 5 111 nąć   nijmy   nąć
 V 5 111 ć     jmy     [np]ić
+V 5 112 snąć  śnijcie snąć
 V 5 112 nąć   nijcie  nąć
 V 5 112 ć     jcie    [np]ić
-V 5 102 snąć  śnij    snąć
-V 5 111 snąć  śnijmy  snąć
-V 5 112 snąć  śnijcie snąć
 
 # koniugacja VIa, VIb robić, wierzyć, prosić
 V 6  1 sić szę sić
