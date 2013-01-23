@@ -16,8 +16,9 @@ module Poeta
 		# After processing one source, the processor instance will remember
 		# all defined variables when called to process an another source.
 		def process(source)
-			@source = source.respond_to?(:path) ? source.path : 'unknown'
+			@source = source.respond_to?(:path) ? File.basename(source.path) : 'unknown'
 			@line_no = 0
+			@last_if = nil
 			@outputting = true
 			out_lines = []
 			source.each_line do |line|
@@ -29,6 +30,9 @@ module Poeta
 						out_lines << line
 					end
 				end
+			end
+			if @last_if
+				raise PreprocessorError, "#@source:#@last_if:error: unmatched #if"
 			end
 			FakeIO.new(out_lines)
 		end
@@ -92,18 +96,29 @@ module Poeta
 		end
 
 		def handle_if(name)
-			if @vars.include?(name) && @vars[name] != 0
-				@outputting = true
-			else
+			@last_if = @line_no
+			if ! @vars.include?(name)
+				@conf.logger.warn "#@source:#@line_no:warn: preprocessor: using undefined '#{name}'"
 				@outputting = false
+			elsif @vars[name] == 0
+				@outputting = false
+			else
+				@outputting = true
 			end
 		end
 
 		def handle_else
+			unless @last_if
+				raise PreprocessorError, "#@source:#@line_no:error: 'else' without 'if'"
+			end
 			@outputting = ! @outputting
 		end
 
 		def handle_endif
+			unless @last_if
+				raise PreprocessorError, "#@source:#@line_no:error: 'endif' without 'if'"
+			end
+			@last_if = nil
 			@outputting = true
 		end
 
@@ -116,5 +131,8 @@ module Poeta
 				@lines.each { |l| yield l }
 			end
 		end
+	end
+
+	class PreprocessorError < StandardError
 	end
 end

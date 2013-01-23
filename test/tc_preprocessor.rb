@@ -267,6 +267,45 @@ we
 		assert_equal "", as_string(@preprocessor.process(File.open(input_path)))
 	end
 
+	def test_if_without_endif
+		input = <<-END
+foo
+#if SINGULAR_YOU
+bar
+		END
+		assert_raise(PreprocessorError) { @preprocessor.process(input) }
+	end
+
+	def test_bare_else
+		input = <<-END
+foo
+#else
+bar
+		END
+		assert_raise(PreprocessorError) { @preprocessor.process(input) }
+	end
+
+	def test_bare_endif
+		input = <<-END
+foo
+#endif
+bar
+		END
+		assert_raise(PreprocessorError) { @preprocessor.process(input) }
+	end
+
+	def test_can_process_next_after_error
+		input1 = <<-END
+foo
+#if SINGULAR_YOU
+bar
+		END
+		assert_raise(PreprocessorError) { @preprocessor.process(input1) }
+
+		input2 = "baz\n"
+		assert_equal input2, as_string(@preprocessor.process(input2))
+	end
+
 	private
 
 	def as_string(output)

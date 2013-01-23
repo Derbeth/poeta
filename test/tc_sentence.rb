@@ -1026,7 +1026,7 @@ A y 115 0 ymi .
 		dictionary.set_indices VERB, [0,1]
 		assert_equal 'i głodne słyszą, jak wilk węszy', sentence.write
 		assert_equal 'psy', sentence.subject.text
-end
+	end
 
 	def test_implicit_subject_adjective_disallowed
 		grammar = PolishGrammar.new
