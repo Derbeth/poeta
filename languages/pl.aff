@@ -36,7 +36,7 @@ N b 3,6      ra  rze  ra
 N b 3,6      sta ście sta
 N b 3,6      ta  cie  ta
 N b 3,6      cha sze  cha # mucha -> musze
-N b 3,6      a   ie   [bnpsz]a
+N b 3,6      a   ie   [bnpswz]a
 N b 3,6      azda eździe azda # jazda
 N b 3,6      da  dzie da
 N b 4        a   ę    a
@@ -49,7 +49,7 @@ N b 12       a   0    ra/2  # kara -> kar
 N b 12       a   0    ra/3  # ofiara -> ofiar
 N b 12       ra  er   ra    # kołdra -> kołder
 N b 12       a   0    na/1  # wina -> win
-N b 12       a   0    [dpsthz]a
+N b 12       a   0    [dpsthwz]a
 N b 12       na  en   jna   # wojna -> wojen
 N b 12       a   0    na/2  # zmiana -> zmian, kraina -> krain
 N b 12       na  ien  na

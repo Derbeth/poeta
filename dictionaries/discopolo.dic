@@ -12,15 +12,17 @@ N  50 myśl/n f Pl OBJ_FREQ(10)
 N 100 noc/k f                   SEMANTIC(GORĄCY,PORA,RZECZ)
 N 100 publika/r f               SEMANTIC(GORĄCY)
 N  50 świnka/r f                SEMANTIC(DZIUNIA)
-N 100 wieczór/m1 m nan             SEMANTIC(PORA,RZECZ)
+N 100 wieczór/m1 m nan          SEMANTIC(PORA,RZECZ)
 
 N 200 "" m      PERSON(1) NO_ADJ  ONLY_SUBJ   SEMANTIC(ZIOMAL,PERSON)    # ja
+N 100 ja/0 m    PERSON(1) NO_ADJ  ONLY_OBJ    SEMANTIC(ZIOMAL,PERSON)    # ja (mnie)
 #if TY_DZIUNIA
 N 300 "" f      PERSON(2) NO_ADJ  ONLY_SUBJ   SEMANTIC(DZIUNIA,PERSON)    # ty
 N 100 "" m Pl   PERSON(1) NO_ADJ  ONLY_SUBJ   SEMANTIC(PLURAL,PERSON)     # my
-N 200 ty/0 f    ONLY_OBJ  NO_ADJ NO_NOUN_NOUN SEMANTIC(DZIUNIA,PERSON)
+N 200 ty/0 f    ONLY_OBJ  NO_ADJ NO_NOUN_NOUN SEMANTIC(DZIUNIA,PERSON)    # ty (ciebie)
 #else
 N 300 "" m      PERSON(2) NO_ADJ  ONLY_SUBJ   SEMANTIC(ZIOMAL,PERSON)    # ty
+N  50 ty/0 m    ONLY_OBJ  NO_ADJ NO_NOUN_NOUN SEMANTIC(ZIOMAL,PERSON)    # ty (ciebie)
 #endif
 N 100 ona/0 f OBJ_FREQ(200) NO_ADJ NO_NOUN_NOUN    SEMANTIC(DZIUNIA,PERSON)
 
@@ -36,6 +38,7 @@ V  50 kochać/1 OBJ(4)                 ONLY_WITH(ZIOMAL) TAKES_NO(ZIOMAL) # prev
 V  50 kochać/1 OBJ(4)                 NOT_WITH(ZIOMAL)                   # no restriction
 V  20 kręcić/6b SUFFIX(pupą)          ONLY_WITH(DZIUNIA)
 V  20 kręcić/6b SUFFIX(pupą) ONLY_OBJ
+V 100 kręcić/6b OBJ(4)                ONLY_WITH(DZIUNIA) TAKES_ONLY(ZIOMAL)
 V 800 krążyć/6 SUFFIX(w głowie)       ONLY_WITH_W(myśl)
 V 100 nadchodzić/6                    ONLY_WITH(PORA)
 V 400 nakręcać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(biba,impreza,publika)
@@ -93,7 +96,3 @@ O 100 "je je je"
 O 100 "la la la la"
 O 100 ooo
 O 100 popatrz
-
-# http://teksty.org/boys,a-teraz-lapy-w-gore,tekst-piosenki
-# http://teksty.org/boys,bawmy-sie,tekst-piosenki
-# http://teksty.org/akcent,bo-ja-dobrze-o-tym-wiem,tekst-piosenki
