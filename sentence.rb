@@ -165,7 +165,10 @@ class Sentence
 		return '' if noun.get_property(:no_adjective)
 		semantic_counter = @dictionary.semantic_chooser(noun)
 		adjective = @dictionary.get_random_adjective(noun, exclude_double, &semantic_counter)
-		return '' unless adjective
+		unless adjective
+			@conf.logger.debug "Cannot find adjective matching #{noun} (#{noun.get_properties})"
+			return ''
+		end
 
 		@adjectives << adjective
 		gram_case = adj_opts[:case] || NOMINATIVE
@@ -277,7 +280,10 @@ class Sentence
 			next if (object && @nouns.find { |n| n.text == object.text})
 			break
 		end
-		return '' unless object
+		unless object
+			@conf.logger.debug "Could not find matching object for #{word} with #{object_spec}"
+			return ''
+		end
 
 		# resolve adjective before inflecting object
 		# in order to avoid assigning first object adjective to the
@@ -319,7 +325,10 @@ class Sentence
 			next if (object_verb.nil? || verb.text == object_verb.text)
 			break
 		end
-		return '' unless object_verb
+		unless object_verb
+			@conf.logger.warn "Could not find matching object for #{verb} with #{object_spec}"
+			return ''
+		end
 
 		text = object_verb.inflect(@grammar,{:infinitive=>1})
 		if !object_verb.objects.empty?
@@ -343,7 +352,10 @@ class Sentence
 
 		freq_counter = @dictionary.semantic_chooser(verb)
 		adjective = @dictionary.get_random_adjective_object(&freq_counter)
-		return '' unless adjective
+		unless adjective
+			@conf.logger.warn "Could not find matching adjective object for #{verb} (#{verb.get_properties})"
+			return ''
+		end
 
 		form = {:case=>NOMINATIVE, :gender=>gender, :number=>number}
 		adjective.inflect(@grammar,form)

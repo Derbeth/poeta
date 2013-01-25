@@ -212,6 +212,9 @@ class NounTest < Test::Unit::TestCase
 		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ') }
 		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ()') }
 		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ(a)') }
+
+		noun = Noun.parse('foo', [], 100, 'SEMANTIC(GOOD)')
+		assert_equal({:semantic => ['GOOD']}, noun.get_properties)
 	end
 
 	def test_parse_attribute

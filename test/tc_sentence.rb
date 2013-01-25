@@ -142,6 +142,15 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('kibice pijani ze szczęścia', sentence.write)
 	end
 
+	def test_handle_adjective_impossible
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 100 flower\nA 10 ugly ONLY_WITH(ugly)"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${SUBJ}')
+		# should print a warning
+		assert_equal 'flower', sentence.write
+	end
+
 	def test_double_adjective
 		grammar = GenericGrammar.new
 		# to check if form is passed
@@ -616,6 +625,15 @@ D 10 schnell
 		assert_equal 'wąsy w ładnego wrota', sentence.write
 	end
 
+	def test_handle_noun_object_impossible
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 10 hero\nN 10 him ONLY_OBJ\nV 100 fights OBJ(2) TAKES_ONLY(EVIL)"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
+		# should also write a warning
+		assert_equal 'hero fights', sentence.write
+	end
+
 	def test_object_wont_equal_subject
 		dictionary = Dictionary.new
 		dictionary.read("N 100 pies\nN 30 kota/a\nV 100 goni OBJ(4)")
@@ -861,6 +879,15 @@ A y 115 0 ymi .
 		end
 	end
 
+	def test_handle_infinitive_object_impossible
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 10 dogs\nV 10 must INF NOT_AS_OBJ\n"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
+		# should also write a warning
+		assert_equal 'dogs must', sentence.write
+	end
+
 	def test_handle_adjective_object
 		grammar = PolishGrammar.new
 		dictionary = Dictionary.new
@@ -891,6 +918,15 @@ A y 115 0 ymi .
 			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
 			assert_equal('flower is beautiful', sentence.write)
 		end
+	end
+
+	def test_handle_adjective_object_impossible
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 100 flower\nV 100 is ADJ TAKES_NO(BAD)\nA 10 ugly SEMANTIC(BAD)\n"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
+		# should also write a warning
+		assert_equal 'flower is', sentence.write
 	end
 
 	# verb requires an object but sentence pattern explicitly omits object

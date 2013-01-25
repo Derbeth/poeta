@@ -50,6 +50,10 @@ module Grammar
 			@general_props[prop_name]
 		end
 
+		def get_properties
+			@general_props.clone
+		end
+
 		def to_s
 			"Word(#{text} p=#{@general_props.inspect})"
 		end
