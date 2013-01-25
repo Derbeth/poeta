@@ -71,8 +71,11 @@ module Poeta
 		end
 
 		def handle_definition(name, body)
+			return unless @outputting
+
 			if body =~ /^(\d+)$/
 				@vars[name] = $1.to_i
+				@conf.logger.debug "preprocessor: defined #{name} as #{@vars[name]}"
 				true
 			elsif body =~ /^\s*(\w+)\s*\(([^)]+)\)\s*$/
 				func_name = $1

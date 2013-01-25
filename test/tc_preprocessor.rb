@@ -160,6 +160,27 @@ you
 		assert_equal "I\nyou\n", as_string(@preprocessor.process(input))
 	end
 
+	def test_define_respects_if
+		input = <<-END
+#define SINGULAR_YOU 1
+I
+#if SINGULAR_YOU
+thou
+#define USED_SINGULAR 1
+#else
+#define USED_PLURAL 1
+you
+#endif
+#if USED_SINGULAR
+singular
+#endif
+#if USED_PLURAL
+plural
+#endif
+		END
+		assert_equal "I\nthou\nsingular\n", as_string(@preprocessor.process(input))
+	end
+
 	def test_defined_vars_seen_in_all_files
 		input1 = <<-END
 #define SINGULAR_YOU 1
