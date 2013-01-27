@@ -15,33 +15,33 @@ N  10 efekt/e m nan ATTR(2) OBJ_FREQ(40) # "efekt zmian"
 N 150 ekipa/b f SEMANTIC(OK,ZIOM,RZĄDZONY)
 N 100 głos/e m nan SEMANTIC(PŁYNIE)
 N  50 hasło/p n
-N  50 hip-hop/e m nan SEMANTIC(OK,ZIOM,PŁYNIE)
-N  50 honor/e m nan SEMANTIC(OK,ZIOM)
+N  50 hip-hop/e m nan SEMANTIC(OK,ZIOM,PŁYNIE,RZECZ)
+N  50 honor/e m nan SEMANTIC(OK,ZIOM,RZECZ)
 N  50 impreza/b f OBJ_FREQ(100) SEMANTIC(OK,RZĄDZONY,WPADANY)
-N  50 jazda/b f SEMANTIC(OK,ZIOM)
+N  50 jazda/b f SEMANTIC(OK,ZIOM,RZECZ)
 N  10 kasa/b f OBJ_FREQ(100)
-N  10 klasa/b f SEMANTIC(OK,ZIOM)
+N  10 klasa/b f SEMANTIC(OK,ZIOM,RZECZ)
 N  50 komercha/b f SEMANTIC(POLICJA)
 N  10 konfident/j m                  SEMANTIC(POLICJA)
 N  10 konfident/j m Pl OBJ_FREQ(100) SEMANTIC(POLICJA)
 N  50 krew/n f SEMANTIC(PŁYNIE)
 N 200 ludzie/a m Pl
-N 100 małolat/j1 m SEMANTIC(OK)
+N 100 małolat/j1 m NO_ATTR SEMANTIC(OK)
 N 100 miasto/p n SEMANTIC(RZĄDZONY,WPADANY)
 N  50 miejsce/d n         SEMANTIC(WPADANY)
 N  50 miejsce/d n ATTR(2) SEMANTIC(WPADANY) # "miejsce agresji"
 N  10 numer/e m nan OBJ_FREQ(50)
 N  50 ofiara/b3 f ATTR(2)
-N 100 pięść/n f SEMANTIC(OK,ZIOM)
+N 100 pięść/n f SEMANTIC(OK,ZIOM,RZECZ)
 N 100 policja/h f SEMANTIC(POLICJA)
 N  10 polityka/r f OBJ_FREQ(50) SEMANTIC(POLITYKA,RZĄDZONY)
 N  10 przyczyna/b1 f ATTR(2) OBJ_FREQ(50) # "przyczyna buntu"
 N   3 porozumienie/d n SUFFIX(ponad podziałami) OBJ_FREQ(6)
 N  50 prawo/p n
 N  10 pretekst/e m nan ONLY_OBJ
-N  10 przekaz/e m nan SEMANTIC(OK,ZIOM,PŁYNIE)
-N 100 rap/e m nan SEMANTIC(OK,ZIOM,PŁYNIE)
-N  20 skręt/m m OBJ_FREQ(100) SEMANTIC(OK,ZIOM)
+N  10 przekaz/e m nan SEMANTIC(OK,ZIOM,PŁYNIE,RZECZ)
+N 100 rap/e m nan SEMANTIC(OK,ZIOM,PŁYNIE,RZECZ)
+N  20 skręt/m m OBJ_FREQ(100) SEMANTIC(OK,ZIOM,RZECZ)
 N  10 styl/c m nan OBJ_FREQ(50)
 N  10 szansa/b f OBJ_FREQ(50)
 N  10 szmal/c m nan OBJ_FREQ(100)
@@ -71,8 +71,8 @@ V  30 dawać/A OBJ(3) OBJ(4)
 V  30 donosić/6b NOT_WITH(ZIOM)
 V 100 iść/c
 V  40 iść/c INF
-V  30 iść/c OBJ(po,6)
-V  30 iść/c OBJ(na,4)
+V  30 iść/c OBJ(przez,6) TAKES_ONLY_W(dzielnica,miasto,miejsce)
+V  30 iść/c OBJ(na,4)    TAKES_ONLY_W(boisko,buch,dzielnica,impreza,jazda,miasto,miejsce)
 V 100 jechać/9 OBJ(po,6)
 V  20 kablować/4 NOT_WITH(ZIOM)
 V 100 lecieć/7a
@@ -94,6 +94,8 @@ V 100 rozpierdalać/1 OBJ(4) TAKES_NO(ZIOM)
 V  40 rozkminiać/1 OBJ(4)
 V  50 rymować/4 NOT_WITH(POLICJA)
 V  50 rządzić/6b OBJ(5) TAKES_ONLY(RZĄDZONY)
+V  80 siedzieć/7 SUFFIX(na ławce)    ONLY_WITH(ZIOM) NOT_WITH(RZECZ)
+V  70 siedzieć/7 SUFFIX(pod blokiem) ONLY_WITH(ZIOM) NOT_WITH(RZECZ)
 V  50 słuchać/1 OBJ(2)
 V  50 trzymać/1 OBJ(4)
 V  10 trzymać/1 OBJ(2) REFL
@@ -101,11 +103,12 @@ V  50 trzymać/1 OBJ(4) ONLY_WITH(OK) TAKES_ONLY_W(klasa) # ekipa trzyma klasę
 V  50 uderzać/1 OBJ(na,4)
 V  50 widzieć/7 OBJ(4)
 V  70 wpadać/1 OBJ(na,4) TAKES_ONLY(WPADANY)
-V  40 wznosić/6 OBJ(4)
+V  30 wznosić/6 OBJ(4) ONLY_WITH(ZIOM) TAKES_ONLY_W(hasło,pięść)
 V  50 zaczynać/1 INF
 V  10 zaczynać/1 REFL
 V 100 zapierdalać/1
 V 100 zapalać/1 OBJ(4)
+V 150 znać/1 OBJ(4) ONLY_WITH(ZIOM) TAKES_ONLY_W(dzielnica,ekipa,ludzie,konfident,przyczyna,teren,ulica,zasada)
 V  50 zwijać/1 OBJ(4)
 
 A  70 autentyczny/a NOT_WITH(POLICJA)

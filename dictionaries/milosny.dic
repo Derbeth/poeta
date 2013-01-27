@@ -4,8 +4,8 @@ N  50 ciało/p n Pl
 N  50 dłoń/u1 f Pl
 N 100 dotyk/g m nan
 N  50 kwiat/e m nan
-N 100 miłość/n f
-N 100 namiętność/n f
+N 100 miłość/n f          SEMANTIC(PALANY)
+N 100 namiętność/n f      SEMANTIC(PALANY)
 N 100 oczekiwanie/d n
 N  90 oddech/e m nan
 N  10 oddech/e m nan Pl
@@ -23,9 +23,9 @@ N  50 rozłąka/r f
 N 100 spojrzenie/d n
 N  50 spotkanie/d n
 N 100 szept/e m nan
-N 100 tęsknota/b f
+N 100 tęsknota/b f         SEMANTIC(PALANY)
 N  50 twarz/k f
-N  50 uczucie/d n
+N  50 uczucie/d n          SEMANTIC(PALANY)
 N  50 uczucie/d n Pl
 N 100 usta/p n Pl
 N  80 uśmiech/e m nan
@@ -34,8 +34,8 @@ N 100 warga/r f Pl
 N 100 włos/j2 m nan Pl
 N 100 wstyd/e m nan
 N 100 zapach/e m nan
-N 100 żar/e m nan
-N  45 żądza/l f
+N 100 żar/e m nan          SEMANTIC(PALANY)
+N  45 żądza/l f            SEMANTIC(PALANY)
 N   5 żądza/l f Pl
 
 N 200 "" m      PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(PERSON)    # ja
@@ -77,7 +77,7 @@ V 100 kochać/1 OBJ(4)
 V 100 leżeć/7m
 V  80 lubić/6 OBJ(4)
 V  20 lubić/6 INF NOT_AS_OBJ
-V 100 pałać/1 OBJ(5)
+V 100 pałać/1 OBJ(5)        TAKES_ONLY(PALANY)
 V 100 patrzeć/7 OBJ(na,4)
 V  70 płonąć/5b
 V  30 płonąć/5b OBJ(z,2) TAKES_NO(PERSON)
