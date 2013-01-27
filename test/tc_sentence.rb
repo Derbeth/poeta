@@ -476,12 +476,45 @@ D 10 schnell
 		# subject -> verb
 		srand 2
 		dictionary.read("N 100 policja\nV 100 rymuje\nV 10 idzie") # no semantic - expect wrong result
-		sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB}');
+		sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB}')
 		assert_equal('policja rymuje', sentence.write)
 		srand 2
 		dictionary.read("N 100 policja SEMANTIC(NOT_COOL)\nV 100 rymuje NOT_WITH(NOT_COOL)\nV 10 idzie")
-		sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB}');
+		sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB}')
 		assert_equal('policja idzie', sentence.write)
+	end
+
+	def test_semantic_not_with_overrides_only_with
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read <<-END
+N 10 gang SEMANTIC(GANGSTA)
+N 10 fist SEMANTIC(GANGSTA,THING)
+N 10 street SEMANTIC(THING)
+N 10 girl
+V 10 goes ONLY_WITH(GANGSTA) NOT_WITH(THING)
+		END
+		20.times do
+			text = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB}').write
+			next unless text.include? 'goes'
+			assert_equal 'gang goes', text
+		end
+	end
+
+	def test_semantic_takes_no_overrides_takes_only
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read <<-END
+N 10 gang SEMANTIC(GANGSTA)
+N 10 fist SEMANTIC(GANGSTA,THING)
+N 10 street SEMANTIC(THING)
+N 10 girl
+V 10 join OBJ(2) TAKES_ONLY(GANGSTA) TAKES_NO(THING)
+		END
+		20.times do
+			text = Sentence.new(dictionary, grammar, @conf, '${VERB(2)} ${OBJ}').write
+			assert_equal 'join gang', text
+		end
 	end
 
 	def test_semantic_in_sentence_def
