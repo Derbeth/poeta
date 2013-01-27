@@ -308,6 +308,7 @@ class Sentence
 	# returns true if it is forbidden to use the second noun as the attribute
 	# for the first noun
 	def noun_noun_forbidden?(main_noun, attribute_noun)
+		return true if main_noun.get_property(:no_attribute)
 		[main_noun, attribute_noun].each do |noun|
 			return true if noun.person != 3 || noun.get_property(:no_noun_noun)
 		end

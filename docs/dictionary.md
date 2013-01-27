@@ -103,13 +103,18 @@ Noun
 
   Makes the noun never take an adjective.
 
+* `NO_ATTR`
+
+  Makes the noun never take an attribute (but allows it to be taken as an attribute).
+  Compare with `NO_NOUN_NOUN`.
+
 * `NO_NOUN_NOUN`
 
   Makes the noun never take noun attribute or be used as a noun attribute. Example:
 
         N 100 they NO_NOUN_NOUN
 
-  prevents appearing things like "they's sea" or "sea of they".
+  prevents appearing things like "they's sea" or "sea of they". Compare with `NO_ATTR`.
 
 * `OBJ_FREQ(f)`
 

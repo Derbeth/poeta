@@ -822,17 +822,38 @@ A y 115 0 ymi .
 		dictionary.read "N 100 eagle\nN 100 I PERSON(1)"
 		@conf.double_noun_chance = 1
 		10.times do
-			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
-			text = sentence.write
+			text = Sentence.new(dictionary,grammar,@conf,'${SUBJ}').write
 			assert_includes ['eagle', 'I'], text
 		end
 
 		dictionary.read "N 100 eagle\nN 100 he NO_NOUN_NOUN"
 		@conf.double_noun_chance = 1
 		10.times do
-			sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
-			text = sentence.write
+			text = Sentence.new(dictionary,grammar,@conf,'${SUBJ}').write
 			assert_includes ['eagle', 'he'], text
+		end
+	end
+
+	def test_no_attr_forbids
+		grammar = EnglishGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 100 eagle\nN 100 he NO_ATTR"
+		@conf.double_noun_chance = 1
+		10.times do
+			text = Sentence.new(dictionary,grammar,@conf,'${SUBJ}').write
+			assert_includes ['eagle', 'he', 'eagle of he'], text # forbids only 'he of eagle'
+		end
+	end
+
+	def test_no_attr_allows
+		grammar = EnglishGrammar.new
+		dictionary = ControlledDictionary.new
+		dictionary.read "N 100 eagle\nN 100 he NO_ATTR"
+		@conf.double_noun_chance = 1
+		10.times do
+			dictionary.set_indices NOUN, [0]
+			text = Sentence.new(dictionary,grammar,@conf,'${SUBJ}').write
+			assert_equal 'eagle of he', text
 		end
 	end
 

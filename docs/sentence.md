@@ -4,7 +4,7 @@ Noun properties
 * `IG_ONLY` = ignore only (ignores ONLY)
 * `NE` = not empty
 * `EMPTY` = only empty
-* `NO_IMPL`
+* `NO_IMPL` = no implicit subject
 
 Verb properties
 ---------------

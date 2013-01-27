@@ -92,7 +92,7 @@ module Grammar
 		end
 	end
 
-	# options: :no_adjective, :only_subj, :only_obj
+	# options: :no_adjective, :no_attribute, :no_noun_noun, :only_subj, :only_obj
 	class Noun < Word
 		attr_reader :animate,:gender, :number, :person,:attributes
 		STRING2GENDER = {'m'=>MASCULINE,'n'=>NEUTER,'f'=>FEMININE}
@@ -121,6 +121,7 @@ module Grammar
 						suffix = $1
 					when 'NO_ADJ' then general_props[:no_adjective] = true
 					when 'NO_NOUN_NOUN' then general_props[:no_noun_noun] = true
+					when 'NO_ATTR' then general_props[:no_attribute] = true
 					when 'ONLY_SUBJ' then general_props[:only_subj] = true
 					when 'ONLY_OBJ' then general_props[:only_obj] = true
 					when /^OBJ_FREQ/
