@@ -74,6 +74,7 @@ A 400 nasz/d POSS         ONLY_WITH_W(didżej)
 A 100 na~ful
 A 100 odjazdowy/a         ONLY_WITH(DZIUNIA)
 A 100 odjazdowy/a         ONLY_WITH_W(impreza,noc)
+A  50 opalony             ONLY_WITH(DZIUNIA)
 A 200 szalony/a           ONLY_WITH_W(impreza,noc)
 A 100 szalony/a           ONLY_WITH(DZIUNIA)
 A 200 ten/c DOUBLE NOT_AS_OBJ
