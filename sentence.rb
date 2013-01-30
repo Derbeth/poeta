@@ -557,4 +557,3 @@ class Sentence
 		result
 	end
 end
-
