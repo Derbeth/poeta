@@ -153,7 +153,7 @@ module Grammar
 					speech_part, rest = read_speech_part(line)
 					frequency, rest = read_frequency(rest)
 					word_text, gram_props, rest = read_word(rest)
-					word = Words.get_class(speech_part).parse(word_text,gram_props,frequency,rest)
+					word = Words.get_parser(speech_part).parse(word_text,gram_props,frequency,rest)
 					raise ParseError, "line '#{line}' not parsed" unless word
 
 					@words[speech_part] ||= []

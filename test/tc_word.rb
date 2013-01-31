@@ -68,48 +68,15 @@ V w   3 0 AlsoWrong .
 		verb = Verb.new('eat',%w{v},100)
 		assert_equal('eats', verb.inflect(grammar, {:person=>3}))
 	end
-
-	def test_protected_parse
-		read_opts = []
-		global_opts = {:foo=>'bar'}
-		Word.send(:parse,'A FOO(one two) SEMANTIC(good) B',global_opts) do |part|
-			read_opts << part
-		end
-		assert_equal(['A','FOO(one two)','B'], read_opts) # does not include handled by WORD
-		assert_equal({:foo=>'bar',:semantic=>['good']}, global_opts)
-
-		global_opts = {}
-		Word.send(:parse,'SEMANTIC(good,great) ONLY_WITH(good) NOT_WITH(bad,awful)
-		ONLY_WITH_W(angel,saint) NOT_WITH_W(devil,demon)
-		TAKES_ONLY(cool) TAKES_NO(boring)
-		TAKES_ONLY_W(easy) TAKES_NO_W(old)',global_opts)
-		assert_equal({:semantic=>['good','great'],
-			:only_with=>['good'],:not_with=>['bad','awful'],
-			:only_with_word=>['angel','saint'],:not_with_word=>['devil','demon'],
-			:takes_only=>['cool'], :takes_no=>['boring'],
-			:takes_only_word=>['easy'], :takes_no_word=>['old']}, global_opts)
-
-		# double semantic
-		global_opts = {}
-		Word.send(:parse,'SEMANTIC(a) ONLY_WITH(b) NOT_WITH(c) ONLY_WITH_W(d) NOT_WITH_W(e)
-		TAKES_ONLY(f) TAKES_NO(g) TAKES_ONLY_W(h) TAKES_NO_W(i)
-		SEMANTIC(A) ONLY_WITH(B) NOT_WITH(C) ONLY_WITH_W(D) NOT_WITH_W(E)
-		TAKES_ONLY(F) TAKES_NO(G) TAKES_ONLY_W(H) TAKES_NO_W(I)'.gsub(/\s+/,' '),global_opts)
-		assert_equal({:semantic=>['a','A'],
-			:only_with=>['b','B'],:not_with=>['c','C'],
-			:only_with_word=>['d','D'], :not_with_word=>['e','E'],
-			:takes_only=>['f','F'], :takes_no=>['g','G'],
-			:takes_only_word=>['h','H'], :takes_no_word=>['i','I']}, global_opts)
-	end
 end
 
 class VerbTest < Test::Unit::TestCase
 	def test_parse
-		assert_raise(ParseError) { Verb.parse('foo',[],100,"OBJ(na)") } # wrong existing option
-		Verb.parse('foo',[],100,"SUBJ") # unknown option - ignore
-		assert_raise(ParseError) { Verb.parse('foo',[],100,"OBJ(8)") } # wrong case
+		assert_raise(ParseError) { VerbParser.new.parse('foo',[],100,"OBJ(na)") } # wrong existing option
+		VerbParser.new.parse('foo',[],100,"SUBJ") # unknown option - ignore
+		assert_raise(ParseError) { VerbParser.new.parse('foo',[],100,"OBJ(8)") } # wrong case
 
-		verb = Verb.parse('foo',[],100,"OBJ(3)")
+		verb = VerbParser.new.parse('foo',[],100,"OBJ(3)")
 		assert_equal(1,verb.objects.size)
 		assert verb.objects[0].is_noun?
 		assert !verb.objects[0].is_adjective?
@@ -117,7 +84,7 @@ class VerbTest < Test::Unit::TestCase
 		assert_equal(3,verb.objects[0].case)
 		assert_nil verb.objects[0].preposition
 
-		verb = Verb.parse('foo',[],100,"OBJ(3) OBJ(o,6)")
+		verb = VerbParser.new.parse('foo',[],100,"OBJ(3) OBJ(o,6)")
 		assert_equal(2,verb.objects.size)
 		assert verb.objects[0].is_noun?
 		assert !verb.objects[0].is_adjective?
@@ -130,32 +97,42 @@ class VerbTest < Test::Unit::TestCase
 		assert_equal(6,verb.objects[1].case)
 		assert_equal('o',verb.objects[1].preposition)
 
-		verb = Verb.parse('foo',[],100,"ADJ")
+		verb = VerbParser.new.parse('foo',[],100,"ADJ")
 		assert_equal(1,verb.objects.size)
 		assert !verb.objects[0].is_noun?
 		assert verb.objects[0].is_adjective?
 		assert !verb.objects[0].is_infinitive?
 
-		verb = Verb.parse('foo',[],100,"INF")
+		verb = VerbParser.new.parse('foo',[],100,"INF")
 		assert_equal(1,verb.objects.size)
 		assert !verb.objects[0].is_noun?
 		assert !verb.objects[0].is_adjective?
 		assert verb.objects[0].is_infinitive?
 		assert_nil verb.objects[0].preposition
 
-		verb = Verb.parse('foo',[],100,"INF(for)")
+		verb = VerbParser.new.parse('foo',[],100,"INF(for)")
 		assert_equal(1,verb.objects.size)
 		assert !verb.objects[0].is_noun?
 		assert !verb.objects[0].is_adjective?
 		assert verb.objects[0].is_infinitive?
 		assert_equal 'for', verb.objects[0].preposition
 
-		verb = Verb.parse('foo',[],100,"REFL")
+		assert_raise(ParseError) { VerbParser.new.parse('foo',[],100,"INF(for,2)") }
+
+		verb = VerbParser.new.parse('foo',[],100,"REFL")
 		assert verb.reflexive
-		verb = Verb.parse('foo',[],100,"REFLEX")
+		verb = VerbParser.new.parse('foo',[],100,"REFLEX")
 		assert verb.reflexive
-		verb = Verb.parse('foo',[],100,"REFLEXIVE")
+		verb = VerbParser.new.parse('foo',[],100,"REFLEXIVE")
 		assert verb.reflexive
+	end
+
+	def test_parse_semantic
+		verb = VerbParser.new.parse('foo',[],100,'ONLY_WITH(GOOD,NICE) NOT_WITH(THING) TAKES_ONLY(BAD) TAKES_NO(THING,EVENT)')
+		assert_equal %w{GOOD NICE}, verb.get_property(:only_with)
+		assert_equal %w{THING}, verb.get_property(:not_with)
+		assert_equal %w(BAD), verb.get_property(:takes_only)
+		assert_equal %w{THING EVENT}, verb.get_property(:takes_no)
 	end
 
 	def test_all_forms
@@ -167,7 +144,7 @@ class VerbTest < Test::Unit::TestCase
 	end
 
 	def test_suffix
-		verb = Verb.parse('mieć',%w{a},100,"SUFFIX(na karku)")
+		verb = VerbParser.new.parse('mieć',%w{a},100,"SUFFIX(na karku)")
 		grammar = PolishGrammar.new
 		grammar.read_rules "V a 1 ieć am ieć"
 		assert_equal('mieć na karku', verb.inflect(grammar,{:infinitive=>1}))
@@ -177,70 +154,70 @@ end
 
 class NounTest < Test::Unit::TestCase
 	def test_parse
-		noun = Noun.parse('foo',[],100,"NOTEXIST") # unknown option - ignore
+		noun = NounParser.new.parse('foo',[],100,"NOTEXIST") # unknown option - ignore
 		assert_equal(MASCULINE, noun.gender)
 		assert_equal(1, noun.number)
 
-		noun = Noun.parse('foo',[],100,"f Pl")
+		noun = NounParser.new.parse('foo',[],100,"f Pl")
 		assert_equal(FEMININE, noun.gender)
 		assert_equal(2, noun.number)
 
-		noun = Noun.parse('foo',[],100,"Pl n")
+		noun = NounParser.new.parse('foo',[],100,"Pl n")
 		assert_equal(NEUTER, noun.gender)
 		assert_equal(2, noun.number)
 		assert_equal(3, noun.person)
 		assert noun.animate # by default
 
-		noun = Noun.parse('foo',[],100,"nan") # not animate
+		noun = NounParser.new.parse('foo',[],100,"nan") # not animate
 		assert_equal(false, noun.animate)
 
-		noun = Noun.parse('foo',[],100,'PERSON(2)')
+		noun = NounParser.new.parse('foo',[],100,'PERSON(2)')
 		assert_equal(2, noun.person)
-		noun = Noun.parse('',[],100,'PERSON(2)')
+		noun = NounParser.new.parse('',[],100,'PERSON(2)')
 
-		assert_raise(ParseError) { Noun.parse('foo',[],100,'PERSON()') }
-		assert_raise(ParseError) { Noun.parse('foo',[],100,'PERSON(a)') }
-		assert_raise(ParseError) { Noun.parse('foo',[],100,'PERSON(5)') }
+		noun = NounParser.new.parse('foo',[],100,'PERSON()') # should be ignored
+		assert_equal 3, noun.person
+		assert_raise(ParseError) { NounParser.new.parse('foo',[],100,'PERSON(a)') }
+		assert_raise(ParseError) { NounParser.new.parse('foo',[],100,'PERSON(5)') }
 
-		noun = Noun.parse('foo',[],100,'ONLY_SUBJ')
+		noun = NounParser.new.parse('foo',[],100,'ONLY_SUBJ')
 		assert_nil(noun.get_property(:only_obj))
 		assert_nil(noun.get_property(:obj_freq))
 		assert_not_nil(noun.get_property(:only_subj))
 
-		assert_not_nil(Noun.parse('foo',[],100,'ONLY_OBJ').get_property(:only_obj))
-		assert_equal(53, Noun.parse('foo',[],100,'OBJ_FREQ(53)').get_property(:obj_freq))
-		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ') }
-		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ()') }
-		assert_raise(ParseError) { Noun.parse('foo',[],100,'OBJ_FREQ(a)') }
+		assert_not_nil(NounParser.new.parse('foo',[],100,'ONLY_OBJ').get_property(:only_obj))
+		assert_equal(53, NounParser.new.parse('foo',[],100,'OBJ_FREQ(53)').get_property(:obj_freq))
+		assert_raise(ParseError) { NounParser.new.parse('foo',[],100,'OBJ_FREQ') }
+		assert_raise(ParseError) { NounParser.new.parse('foo',[],100,'OBJ_FREQ(a)') }
 
-		noun = Noun.parse('foo', [], 100, 'SEMANTIC(GOOD)')
+		noun = NounParser.new.parse('foo', [], 100, 'SEMANTIC(GOOD)')
 		assert_equal({:semantic => ['GOOD']}, noun.get_properties)
 	end
 
 	def test_parse_attribute
 		# wrong syntax
-		noun = Noun.parse('dog', [], 100, 'ATTRIBUTE(0)')
+		noun = NounParser.new.parse('dog', [], 100, 'ATTRIBUTE(0)')
 		assert_equal 0, noun.attributes.size
 
-		noun = Noun.parse('dog', [], 100, 'ATTR(z,5)')
+		noun = NounParser.new.parse('dog', [], 100, 'ATTR(z,5)')
 		assert_equal 1, noun.attributes.size
 		assert_equal 5, noun.attributes[0].case
 		assert_equal 'z', noun.attributes[0].preposition
 
 		# well, also legal
-		noun = Noun.parse('dog', [], 100, 'ATTR(2)')
+		noun = NounParser.new.parse('dog', [], 100, 'ATTR(2)')
 		assert_equal 1, noun.attributes.size
 		assert_equal 2, noun.attributes[0].case
 		assert_nil noun.attributes[0].preposition
 
 		# not allowed to have 2 attributes
-		assert_raise(ParseError) { Noun.parse('dog', [], 100, 'ATTR(z,5) ATTR(od,4)') }
+		assert_raise(ParseError) { NounParser.new.parse('dog', [], 100, 'ATTR(z,5) ATTR(od,4)') }
 		# wrong case
-		assert_raise(ParseError) { Noun.parse('dog', [], 100, 'ATTR(8)') }
+		assert_raise(ParseError) { NounParser.new.parse('dog', [], 100, 'ATTR(8)') }
 	end
 
 	def test_suffix
-		noun = Noun.parse('pies',%w{a},100,"SUFFIX(z kulawą nogą)")
+		noun = NounParser.new.parse('pies',%w{a},100,"SUFFIX(z kulawą nogą)")
 		grammar = PolishGrammar.new
 		grammar.read_rules "N a 2 ies sa pies"
 		assert_equal 'psa z kulawą nogą', noun.inflect(grammar, {:case => 2})
@@ -271,42 +248,42 @@ class AdjectiveTest < Test::Unit::TestCase
 	include Grammar::TestHelper
 
 	def test_parse
-		Adjective.parse('good',[],100,'')
-		adjective = Adjective.parse('good',['F'],100,'ONLY_WITH(GOOD)')
+		AdjectiveParser.new.parse('good',[],100,'')
+		adjective = AdjectiveParser.new.parse('good',['F'],100,'ONLY_WITH(GOOD)')
 		assert_equal 'good', adjective.text
 		assert_equal 0, adjective.attributes.size
 		assert !adjective.double
-		adjective = Adjective.parse('good',['F'],100,'POSS')
+		adjective = AdjectiveParser.new.parse('good',['F'],100,'POSS')
 		assert adjective.double
-		adjective = Adjective.parse('good',['F'],100,'DOUBLE')
+		adjective = AdjectiveParser.new.parse('good',['F'],100,'DOUBLE')
 		assert adjective.double
-		Adjective.parse('good',[],100,'NOTEXIST')
+		AdjectiveParser.new.parse('good',[],100,'NOTEXIST')
 	end
 
 	def test_parse_only_plural_singular
-		adjective = Adjective.parse('good',['F'],100,'')
+		adjective = AdjectiveParser.new.parse('good',['F'],100,'')
 		assert !adjective.get_property(:only_plural)
 		assert !adjective.get_property(:only_singular)
-		adjective = Adjective.parse('good',['F'],100,'ONLY_PL')
+		adjective = AdjectiveParser.new.parse('good',['F'],100,'ONLY_PL')
 		assert_equal true, adjective.get_property(:only_plural)
 		assert !adjective.get_property(:only_singular)
-		adjective = Adjective.parse('good',['F'],100,'ONLY_SING')
+		adjective = AdjectiveParser.new.parse('good',['F'],100,'ONLY_SING')
 		assert !adjective.get_property(:only_plural)
 		assert_equal true, adjective.get_property(:only_singular)
 	end
 
 	def test_parse_attribute
-		adjective = Adjective.parse('good', [], 100, 'ADJ')
+		adjective = AdjectiveParser.new.parse('good', [], 100, 'ADJ')
 		assert_equal 0, adjective.attributes.size
 
-		adjective = Adjective.parse('good', [], 100, 'ATTR(z,5)')
+		adjective = AdjectiveParser.new.parse('good', [], 100, 'ATTR(z,5)')
 		assert_equal 1, adjective.attributes.size
 		assert_equal 5, adjective.attributes[0].case
 
 		# not allowed to have 2 attributes
-		assert_raise(ParseError) { Adjective.parse('good', [], 100, 'ATTR(z,5) ATTR(od,4)') }
+		assert_raise(ParseError) { AdjectiveParser.new.parse('good', [], 100, 'ATTR(z,5) ATTR(od,4)') }
 		# wrong case
-		assert_raise(ParseError) { Adjective.parse('good', [], 100, 'ATTR(8)') }
+		assert_raise(ParseError) { AdjectiveParser.new.parse('good', [], 100, 'ATTR(8)') }
 	end
 
 	def test_all_forms
@@ -328,7 +305,7 @@ class AdjectiveTest < Test::Unit::TestCase
 	end
 
 	def test_suffix
-		adj = Adjective.parse('wyjęty',%w{a},100,"SUFFIX(spod prawa)")
+		adj = AdjectiveParser.new.parse('wyjęty',%w{a},100,"SUFFIX(spod prawa)")
 		grammar = PolishGrammar.new
 		grammar.read_rules "A a 102 y ego y"
 		assert_equal 'wyjętego spod prawa', adj.inflect(grammar, {:gender=>MASCULINE, :case => 2})
@@ -337,22 +314,22 @@ end
 
 class OtherWordTest < Test::Unit::TestCase
 	def test_parse
-		word = Other.parse('some other',[],100,'')
+		word = OtherParser.new.parse('some other',[],100,'')
 		assert_equal 'some other', word.text
 
 		# we don't expect any grammar properties
-		assert_raise(ParseError) { Other.parse('some other',['A'],100,'') }
+		assert_raise(ParseError) { OtherParser.new.parse('some other',['A'],100,'') }
 		# we don't expect any properties
-		assert_raise(ParseError) { Other.parse('some other',[],100,'word') }
+		assert_raise(ParseError) { OtherParser.new.parse('some other',[],100,'word') }
 	end
 end
 
 class AdverbTest < Test::Unit::TestCase
 	def test_parse
-		word = Adverb.parse('an adverb',[],100,'')
+		word = AdverbParser.new.parse('an adverb',[],100,'')
 		assert_equal 'an adverb', word.text
-		Adverb.parse('adverb', ['A'],100,'')
-		Adverb.parse('adverb', [],100,'ONLY_WITH(GOOD)')
-		Adverb.parse('adverb', [],100,'NOTEXIST')
+		AdverbParser.new.parse('adverb', ['A'],100,'')
+		AdverbParser.new.parse('adverb', [],100,'ONLY_WITH(GOOD)')
+		AdverbParser.new.parse('adverb', [],100,'NOTEXIST')
 	end
 end

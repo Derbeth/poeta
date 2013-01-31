@@ -28,8 +28,6 @@ module Grammar
 	PERSONS = [1,2,3]
 	NUMBER2STRING = Hash[*NUMBERS.zip(NUMBER_NAMES).flatten]
 
-	class ParseError < RuntimeError
-	end
 	class GrammarError < RuntimeError
 	end
 
