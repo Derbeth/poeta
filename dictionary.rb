@@ -2,6 +2,7 @@
 
 require './grammar'
 require './word'
+require './word_parser'
 require './randomized_choice'
 
 module Grammar

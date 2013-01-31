@@ -3,6 +3,7 @@
 require 'test/unit'
 
 require './word'
+require './word_parser'
 require './test/test_helper'
 
 include Grammar
