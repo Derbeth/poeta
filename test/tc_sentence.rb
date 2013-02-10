@@ -522,13 +522,13 @@ V 10 join OBJ(2) TAKES_ONLY(GANGSTA) TAKES_NO(THING)
 		dictionary = Dictionary.new
 		dictionary.read("N 100 ziomy\nN 100 policja SEMANTIC(POLICJA)\nV 100 idziesz\nV 100 donosisz NOT_WITH(ZIOM)")
 		10.times do
-			sentence = Sentence.new(dictionary, grammar, @conf, 'spoko jak ${SUBJ(TAKES_NO POLICJA)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, 'spoko jak ${SUBJ(TAKES_NO(POLICJA))}')
 			assert_equal('spoko jak ziomy', sentence.write)
-			sentence = Sentence.new(dictionary, grammar, @conf, 'spoko jak ${SUBJ(IG_ONLY,TAKES_NO POLICJA)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, 'spoko jak ${SUBJ(IG_ONLY,TAKES_NO(POLICJA))}')
 			assert_equal('spoko jak ziomy', sentence.write)
-			sentence = Sentence.new(dictionary, grammar, @conf, 'spoko jak ${NOUN(TAKES_NO POLICJA)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, 'spoko jak ${NOUN(TAKES_NO(POLICJA))}')
 			assert_equal('spoko jak ziomy', sentence.write)
-			sentence = Sentence.new(dictionary, grammar, @conf, '${VERB(2,SEMANTIC ZIOM)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, '${VERB(2,SEMANTIC(ZIOM))}')
 			assert_equal('idziesz', sentence.write)
 		end
 	end
@@ -538,17 +538,20 @@ V 10 join OBJ(2) TAKES_ONLY(GANGSTA) TAKES_NO(THING)
 		dictionary = ControlledDictionary.new
 		dictionary.read "N 100 ice\nN 100 fire\nV 100 burn\nV 100 fly"
 		10.times do
-			sentence = Sentence.new(dictionary, grammar, @conf, 'cool as ${NOUN(TAKES_ONLY_W ice)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, 'cool as ${NOUN(TAKES_ONLY_W(ice))}')
 			assert_equal 'cool as ice', sentence.write
-			sentence = Sentence.new(dictionary, grammar, @conf, 'cool as ${NOUN(TAKES_NO_W fire)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, 'cool as ${NOUN(TAKES_NO_W(fire))}')
 			assert_equal 'cool as ice', sentence.write
-			sentence = Sentence.new(dictionary, grammar, @conf, '${VERB(2,TAKES_ONLY_W fly)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, '${VERB(2,TAKES_ONLY_W(fly))}')
 			assert_equal 'fly', sentence.write
-			sentence = Sentence.new(dictionary, grammar, @conf, '${VERB(2,TAKES_NO_W fly)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, '${VERB(2,TAKES_NO_W(fly))}')
 			assert_equal 'burn', sentence.write
-			sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB(TAKES_ONLY_W burn)}')
+			sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB(TAKES_ONLY_W(burn))}')
 			dictionary.set_indices NOUN, [1]
 			assert_equal 'fire burn', sentence.write
+			sentence = Sentence.new(dictionary, grammar, @conf, '${SUBJ} ${VERB(TAKES_ONLY_W(burn,fly))}')
+			dictionary.set_indices NOUN, [1]
+			assert_includes ['fire burn', 'fire fly'], sentence.write
 		end
 	end
 
@@ -929,7 +932,7 @@ A y 115 0 ymi .
 		possible = ['dogs must eat', 'dogs cannot eat', 'dogs eat']
 		10.times do
 			sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
-			assert_include possible, sentence.write
+			assert_includes possible, sentence.write
 		end
 	end
 

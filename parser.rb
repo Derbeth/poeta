@@ -32,6 +32,8 @@ module Poeta
 			@separator = separator
 		end
 
+		# parses the source
+		# returns an instance of ParseResult
 		def parse(source)
 			result = ParseResult.new
 			split_by = case @separator

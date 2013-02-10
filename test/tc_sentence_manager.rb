@@ -112,8 +112,8 @@ class SentenceManagerTest < Test::Unit::TestCase
 		mgr.read('10 ${VERB(1)}')
 		mgr.read('10 ${VERB(1)} ${OBJ}')
 		assert_raise(SentenceError) { mgr.read('10 ${VERB} ${OBJ}') }
-		assert_raise(ArgumentError) { mgr.read('10 ${VERB(a)}') }
-		assert_raise(RuntimeError) { mgr.read('10 ${VERB(14)}') }
+		mgr.read('10 ${SUBJ} ${VERB(a)}') # only warning
+		mgr.read('10 ${SUBJ} ${VERB(14)}') # warning
 		assert_raise(SentenceError) { mgr.read '10 ${VERB2.1.1}' }
 
 		# unclosed brackets
