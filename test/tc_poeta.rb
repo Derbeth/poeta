@@ -37,6 +37,7 @@ class PoetaIntegratontest < Test::Unit::TestCase
 	def run_and_check(cmd, opts={})
 		expect_success = opts.include?(:should_work) ? opts[:should_work] : true
 		message = opts[:message] || "running '#{cmd}' failed"
+		puts "...#{cmd}"
 		output = `#{cmd}`
 		if expect_success
 			assert_equal 0, $?.to_i, message

@@ -54,6 +54,7 @@ class Sentence
 		[Sentences::SUBJECT, Sentences::NOUN].each do |part|
 			@pattern.scan(match_token(part)) do
 				full_match,noun_index,norm_index,options = process_match($&, $1)
+				CommonNounOptionsParser.new(@dictionary,@logger).parse(options, full_match)
 				noun_occurs[noun_index] ||= 0
 				noun_occurs[noun_index] += 1
 			end
@@ -61,13 +62,16 @@ class Sentence
 		[Sentences::VERB, Sentences::ADJECTIVE, Sentences::OBJECT].each do |part|
 			@pattern.scan(match_token(part)) do
 				full_match,noun_index,norm_index,options = process_match($&, $1)
-				if part == Sentences::VERB
-					parsed = VerbOptionsParser.new(@dictionary).parse(options, full_match)
-					if parsed[:form]
-						noun_occurs[noun_index] ||= 0
-						noun_occurs[noun_index] += 1
-						next
-					end
+				case part
+					when Sentences::VERB
+						parsed = VerbOptionsParser.new(@dictionary,@logger).parse(options, full_match)
+						if parsed[:form]
+							noun_occurs[noun_index] ||= 0
+							noun_occurs[noun_index] += 1
+							next
+						end
+					when Sentence::ADJECTIVE
+						AdjectiveOptionsParser.new(@dictionary,@logger).parse(options, full_match)
 				end
 				raise SentenceError, "undefined noun referenced from #{full_match} in '#{pattern}'" unless noun_occurs.include? noun_index
 			end
@@ -115,7 +119,7 @@ class Sentence
 	DBL_NOUN_RECUR = 1
 
 	def handle_subject(full_match,subject_index,norm_index,options)
-		parsed_opts = CommonNounOptionsParser.new(@dictionary).parse(options, full_match)
+		parsed_opts = CommonNounOptionsParser.new(@dictionary,@logger).parse(options, full_match)
 		if subject_index == 1 && @subject && !(@implicit_subject && parsed_opts[:no_implicit])
 			noun = @subject
 		else
@@ -134,7 +138,7 @@ class Sentence
 	end
 
 	def handle_noun(full_match,noun_index,norm_index,options)
-		parsed_opts = CommonNounOptionsParser.new(@dictionary).parse(options, full_match)
+		parsed_opts = CommonNounOptionsParser.new(@dictionary,@logger).parse(options, full_match)
 
 		noun = get_random_standalone_noun(parsed_opts)
 
@@ -146,7 +150,7 @@ class Sentence
 	end
 
 	def handle_adjective(full_match,noun_index,norm_index,options)
-		parsed_opts = AdjectiveOptionsParser.new(@dictionary).parse(options, full_match)
+		parsed_opts = AdjectiveOptionsParser.new(@dictionary,@logger).parse(options, full_match)
 		raise "no noun for #{full_match}" unless @indexed_nouns.include? noun_index
 
 		if noun_index == 1 && @subject && @implicit_subject
@@ -217,7 +221,7 @@ class Sentence
 
 	def _handle_verb(full_match,noun_index,norm_index,options)
 		noun = nil
-		parsed_opts = VerbOptionsParser.new(@dictionary).parse(options, full_match)
+		parsed_opts = VerbOptionsParser.new(@dictionary,@logger).parse(options, full_match)
 		if parsed_opts[:form]
 			form = parsed_opts[:form]
 			@forced_subject_number = form[:number] if form[:number]
@@ -456,8 +460,8 @@ class Sentence
 	end
 
 	class SentencePartParser
-		def initialize(dictionary)
-			@dictionary = dictionary
+		def initialize(dictionary,logger)
+			@dictionary, @logger = dictionary, logger
 		end
 
 		def parse(opts, full_match)
@@ -477,7 +481,7 @@ class Sentence
 		attr_reader :parsed
 
 		def handle_option(name, params)
-			puts "warn: unknown option #{name}"
+			@logger.warn "warn: unknown option #{name}"
 		end
 
 		def validate
@@ -485,8 +489,8 @@ class Sentence
 	end
 
 	class SemanticEnabledSentencePartParser < SentencePartParser
-		def initialize(dictionary)
-			super(dictionary)
+		def initialize(dictionary,logger)
+			super(dictionary,logger)
 		end
 
 		protected
@@ -511,8 +515,8 @@ class Sentence
 	end
 
 	class VerbOptionsParser < SemanticEnabledSentencePartParser
-		def initialize(dictionary)
-			super(dictionary)
+		def initialize(dictionary,logger)
+			super(dictionary,logger)
 		end
 
 		protected
@@ -539,8 +543,8 @@ class Sentence
 	end
 
 	class AdjectiveOptionsParser < SentencePartParser
-		def initialize(dictionary)
-			super(dictionary)
+		def initialize(dictionary,logger)
+			super(dictionary,logger)
 		end
 
 		protected
@@ -554,8 +558,8 @@ class Sentence
 	end
 
 	class CommonNounOptionsParser < SemanticEnabledSentencePartParser
-		def initialize(dictionary)
-			super(dictionary)
+		def initialize(dictionary,logger)
+			super(dictionary,logger)
 		end
 
 		protected
