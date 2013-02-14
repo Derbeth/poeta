@@ -62,7 +62,7 @@ module Grammar
 
 	# options: :no_adjective, :no_attribute, :no_noun_noun, :only_subj, :only_obj
 	class Noun < Word
-		attr_reader :animate,:gender, :number, :person,:attributes
+		attr_reader :animate,:gender,:number,:person,:attributes,:suffix
 
 		def initialize(text,gram_props,frequency,gender,general_props={},number=SINGULAR,person=3,animate=true,attributes=[],suffix=nil)
 			super(text,gram_props,general_props,frequency)

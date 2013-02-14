@@ -219,6 +219,7 @@ class NounTest < Test::Unit::TestCase
 
 	def test_suffix
 		noun = NounParser.new.parse('pies',%w{a},100,"SUFFIX(z kulawą nogą)")
+		assert_not_nil noun.suffix
 		grammar = PolishGrammar.new
 		grammar.read_rules "N a 2 ies sa pies"
 		assert_equal 'psa z kulawą nogą', noun.inflect(grammar, {:case => 2})

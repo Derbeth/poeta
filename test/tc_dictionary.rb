@@ -33,6 +33,59 @@ A 50 "strasznie mocny"
 		assert_equal('Dictionary', dict.to_s)
 	end
 
+	def test_statistics
+		dict = Dictionary.new
+		dict.read <<-END
+N  20 cat
+N  30 cat SUFFIX(in boots)
+N  10 pig
+V   2 run
+A 750 big
+A 250 fat
+		END
+		stats = dict.statistics
+		puts "generated statistics: #{stats.inspect}"
+		assert_equal [NOUN,VERB,ADJECTIVE].sort, stats.keys.sort
+		assert_equal 3, stats[NOUN].size
+		assert_equal 1, stats[VERB].size
+		assert_equal 2, stats[ADJECTIVE].size
+		stats[NOUN].each do |word, stat_val|
+			if word.text == 'cat' and word.suffix.nil?
+				assert_in_delta 20.0/60, stat_val
+			elsif word.text == 'cat'
+				assert_in_delta 30.0/60, stat_val
+			elsif word.text == 'pig'
+				assert_in_delta 10.0/60, stat_val
+			else
+				flunk 'unexpected word: ' + word
+			end
+		end
+		stats[VERB].each do |word, stat_val|
+			assert_equal 'run', word.text
+			assert_in_delta 1.0, stat_val
+		end
+		stats[ADJECTIVE].each do |word, stat_val|
+			if word.text == 'big'
+				assert_in_delta 0.75, stat_val
+			elsif word.text == 'fat'
+				assert_in_delta 0.25, stat_val
+			else
+				flunk 'unexpected word: ' + word
+			end
+		end
+	end
+
+	def test_statistics_no_freq
+		dict = Dictionary.new
+		dict.read "N 0 foo\nN 0 bar\n"
+		stats = dict.statistics
+		assert_equal [NOUN], stats.keys
+		assert_equal 2, stats[NOUN].size
+		stats[NOUN].each do |word, stat_val|
+			assert_in_delta 0.0, stat_val
+		end
+	end
+
 	def test_get_random_and_each
 		srand
 		# deliberately used different order of speech parts here to assure word order is not important

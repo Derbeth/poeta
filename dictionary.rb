@@ -172,6 +172,18 @@ module Grammar
 			end
 		end
 
+		def statistics
+			stats = {}
+			@words.each do |speech_part, word_list|
+				stats[speech_part] = {}
+				sum_freq = word_list.reduce(0) { |sum, word| sum + word.frequency }.to_f
+				word_list.each do |word|
+					stats[speech_part][word] = sum_freq == 0.0 ? 0.0 : word.frequency.to_f/sum_freq
+				end
+			end
+			stats
+		end
+
 		# Checks if the word is correct in context of this dictionary.
 		# Does not check word type-specific constraints (for example
 		# does not check if a word is a correct noun etc.), rather it
