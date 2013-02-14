@@ -3,7 +3,7 @@
 require 'optparse'
 
 require './poem'
-require './dictionary'
+require './smart_random_dictionary'
 require './configuration'
 require './preprocessor'
 require './sentence_manager'

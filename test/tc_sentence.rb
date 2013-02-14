@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 require 'test/unit'
 
+require './controlled_dictionary'
 require './sentence'
 require './configuration'
 
