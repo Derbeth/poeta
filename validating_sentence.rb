@@ -8,39 +8,62 @@ class ValidatingSentence < BaseSentence
 	end
 
 	def validate
-		# check that after replacing all placeholders there are no unclosed
-		# placeholders left
-		reduced_text = @pattern.clone
-		Sentences::PARTS.each { |p| reduced_text.gsub!(match_token(p), '') }
-		if reduced_text =~ /\$\{\S+/
+		@noun_occurs = {}
+		text = self.write
+		if text =~ /\$\{\S+/
 			raise SentenceError, "syntax error near '#{$&}' - cannot handle this placeholder"
 		end
+	end
 
-		noun_occurs = {}
-		[Sentences::SUBJECT, Sentences::NOUN].each do |part|
-			@pattern.scan(match_token(part)) do
-				full_match,noun_index,norm_index,options = process_match($&, $1)
-				CommonNounOptionsParser.new(@dictionary,@logger).parse(options, full_match)
-				noun_occurs[noun_index] ||= 0
-				noun_occurs[noun_index] += 1
-			end
+	protected
+
+	def handle_subject(full_match,noun_index,norm_index,parsed_opts)
+		common_handle_noun(full_match,noun_index,norm_index,parsed_opts)
+	end
+
+	def handle_noun(full_match,noun_index,norm_index,parsed_opts)
+		common_handle_noun(full_match,noun_index,norm_index,parsed_opts)
+	end
+
+	def handle_verb(full_match,noun_index,norm_index,parsed_opts)
+		if parsed_opts[:form]
+			@noun_occurs[noun_index] ||= 0
+			@noun_occurs[noun_index] += 1
 		end
-		[Sentences::VERB, Sentences::ADJECTIVE, Sentences::OBJECT].each do |part|
-			@pattern.scan(match_token(part)) do
-				full_match,noun_index,norm_index,options = process_match($&, $1)
-				case part
-					when Sentences::VERB
-						parsed = VerbOptionsParser.new(@dictionary,@logger).parse(options, full_match)
-						if parsed[:form]
-							noun_occurs[noun_index] ||= 0
-							noun_occurs[noun_index] += 1
-							next
-						end
-					when Sentence::ADJECTIVE
-						AdjectiveOptionsParser.new(@dictionary,@logger).parse(options, full_match)
-				end
-				raise SentenceError, "undefined noun referenced from #{full_match} in '#{pattern}'" unless noun_occurs.include? noun_index
-			end
+		check_noun_occur(full_match, noun_index)
+		'verb'
+	end
+
+	def handle_adjective(full_match,noun_index,norm_index,parsed_opts)
+		check_noun_occur(full_match, noun_index)
+		'adjective'
+	end
+
+	def handle_object(full_match,noun_index,norm_index,parsed_opts)
+		check_noun_occur(full_match, noun_index)
+		'object'
+	end
+
+	def handle_adverb(full_match,noun_index,norm_index,parsed_opts)
+		check_noun_occur(full_match, noun_index)
+		'adverb'
+	end
+
+	def handle_other(full_match,noun_index,norm_index,parsed_opts)
+		'other'
+	end
+
+	private
+
+	def common_handle_noun(full_match,noun_index,norm_index,parsed_opts)
+		@noun_occurs[noun_index] ||= 0
+		@noun_occurs[noun_index] += 1
+		'noun'
+	end
+
+	def check_noun_occur(full_match, noun_index)
+		unless @noun_occurs.include? noun_index
+			raise SentenceError, "undefined noun referenced from #{full_match} in '#{@pattern}'"
 		end
 	end
 
