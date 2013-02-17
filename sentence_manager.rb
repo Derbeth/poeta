@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require './sentence'
+require './validating_sentence'
 
 class SentenceManager
 	attr_reader :debug
@@ -58,7 +59,7 @@ class SentenceBuilder
 	def initialize(dictionary,grammar,conf,pattern,frequency)
 		@dictionary,@grammar,@conf,@pattern,@frequency = dictionary,grammar,conf,pattern,frequency
 		raise "invalid frequency: #{frequency}" if frequency < 0
-		create_sentence.validate
+		ValidatingSentence.new(@dictionary,@grammar,@conf,@pattern.dup).validate
 	end
 
 	def create_sentence

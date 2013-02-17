@@ -4,6 +4,7 @@ require 'test/unit'
 
 require './sentence_manager'
 require './configuration'
+require './controlled_dictionary'
 
 include Grammar
 
@@ -30,6 +31,11 @@ class SentenceBuilderTest < Test::Unit::TestCase
 end
 
 class SentenceManagerTest < Test::Unit::TestCase
+	def setup
+		conf = PoetryConfiguration.new
+		@mgr = SentenceManager.new('dictionary','grammar',conf)
+	end
+
 	def test_read
 		srand
 		input = <<-END
@@ -42,22 +48,18 @@ class SentenceManagerTest < Test::Unit::TestCase
 
 1 owaśtam
 		END
-		conf = PoetryConfiguration.new
-		mgr = SentenceManager.new("dictionary",'grammar',conf)
-		mgr.read(input)
-		assert_equal(3, mgr.size)
-		mgr.read(input)
-		assert_equal(3, mgr.size)
+		@mgr.read(input)
+		assert_equal(3, @mgr.size)
+		@mgr.read(input)
+		assert_equal(3, @mgr.size)
 		srand 1
-		assert_equal('okeee', mgr.random_sentence.write)
+		assert_equal('okeee', @mgr.random_sentence.write)
 	end
 
 	def test_nonlatin_characters
 		srand
-		conf = PoetryConfiguration.new
-		mgr = SentenceManager.new('dictionary','grammar',conf)
-		mgr.read '10 ну, давай'
-		assert_equal 'ну, давай', mgr.random_sentence.write
+		@mgr.read '10 ну, давай'
+		assert_equal 'ну, давай', @mgr.random_sentence.write
 	end
 
 	def test_get_random
@@ -69,56 +71,50 @@ class SentenceManagerTest < Test::Unit::TestCase
 2 is
 0 neverever
 		END
-		conf = PoetryConfiguration.new
-		mgr = SentenceManager.new("dictionary",'grammar',conf)
-		mgr.read(input)
-		assert_equal(5,mgr.size)
+		@mgr.read(input)
+		assert_equal(5,@mgr.size)
 		100.times() do
-			sentence = mgr.random_sentence.write
+			sentence = @mgr.random_sentence.write
 			assert(%w{sometimes is}.include?(sentence))
 		end
 	end
 
-	def test_validation
-		conf = PoetryConfiguration.new
-		mgr = SentenceManager.new("dictionary",'grammar',conf)
+	def test_validates_noun_present
+		@mgr.read '10 ${SUBJ} ${VERB} ${SUBJ2}' # ok, two subjects
+		@mgr.read '10 ${OTHER} ${ADJ} ${SUBJ} ${ADV} ${VERB} ${OBJ}' # ok, all elements
 
-		assert_raise(SentenceError) { mgr.read('10 ${SUBJ ${VERB}') }
+		assert_raise(SentenceError) { @mgr.read '10 ${ADJ}' } # no such noun
+		assert_raise(SentenceError) { @mgr.read '10 ${NOUN2} ${ADJ}' } # no such noun
 
-		input = '10 ${SUBJ} ${VERB} ${SUBJ2}' # ok
-		mgr.read(input)
+		@mgr.read '10 ${NOUN} ${ADJ} ${NOUN2} {$ADJ2}' # ok
 
-		input = '10 ${ADJ}' # no such noun
-		assert_raise(SentenceError) { mgr.read(input) }
+		assert_raise(SentenceError) { @mgr.read '10 ${VERB}' } # no such noun
+		assert_raise(SentenceError) { @mgr.read '10 ${NOUN2} ${VERB}' } # no such noun
 
-		input = '10 ${NOUN2} ${ADJ}' # no such noun
-		assert_raise(SentenceError) { mgr.read(input) }
+		assert_raise(SentenceError) { @mgr.read '10 ${OBJ}' } # no such noun for object
+		assert_raise(SentenceError) { @mgr.read '10 ${NOUN2} ${VERB2} ${OBJ}' } # no such noun for object
 
-		input = '10 ${NOUN} ${ADJ} ${NOUN2} {$ADJ2}' # ok
-		mgr.read(input)
+		@mgr.read '10 ${NOUN} ${VERB} ${NOUN2} {$VERB2}' # ok, two nouns
+	end
+	
+	def test_accepts_sentences_not_needing_subject
+		@mgr.read '10 ${VERB(1)}'
+		@mgr.read '10 ${VERB(1)} ${OBJ}'
+	end
+	
+	def test_validates_options
+		@mgr.read '10 ${SUBJ} ${VERB(a)}' # only warning
+		@mgr.read '10 ${SUBJ} ${VERB(14)}' # warning
+		@mgr.read '10 ${SUBJ} ${VERB1.1} ${OBJ1.1} i ${VERB1.2} ${OBJ1.2}' # ok
+		@mgr.read '10 give ${ADJ(4)} ${SUBJ(4,NE)}' # ok
+	end
 
-		input = '10 ${VERB}' # no such noun
-		assert_raise(SentenceError) { mgr.read(input) }
-
-		input = '10 ${NOUN2} ${VERB}' # wrong verb, no such noun
-		assert_raise(SentenceError) { mgr.read(input) }
-
-		input = '10 ${NOUN2} ${VERB2} ${OBJ}' # wrong object, no such noun
-		assert_raise(SentenceError) { mgr.read(input) }
-
-		input = '10 ${NOUN} ${VERB} ${NOUN2} {$VERB2}' # ok
-		mgr.read(input)
-
-		mgr.read('10 ${VERB(1)}')
-		mgr.read('10 ${VERB(1)} ${OBJ}')
-		assert_raise(SentenceError) { mgr.read('10 ${VERB} ${OBJ}') }
-		mgr.read('10 ${SUBJ} ${VERB(a)}') # only warning
-		mgr.read('10 ${SUBJ} ${VERB(14)}') # warning
-		assert_raise(SentenceError) { mgr.read '10 ${VERB2.1.1}' }
-
+	def test_validates_wrong_syntax
 		# unclosed brackets
-		assert_raise(SentenceError) { mgr.read('10 ${SUBJ ${VERB} ${SUBJ2}') }
-		assert_raise(SentenceError) { mgr.read('10 ${SUBJ} ${VERB ${SUBJ2}') }
-		assert_raise(SentenceError) { mgr.read('10 ${SUBJ} ${VERB} ${SUBJ2') }
+		assert_raise(SentenceError) { @mgr.read('10 ${SUBJ ${VERB} ${SUBJ2}') }
+		assert_raise(SentenceError) { @mgr.read('10 ${SUBJ} ${VERB ${SUBJ2}') }
+		assert_raise(SentenceError) { @mgr.read('10 ${SUBJ} ${VERB} ${SUBJ2') }
+
+		assert_raise(SentenceError) { @mgr.read '10 ${VERB2.1.1}' } # wrong format
 	end
 end
