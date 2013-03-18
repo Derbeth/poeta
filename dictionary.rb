@@ -78,44 +78,28 @@ module Grammar
 		def get_random_subject(&freq_counter)
 			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
 			get_random(NOUN) do |frequency, word|
-				if word.get_property(:only_obj)
-					frequency = 0
-				end
-				counter.call(frequency,word)
+				counter.call(noun_as_subject_frequency(frequency,word),word)
 			end
 		end
 
 		def get_random_object(&freq_counter)
 			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
 			get_random(NOUN) do |frequency, word|
-				if word.get_property(:only_subj)
-					frequency = 0
-				elsif word.get_property(:obj_freq)
-					frequency = word.get_property(:obj_freq)
-				end
-				counter.call(frequency,word)
+				counter.call(noun_as_object_frequency(frequency,word),word)
 			end
 		end
 
 		def get_random_verb_as_predicate(&freq_counter)
 			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
 			get_random(VERB) do |frequency, word|
-				if word.get_property(:only_obj)
-					frequency = 0
-				end
-				counter.call(frequency,word)
+				counter.call(verb_as_predicate_frequency(frequency,word),word)
 			end
 		end
 
 		def get_random_verb_as_object(&freq_counter)
 			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
 			get_random(VERB) do |frequency, word|
-				if word.get_property(:obj_freq)
-					frequency = word.get_property(:obj_freq)
-				elsif word.get_property(:not_as_object)
-					frequency = 0
-				end
-				counter.call(frequency,word)
+				counter.call(verb_as_object_frequency(frequency,word),word)
 			end
 		end
 
@@ -176,12 +160,47 @@ module Grammar
 			stats = {}
 			@words.each do |speech_part, word_list|
 				stats[speech_part] = {}
-				sum_freq = word_list.reduce(0) { |sum, word| sum + word.frequency }.to_f
+				sum_freq = word_list.reduce(0) { |sum, word| sum + frequency_for_statistics(speech_part,word) }.to_f
+				sum_obj_freq = nil
+				count_obj_freq = has_obj_frequency_in_statistics?(speech_part)
+				if count_obj_freq
+					sum_obj_freq = word_list.reduce(0) { |sum, word| sum + obj_frequency_for_statistics(speech_part,word) }.to_f
+				end
 				word_list.each do |word|
-					stats[speech_part][word] = sum_freq == 0.0 ? 0.0 : word.frequency.to_f/sum_freq
+					stats[speech_part][word] = {}
+					stats[speech_part][word][:freq] = sum_freq == 0.0 ? 0.0 : frequency_for_statistics(speech_part,word).to_f/sum_freq
+					if count_obj_freq
+						stats[speech_part][word][:obj_freq] = sum_obj_freq == 0.0 ? 0.0 : obj_frequency_for_statistics(speech_part,word).to_f/sum_obj_freq
+					end
 				end
 			end
 			stats
+		end
+
+		def has_obj_frequency_in_statistics?(speech_part)
+			speech_part == NOUN || speech_part == VERB
+		end
+
+		def frequency_for_statistics(speech_part, word)
+			case speech_part
+			when NOUN
+				noun_as_subject_frequency(word.frequency, word)
+			when VERB
+				verb_as_predicate_frequency(word.frequency, word)
+			else
+				word.frequency
+			end
+		end
+
+		def obj_frequency_for_statistics(speech_part, word)
+			case speech_part
+			when NOUN
+				noun_as_object_frequency(word.frequency, word)
+			when VERB
+				verb_as_object_frequency(word.frequency, word)
+			else
+				word.frequency
+			end
 		end
 
 		# Checks if the word is correct in context of this dictionary.
@@ -276,6 +295,38 @@ module Grammar
 			def initialize(freq)
 				@frequency = freq
 			end
+		end
+
+		def noun_as_subject_frequency(frequency, word)
+			if word.get_property(:only_obj)
+				frequency = 0
+			end
+			frequency
+		end
+
+		def noun_as_object_frequency(frequency, word)
+			if word.get_property(:only_subj)
+				frequency = 0
+			elsif word.get_property(:obj_freq)
+				frequency = word.get_property(:obj_freq)
+			end
+			frequency
+		end
+
+		def verb_as_predicate_frequency(frequency, word)
+			if word.get_property(:only_obj)
+				frequency = 0
+			end
+			frequency
+		end
+
+		def verb_as_object_frequency(frequency, word)
+			if word.get_property(:obj_freq)
+				frequency = word.get_property(:obj_freq)
+			elsif word.get_property(:not_as_object)
+				frequency = 0
+			end
+			frequency
 		end
 
 		def read_speech_part(line)

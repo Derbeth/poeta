@@ -6,6 +6,7 @@ require './poem'
 require './smart_random_dictionary'
 require './configuration'
 require './preprocessor'
+require './dictionary_statistics'
 require './sentence_manager'
 
 include Grammar
@@ -16,6 +17,7 @@ dictionary = nil
 language = 'pl'
 debug = false
 forced_seed = nil
+show_stats = false
 conf = PoetryConfiguration.new
 
 GRAMMAR_FOR_LANGS = {'de' => GermanGrammar, 'en' => EnglishGrammar, 'pl' => PolishGrammar}
@@ -34,6 +36,9 @@ OptionParser.new do |opts|
 	end
 	opts.on('-s', '--seed SEED', "Feed the random generator with given rand seed") do |s|
 		forced_seed = s.to_i
+	end
+	opts.on('--stats', "Just print statistics of the used dictionary") do
+		show_stats = true
 	end
 
 	opts.separator ""
@@ -90,23 +95,28 @@ unless errors.empty?
 	errors.each { |err| conf.logger.warn "warn: #{err[:message]}" }
 end
 
-if forced_seed
-	srand(forced_seed)
+if show_stats
+	puts "dictionary: #{dictionary_file}"
+	DictionaryStatistics.new.print(dictionary)
 else
-	srand
-end
+	if forced_seed
+		srand(forced_seed)
+	else
+		srand
+	end
 
-begin
-	poem = Poem.new(sentence_mgr,title_sentence_mgr,conf)
-	puts poem.text
-rescue
-	puts 'Error: ', $!.inspect, $@
-end
+	begin
+		poem = Poem.new(sentence_mgr,title_sentence_mgr,conf)
+		puts poem.text
+	rescue
+		puts 'Error: ', $!.inspect, $@
+	end
 
-if debug
-	puts
-	puts "dictionary: #{dictionary_file} sentences: #{sentences_file} grammar: #{grammar.class}"
-	puts "config files: #{used_config_files.join(' ')}"
-	puts "configuration: #{conf.summary}"
-	puts "rand seed: #{srand}"
+	if debug
+		puts
+		puts "dictionary: #{dictionary_file} sentences: #{sentences_file} grammar: #{grammar.class}"
+		puts "config files: #{used_config_files.join(' ')}"
+		puts "configuration: #{conf.summary}"
+		puts "rand seed: #{srand}"
+	end
 end

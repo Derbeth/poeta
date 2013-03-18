@@ -35,39 +35,52 @@ A 50 "strasznie mocny"
 	def test_statistics
 		dict = Dictionary.new
 		dict.read <<-END
-N  20 cat
-N  30 cat SUFFIX(in boots)
-N  10 pig
-V   2 run
-A 750 big
-A 250 fat
+N  20 cat                   # s 20 o 20
+N  30 cat SUFFIX(in boots)  # s 30 o 30
+N  10 pig OBJ_FREQ(30)      # s 10 o 30
+N  10 dog ONLY_OBJ          # s  0 o 10
+V 750 can NOT_AS_OBJ        # p750 o  0
+V 250 run                   # p250 o250
+A   2 big
 		END
 		stats = dict.statistics
 		puts "generated statistics: #{stats.inspect}"
 		assert_equal [NOUN,VERB,ADJECTIVE].sort, stats.keys.sort
-		assert_equal 3, stats[NOUN].size
-		assert_equal 1, stats[VERB].size
-		assert_equal 2, stats[ADJECTIVE].size
-		stats[NOUN].each do |word, stat_val|
+		assert_equal 4, stats[NOUN].size
+		assert_equal 2, stats[VERB].size
+		assert_equal 1, stats[ADJECTIVE].size
+		stats[NOUN].each do |word, stat_vals|
 			if word.text == 'cat' and word.suffix.nil?
-				assert_in_delta 20.0/60, stat_val
+				assert_in_delta 20.0/60, stat_vals[:freq]
+				assert_in_delta 20.0/90, stat_vals[:obj_freq]
 			elsif word.text == 'cat'
-				assert_in_delta 30.0/60, stat_val
+				assert_in_delta 30.0/60, stat_vals[:freq]
+				assert_in_delta 30.0/90, stat_vals[:obj_freq]
 			elsif word.text == 'pig'
-				assert_in_delta 10.0/60, stat_val
+				assert_in_delta 10.0/60, stat_vals[:freq]
+				assert_in_delta 30.0/90, stat_vals[:obj_freq]
+			elsif word.text == 'dog'
+				assert_in_delta 0.0, stat_vals[:freq]
+				assert_in_delta 10.0/90, stat_vals[:obj_freq]
 			else
 				flunk 'unexpected word: ' + word
 			end
 		end
-		stats[VERB].each do |word, stat_val|
-			assert_equal 'run', word.text
-			assert_in_delta 1.0, stat_val
+		stats[VERB].each do |word, stat_vals|
+			if word.text == 'can'
+				assert_in_delta 750.0/1000, stat_vals[:freq]
+				assert_in_delta 0.0, stat_vals[:obj_freq]
+			elsif word.text == 'run'
+				assert_in_delta 250.0/1000, stat_vals[:freq]
+				assert_in_delta 1.0, stat_vals[:obj_freq]
+			else
+				flunk 'unexpected word: ' + word
+			end
 		end
-		stats[ADJECTIVE].each do |word, stat_val|
+		stats[ADJECTIVE].each do |word, stat_vals|
 			if word.text == 'big'
-				assert_in_delta 0.75, stat_val
-			elsif word.text == 'fat'
-				assert_in_delta 0.25, stat_val
+				assert_in_delta 1.0, stat_vals[:freq]
+				assert_nil stat_vals[:obj_freq]
 			else
 				flunk 'unexpected word: ' + word
 			end
@@ -76,12 +89,13 @@ A 250 fat
 
 	def test_statistics_no_freq
 		dict = Dictionary.new
-		dict.read "N 0 foo\nN 0 bar\n"
+		dict.read "N 0 foo\nN 0 bar ONLY_OBJ\n"
 		stats = dict.statistics
 		assert_equal [NOUN], stats.keys
 		assert_equal 2, stats[NOUN].size
-		stats[NOUN].each do |word, stat_val|
-			assert_in_delta 0.0, stat_val
+		stats[NOUN].each do |word, stat_vals|
+			assert_in_delta 0.0, stat_vals[:freq]
+			assert_in_delta 0.0, stat_vals[:obj_freq]
 		end
 	end
 
