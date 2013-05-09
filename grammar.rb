@@ -31,9 +31,9 @@ module Grammar
 	class GrammarError < RuntimeError
 	end
 
-	class Grammar
+	class SpeechParts
 		private_class_method :new
-		def Grammar.describe_speech_part(s)
+		def SpeechParts.describe(s)
 			case s
 				when NOUN then 'noun'
 				when VERB then 'verb'

@@ -4,14 +4,15 @@ require './dictionary'
 require './grammar'
 
 class DictionaryStatistics
-	include Grammar
-
+	# prints the statistics to the standard output
+	#
+	# possible options: :sort_key (:name, :freq), :sort_order (:asc, :desc)
 	def print(dictionary, opts={})
 		sort_key = opts[:sort_key] || :name    # :freq
 		sort_order = opts[:sort_order] || :asc # :desc
 		stats = dictionary.statistics
 		stats.each do |speech_part,part_stats|
-			puts Grammar.describe_speech_part(speech_part).capitalize + 's:'
+			puts SpeechParts.describe(speech_part).capitalize + 's:'
 			sorted_keys(part_stats, sort_key, sort_order).each do |word|
 				word_stats = part_stats[word]
 				puts "\t%s\t%s\t%s" % [format_freq(word_stats[:freq]), format_freq(word_stats[:obj_freq]), format_word(word, part_stats)]
@@ -21,6 +22,8 @@ class DictionaryStatistics
 
 	private
 
+	include Grammar
+
 	def sorted_keys(part_stats, sort_key, sort_order)
 		result = case sort_key
 			when :name then part_stats.keys.sort
@@ -29,7 +32,7 @@ class DictionaryStatistics
 		end
 		case sort_order
 			when :asc then result
-			when :desc then result.revert
+			when :desc then result.reverse
 			else raise "wrong sort order: #{sort_order}"
 		end
 	end

@@ -18,7 +18,7 @@ module Grammar
 			retval = 'Dictionary'
 			word_stats = []
 			@words.keys.sort.each do |speech_part|
-				word_stats << "#{@words[speech_part].size}x #{Grammar.describe_speech_part(speech_part)}"
+				word_stats << "#{@words[speech_part].size}x #{SpeechParts.describe(speech_part)}"
 			end
 			words_part = word_stats.join(', ')
 			retval += '; ' + words_part unless (words_part.empty?)
