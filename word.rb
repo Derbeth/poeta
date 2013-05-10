@@ -140,6 +140,10 @@ module Grammar
 			super()
 			@is_adjective = true
 		end
+
+		def to_s
+			"AdjObject"
+		end
 	end
 
 	class InfinitiveObject < GramObject

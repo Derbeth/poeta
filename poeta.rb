@@ -18,6 +18,7 @@ language = 'pl'
 debug = false
 forced_seed = nil
 show_stats = false
+stat_opts = {}
 conf = PoetryConfiguration.new
 
 GRAMMAR_FOR_LANGS = {'de' => GermanGrammar, 'en' => EnglishGrammar, 'pl' => PolishGrammar}
@@ -37,8 +38,15 @@ OptionParser.new do |opts|
 	opts.on('-s', '--seed SEED', "Feed the random generator with given rand seed") do |s|
 		forced_seed = s.to_i
 	end
-	opts.on('--stats', "Just print statistics of the used dictionary") do
+	opts.on('--stats [SORTING]', "Just print statistics of the used dictionary",
+	        "You can define sorting like 'freq,desc'") do |sort|
 		show_stats = true
+		if sort && sort !~ /^\w+,\w+$/
+			$stderr.puts "Wrong stats option: '#{sort}'; expected something like 'freq,desc'"
+		elsif sort
+			key,order = sort.split(',')
+			stat_opts = {:sort_key => key.to_sym, :sort_order => order.to_sym}
+		end
 	end
 
 	opts.separator ""
@@ -97,7 +105,7 @@ end
 
 if show_stats
 	puts "dictionary: #{dictionary_file}"
-	DictionaryStatistics.new.print(dictionary)
+	DictionaryStatistics.new.print(dictionary, stat_opts)
 else
 	if forced_seed
 		srand(forced_seed)

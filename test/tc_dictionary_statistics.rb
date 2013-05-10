@@ -14,6 +14,7 @@ N 1 mouse
 N 1 "" PERSON(1)           # empty text
 V 2 look OBJ(after,2)
 V 1 look OBJ(for,2)
+V 1 clean REFL
 A 1 smart
 		END
 	end

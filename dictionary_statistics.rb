@@ -42,10 +42,11 @@ class DictionaryStatistics
 	end
 
 	def format_word(word, part_stats)
-		if part_stats.keys.find { |other_word| !other_word.equal?(word) && other_word.text == word.text }
-			format_word_verbose(word)
-		else
+		same_text_words = part_stats.keys.find_all { |other_word| !other_word.equal?(word) && other_word.text == word.text }
+		if same_text_words.empty?
 			format_word_short(word)
+		else
+			format_word_verbose(word, same_text_words)
 		end
 	end
 
@@ -61,16 +62,28 @@ class DictionaryStatistics
 		end
 	end
 
-	def format_word_verbose(word)
+	def format_word_verbose(word, same_text_words)
 		text = format_word_short(word)
-		text += "\t" + word_details(word)
+		text += "\t" + word_details(word, same_text_words)
 		text
 	end
 
-	def word_details(word)
+	def word_details(word, same_text_words)
 		details = []
-		details << 'Pl' if word.is_a?(Noun) and word.number == PLURAL # TODO move to short
-		details << word.get_properties.to_s if !word.get_properties.empty?
+		if word.is_a? Noun
+			details << GENDER2STRING[word.gender] if same_text_words.find { |other| other.gender != word.gender }
+			details << 'Pl' if word.number == PLURAL && same_text_words.find { |other| other.number != word.number }
+		end
+		if word.is_a? Verb
+			details << 'REFL' if word.reflexive && same_text_words.find { |other| other.reflexive != word.reflexive }
+			word.objects.each { |obj| details << format_gram_object(obj) }
+		end
+		details << word.get_properties.to_s if !word.get_properties.empty? && same_text_words.find { |other| other.get_properties != word.get_properties }
 		details.join(' ')
+	end
+
+	def format_gram_object(obj)
+		res = obj.to_s
+		res.sub('NounObject', 'NOUN').sub('AdjObject', 'ADJ').sub('InfObject', 'INF').sub('()','')
 	end
 end
