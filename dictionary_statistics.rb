@@ -70,9 +70,17 @@ class DictionaryStatistics
 
 	def word_details(word, same_text_words)
 		details = []
+		if word.is_a?(Noun) || word.is_a?(Adjective) || word.is_a?(Verb)
+			details << "SUFFIX(#{word.suffix})" if word.suffix && same_text_words.find { |other| other.suffix != word.suffix }
+		end
 		if word.is_a? Noun
 			details << GENDER2STRING[word.gender] if same_text_words.find { |other| other.gender != word.gender }
 			details << 'Pl' if word.number == PLURAL && same_text_words.find { |other| other.number != word.number }
+		end
+		if word.is_a?(Noun) || word.is_a?(Adjective)
+			if !word.attributes.empty? && same_text_words.find { |other| other.attributes != word.attributes }
+				word.attributes.each { |attr| details << format_attribute(attr) }
+			end
 		end
 		if word.is_a? Verb
 			details << 'REFL' if word.reflexive && same_text_words.find { |other| other.reflexive != word.reflexive }
@@ -85,5 +93,9 @@ class DictionaryStatistics
 	def format_gram_object(obj)
 		res = obj.to_s
 		res.sub('NounObject', 'NOUN').sub('AdjObject', 'ADJ').sub('InfObject', 'INF').sub('()','')
+	end
+
+	def format_attribute(attr)
+		attr.to_s.sub('NounObject', 'ATTR')
 	end
 end

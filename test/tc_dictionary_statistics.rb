@@ -10,12 +10,16 @@ class DictionaryTest < Test::Unit::TestCase
 		@dict.read <<-END
 N 3 cat
 N 1 cat Pl                 # two same nouns
+N 1 cat ATTR(of,2)
+N 1 cat SUFFIX(in boots)
 N 1 mouse
 N 1 "" PERSON(1)           # empty text
 V 2 look OBJ(after,2)
 V 1 look OBJ(for,2)
 V 1 clean REFL
 A 1 smart
+D 1 fast
+O 1 ooh
 		END
 	end
 

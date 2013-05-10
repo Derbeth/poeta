@@ -161,7 +161,7 @@ module Grammar
 
 	# Can have properties: :only_obj, :not_as_object
 	class Verb < Word
-		attr_reader :objects, :reflexive
+		attr_reader :objects, :reflexive, :suffix
 
 		def initialize(text,gram_props,frequency,general_props={},reflexive=false,
 			objects=[],suffix=nil)
@@ -222,7 +222,7 @@ module Grammar
 
 	# Also can have properties: :not_as_object, :only_singular, :only_plural
 	class Adjective < Word
-		attr_reader :attributes, :double
+		attr_reader :attributes, :double, :suffix
 
 		def initialize(text,gram_props,frequency,double=false,attributes=[],general_props={},suffix=nil)
 			super(text,gram_props,general_props,frequency)
