@@ -1,13 +1,18 @@
 # TODO what about a/the ?
 
 N 100 abyss/a
+N  20 agony/a
 N  50 air/a
+N  30 anger/a                            SEMANTIC(FEELING)
 N 100 darkness/a     TAKES_NO_W(dark)
 N  50 day/a
 N  50 day/a      Pl
 N 100 death/a
+N  50 dispair/a
+N 100 fear/a                             SEMANTIC(FEELING)
 N 100 flame/a
 N 100 flesh/a
+N  10 fool/a     Pl                      SEMANTIC(SENTIENT)
 N  50 fruit/a    Pl
 N 100 heart/a
 N 100 hope/a
@@ -21,27 +26,33 @@ N 100 life/a
 N 100 love/a
 N 100 madness/a      TAKES_NO_W(insane)
 N  50 nobody         NO_ADJ OBJ_FREQ(10)
-N 100 pain/a         TAKES_NO_W(painful)
+N  50 nothing        NO_ATTR                 SEMANTIC(FEELING)
+N 100 pain/a         TAKES_NO_W(painful)     SEMANTIC(FEELING)
+N  30 pleasure/a Pl
+N  50 people     Pl
 N  10 prophet/a
 N  10 prophet/a  Pl
+N 100 scream/a
 N 100 silence/a      TAKES_NO_W(silent)
 N 100 sin/a
 N  10 sin/a      Pl
 N 100 sorrow/a
 N  30 sun/a
 N 100 tear/a     Pl
+N  30 temptation/a Pl
 N 100 thought/a
 N 100 thought/a  Pl
 N 100 truth/a
 N  10 truth/a    Pl
 N  50 war/a
+N  50 word/a     Pl
 
-N 100 I/0            NO_ADJ PERSON(1)
-N 100 we/0       Pl  NO_ADJ PERSON(1)
-N 100 they/0     Pl  NO_ADJ NO_NOUN_NOUN
-N 100 you/0          NO_ADJ PERSON(2)
-N 100 you/0      Pl  NO_ADJ PERSON(2)
-N 100 it             NO_ADJ
+N 100 I/0            NO_ADJ PERSON(1)     SEMANTIC(PERSONAL,SENTIENT)
+N  50 we/0       Pl  NO_ADJ PERSON(1)     SEMANTIC(PERSONAL,SENTIENT)
+N 100 they/0     Pl  NO_ADJ NO_NOUN_NOUN  SEMANTIC(PERSONAL,SENTIENT)
+N 100 you/0          NO_ADJ PERSON(2)     SEMANTIC(PERSONAL,SENTIENT)
+N 100 you/0      Pl  NO_ADJ PERSON(2)     SEMANTIC(PERSONAL,SENTIENT)
+N 100 it             NO_ADJ               SEMANTIC(PERSONAL)
 
 V 100 become/a    ADJ
 V  50 burn/a      OBJ(2)
@@ -49,9 +60,14 @@ V 100 cannot      INF NOT_AS_OBJ
 V  10 could       INF NOT_AS_OBJ
 V 100 die/a
 V 100 be/0        ADJ
+V  10 be/0        SUFFIX(nothing to me)
+V 100 feel/a      ADJ    ONLY_WITH(SENTIENT)  # I feel weak
+V 100 feel/a      OBJ(2) ONLY_WITH(SENTIENT) TAKES_ONLY(FEELING)  # I feel pain
+V 500 fill/a      OBJ(2) ONLY_WITH_W(anger,dispair,fear,horror,silence,sorrow)
 V 100 kill/a      OBJ(2)
 V  50 lie/a       NOT_WITH_W(lie)
 V  30 long/a      OBJ(for,2) NOT_AS_OBJ
+V  10 mean/a      SUFFIX(nothing to me)
 V 100 must        INF NOT_AS_OBJ
 V  10 scream/a
 V 100 see/a       OBJ(2)
@@ -64,7 +80,7 @@ V  40 try/a       INF(to) NOT_AS_OBJ
 A 100 all         ONLY_PL DOUBLE NOT_AS_OBJ
 A 100 burning
 A 100 cold
-A 100 dark
+A 300 dark
 A 100 dead        NOT_WITH_W(death)
 A  30 deadly      NOT_WITH_W(death)
 A  50 each        ONLY_SING DOUBLE NOT_AS_OBJ
@@ -73,6 +89,7 @@ A 100 eternal
 A  50 every       ONLY_SING DOUBLE NOT_AS_OBJ
 A  30 fallen
 A 100 false
+A  75 foolish
 A 100 forbidden
 A 100 forgotten
 A  50 her         POSS
@@ -82,17 +99,19 @@ A 100 impossible
 A 100 insane
 A 100 last
 A 100 lonely
-A 100 lost
+A 150 lost
 A  10 lost        ATTR(in,2)
 A  50 my          POSS
 A  50 our         POSS
 A 100 painful
 A 100 relentless
 A 100 rotting
+A 100 ruined
 A 100 shining
 A 100 silent
 A 100 stinking
 A 100 stolen
+A 150 such        DOUBLE
 A 100 sweet
 A 100 that/a      DOUBLE NOT_AS_OBJ
 A  50 their       POSS
@@ -106,15 +125,17 @@ D 100 always
 D 100 desperately
 D 100 "forever more"
 D 100 furiously
+D  30 in~agony
+D  30 in~vain
 D 100 madly
 D 100 silently
 D 100 slowly
 
 O 100 and
-O   5 alas
+O  10 alas
 O 100 although
 O 100 as
-O  5 "can it be that"
-O 100 even
+O   5 "can it be that"
+O  50 even
 O   5 lest
 O 100 therefore
