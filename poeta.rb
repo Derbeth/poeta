@@ -3,6 +3,7 @@
 require 'optparse'
 
 require './poem'
+require './poem_files'
 require './smart_random_dictionary'
 require './configuration'
 require './preprocessor'
@@ -62,38 +63,22 @@ OptionParser.new do |opts|
 end.parse!
 
 raise "expects none or one argument" if ARGV.size > 1
-default_name = "default_#{language}"
-dictionary = if ARGV[0]
-	ARGV[0]
-else
-	default_name
-end
-
-dictionary_file = "dictionaries/#{dictionary}.dic"
-sentences_file = "dictionaries/#{dictionary}.cfg"
-sentences_file = "dictionaries/#{default_name}.cfg" unless File.exists?(sentences_file)
-title_sentences_file = 'titles.cfg'
-grammar_file = "languages/#{language}.aff"
-general_config_file = 'poetry.yml'
-dictionary_config_file = "dictionaries/#{dictionary}.yml"
-
-[dictionary_file, sentences_file, title_sentences_file, grammar_file].each do |file|
-	raise "#{file} does not exist" unless File.exists?(file)
-end
+poem_files = PoemFiles.new(language, ARGV[0])
+poem_files.resolve!
 
 grammar = GRAMMAR_FOR_LANGS[language].new
 preprocessor = Preprocessor.new(conf)
 
-File.open(grammar_file) { |f| grammar.read_rules(f) }
+File.open(poem_files.grammar_file) { |f| grammar.read_rules(f) }
 dictionary = SmartRandomDictionary.new(5)
-File.open(dictionary_file) { |f| dictionary.read(preprocessor.process(f)) }
+File.open(poem_files.dictionary_file) { |f| dictionary.read(preprocessor.process(f)) }
 sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
-File.open(sentences_file) { |f| sentence_mgr.read(preprocessor.process(f)) }
+File.open(poem_files.sentences_file) { |f| sentence_mgr.read(preprocessor.process(f)) }
 title_sentence_mgr = SentenceManager.new(dictionary,grammar,conf)
-File.open(title_sentences_file) { |f| title_sentence_mgr.read(f) }
+File.open(poem_files.title_sentences_file) { |f| title_sentence_mgr.read(f) }
 
 used_config_files = []
-[general_config_file, dictionary_config_file].each do |file|
+[poem_files.general_config_file, poem_files.dictionary_config_file].each do |file|
 	next unless File.exists?(file)
 	File.open(file) { |f| conf.read(f) && used_config_files << file }
 end
@@ -104,7 +89,7 @@ unless errors.empty?
 end
 
 if show_stats
-	puts "dictionary: #{dictionary_file}"
+	puts "dictionary: #{poem_files.dictionary_file}"
 	DictionaryStatistics.new.print(dictionary, stat_opts)
 else
 	if forced_seed
@@ -122,7 +107,8 @@ else
 
 	if debug
 		puts
-		puts "dictionary: #{dictionary_file} sentences: #{sentences_file} grammar: #{grammar.class}"
+		puts "dictionary: #{poem_files.dictionary_file} sentences: #{poem_files.sentences_file} titles: #{poem_files.title_sentences_file}"
+		puts "grammar: #{grammar.class}"
 		puts "config files: #{used_config_files.join(' ')}"
 		puts "configuration: #{conf.summary}"
 		puts "rand seed: #{srand}"
