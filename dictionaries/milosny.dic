@@ -1,11 +1,11 @@
-N  50 ból/c m
-N  50 ciało/p n
-N  50 ciało/p n Pl
-N  50 dłoń/u1 f Pl
+N  50 ból/c m nan
+N  50 ciało/p n           SEMANTIC(CIAŁO)
+N  50 ciało/p n Pl        SEMANTIC(CIAŁO)
+N  50 dłoń/u1 f Pl        SEMANTIC(CIAŁO)
 N 100 dotyk/g m nan
 N  50 kwiat/e m nan
-N 100 miłość/n f          SEMANTIC(PALANY)
-N 100 namiętność/n f      SEMANTIC(PALANY)
+N 100 miłość/n f          SEMANTIC(PAŁANY)
+N 100 namiętność/n f      SEMANTIC(PAŁANY)
 N 100 oczekiwanie/d n
 N  90 oddech/e m nan
 N  10 oddech/e m nan Pl
@@ -15,27 +15,27 @@ N  80 pieszczota/b f
 N  20 pieszczota/b f Pl
 N  50 pocałunek/g m nan
 N  50 pocałunek/g m nan Pl
-N 100 policzek/a2 m nan Pl
-N  50 powieka/r f Pl
+N 100 policzek/g m nan Pl   SEMANTIC(CIAŁO)
+N  50 powieka/r f Pl        SEMANTIC(CIAŁO)
 N  50 rozkosz/k f
 N  50 rozkosz/k f Pl
 N  50 rozłąka/r f
 N 100 spojrzenie/d n
 N  50 spotkanie/d n
 N 100 szept/e m nan
-N 100 tęsknota/b f         SEMANTIC(PALANY)
-N  50 twarz/k f
-N  50 uczucie/d n          SEMANTIC(PALANY)
+N 100 tęsknota/b f         SEMANTIC(PAŁANY)
+N  50 twarz/k f            SEMANTIC(CIAŁO)
+N  50 uczucie/d n          SEMANTIC(PAŁANY)
 N  50 uczucie/d n Pl
-N 100 usta/p n Pl
+N 100 usta/p n Pl          SEMANTIC(CIAŁO)
 N  80 uśmiech/e m nan
 N  20 uśmiech/e m nan Pl
-N 100 warga/r f Pl
-N 100 włos/j2 m nan Pl
+N 100 warga/r f Pl         SEMANTIC(CIAŁO)
+N 100 włos/j2 m nan Pl     SEMANTIC(CIAŁO)
 N 100 wstyd/e m nan
-N 100 zapach/e m nan
-N 100 żar/e m nan          SEMANTIC(PALANY)
-N  45 żądza/l f            SEMANTIC(PALANY)
+N 100 zapach/e m nan ATTR(2)
+N 100 żar/e m nan          SEMANTIC(PAŁANY)
+N  45 żądza/l f            SEMANTIC(PAŁANY)
 N   5 żądza/l f Pl
 
 N 200 "" m      PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(PERSON)    # ja
@@ -75,20 +75,21 @@ V 100 dotykać/1 OBJ(4) NOT_WITH_W(dotyk) TAKES_NO_W(dotyk)
 V 100 drżeć/7
 V 100 kochać/1 OBJ(4)
 V 100 leżeć/7m
-V  80 lubić/6 OBJ(4)
-V  20 lubić/6 INF NOT_AS_OBJ
-V 100 pałać/1 OBJ(5)        TAKES_ONLY(PALANY)
+V  80 lubić/6 OBJ(4)                            SEMANTIC(NO_IMPERATIVE)
+V  20 lubić/6 INF NOT_AS_OBJ                    SEMANTIC(NO_IMPERATIVE)
+V  50 pachnąć/5 OBJ(5)      TAKES_NO(CIAŁO)     SEMANTIC(NO_IMPERATIVE)
+V 100 pałać/1 OBJ(5)        TAKES_ONLY(PAŁANY)
 V 100 patrzeć/7 OBJ(na,4)
 V  70 płonąć/5b
 V  30 płonąć/5b OBJ(z,2) TAKES_NO(PERSON)
-V  80 pragnąć/5 OBJ(2)
-V  20 pragnąć/5 INF NOT_AS_OBJ
+V  80 pragnąć/5 OBJ(2)                          SEMANTIC(NO_IMPERATIVE)
+V  20 pragnąć/5 INF NOT_AS_OBJ                  SEMANTIC(NO_IMPERATIVE)
 V 100 rozbierać/1 OBJ(4)
 V 100 rozbudzać/1 OBJ(4)
 V 100 rozpalać/1 OBJ(4)
 V 100 szukać/1 OBJ(2)
-V  80 uwielbiać/1 OBJ(4)
-V  20 uwielbiać/1 INF NOT_AS_OBJ
+V  80 uwielbiać/1 OBJ(4)                        SEMANTIC(NO_IMPERATIVE)
+V  20 uwielbiać/1 INF NOT_AS_OBJ                SEMANTIC(NO_IMPERATIVE)
 
 D 100 cicho
 D  50 "coraz mocniej"

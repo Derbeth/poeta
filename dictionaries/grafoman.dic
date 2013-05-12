@@ -1,15 +1,18 @@
+N  40 bieg/g m nan ATTR(2)
 N 100 ciało/p n nan
 N  50 ciało/p n Pl nan
 N 100 cisza/l f
 N 100 czas/e m nan
 N 100 człowiek/a1 m
+N 100 droga/r f
 N 100 egzystencja/h f
 N  50 grzech/e m nan
 N  50 istnienie/d n
 N 100 jedność/n f
+N  50 kres/e m nan ATTR(2)
 N 100 ludzie/a m Pl
 N  20 łaska/r f
-N  20 mleko/p n SUFFIX(matki)
+N  10 mleko/p n SUFFIX(matki)
 N  50 myśl/n f
 N  50 myśl/n f Pl
 N 100 nieszczęście/d n
@@ -21,6 +24,7 @@ N  50 piekło/d n Pl nan
 N 100 pustka/r f
 N  50 pytanie/d n Pl nan
 N 100 raj/c m nan
+N  50 rana/b2 f
 N 100 ruch/e m nan
 N 100 sens/e m ATTR(2) # sens istnienia
 N  50 smak/g m nan
@@ -60,6 +64,8 @@ V  80 musieć/7m INF NOT_AS_OBJ
 V  50 myśleć/7a OBJ(o,6)
 V  25 niszczyć/6 OBJ(4)
 V  50 opuszczać/1 OBJ(4)
+V  20 otwierać/1 OBJ(4)
+V  25 pachnąć/5 OBJ(5)
 V  20 pluć/A OBJ(na,4)
 V 100 płonąć/5b
 V 100 płynąć/5b
@@ -69,9 +75,11 @@ V 100 próbować/4 INF NOT_AS_OBJ
 V 100 rozkwitać/1
 V   1 sprawiać/1  # only for .cfg
 V  50 stawać/A REFL OBJ(5) NOT_AS_OBJ
+V  50 trwać/1 ONLY_OBJ
 V  50 uciekać/1
 V  25 wypełniać/1 OBJ(4)
 V  25 zabierać/1 OBJ(4)
+V  10 zagłuszać/1 OBJ(4)
 V 100 zmywać/1 OBJ(z,2) OBJ(4) # zmywa łzy z twarzy
 V  50 zrozumieć/1 OBJ(4) ONLY_OBJ
 
@@ -99,6 +107,7 @@ A  50 obcy/a
 A  50 odcięty/a ATTR(od,2)
 A  50 oderwany/a ATTR(od,2)
 A 100 ostatni/b
+A 500 otwarty/a ONLY_WITH_W(rana)
 A 100 pęknięty/a
 A  50 pogardzany/a
 A  50 przeklęty/a
@@ -124,6 +133,7 @@ D  10 podstępnie
 D 100 po~kres
 D 100 po~prostu
 D 100 powoli
+D  10 prawie
 D  40 "przez chwilę"
 D  10 "przez jedną chwilę"
 D  40 "przez moment"
@@ -133,7 +143,8 @@ D  10 skromnie
 D  50 szybko
 D 100 tam
 D 100 tutaj
-D  10 "z wahaniem"
+D  10 w~zadumie
+D  10 z~wahaniem
 D  10 złośliwie
 
 O  50 ależ
