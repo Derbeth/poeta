@@ -54,21 +54,21 @@ N 100 you/0          NO_ADJ PERSON(2)     SEMANTIC(PERSONAL,SENTIENT)
 N 100 you/0      Pl  NO_ADJ PERSON(2)     SEMANTIC(PERSONAL,SENTIENT)
 N 100 it             NO_ADJ               SEMANTIC(PERSONAL)
 
-V 100 become/a    ADJ
+V 100 become/a    ADJ                     SEMANTIC(NO_IMPERATIVE)
 V  50 burn/a      OBJ(2)
-V 100 cannot      INF NOT_AS_OBJ
-V  10 could       INF NOT_AS_OBJ
+V 100 cannot      INF NOT_AS_OBJ          SEMANTIC(NO_IMPERATIVE)
+V  10 could       INF NOT_AS_OBJ          SEMANTIC(NO_IMPERATIVE)
 V 100 die/a
 V 100 be/0        ADJ
-V  10 be/0        SUFFIX(nothing to me)
-V 100 feel/a      ADJ    ONLY_WITH(SENTIENT)  # I feel weak
+V  10 be/0        SUFFIX(nothing to me) NOT_AS_OBJ              SEMANTIC(NO_IMPERATIVE)
+V 100 feel/a      ADJ    ONLY_WITH(SENTIENT)  # I feel weak     SEMANTIC(NO_IMPERATIVE)
 V 100 feel/a      OBJ(2) ONLY_WITH(SENTIENT) TAKES_ONLY(FEELING)  # I feel pain
 V 500 fill/a      OBJ(2) ONLY_WITH_W(anger,dispair,fear,horror,silence,sorrow)
 V 100 kill/a      OBJ(2)
 V  50 lie/a       NOT_WITH_W(lie)
 V  30 long/a      OBJ(for,2) NOT_AS_OBJ
-V  10 mean/a      SUFFIX(nothing to me)
-V 100 must        INF NOT_AS_OBJ
+V  10 mean/a      SUFFIX(nothing to me) NOT_AS_OBJ               SEMANTIC(NO_IMPERATIVE)
+V 100 must        INF NOT_AS_OBJ          SEMANTIC(NO_IMPERATIVE)
 V  10 scream/a
 V 100 see/a       OBJ(2)
 V 100 shine/a
@@ -111,12 +111,13 @@ A 100 shining
 A 100 silent
 A 100 stinking
 A 100 stolen
-A 150 such        DOUBLE
+A 150 such        DOUBLE NOT_AS_OBJ
 A 100 sweet
 A 100 that/a      DOUBLE NOT_AS_OBJ
 A  50 their       POSS
 A 100 this/a      DOUBLE NOT_AS_OBJ
 A  50 true
+A  10 untrue
 A  50 your        POSS
 
 # TODO throughout ..., through + A + N, with + N
