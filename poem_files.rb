@@ -15,11 +15,8 @@ module Poeta
 
 		def resolve!
 			@dictionary_file = "#{DICT_DIR}/#@dictionary.dic"
-			@sentences_file = "#{DICT_DIR}/#@dictionary.cfg"
-			unless @io.exists?(@sentences_file)
-				@sentences_file = "#{DICT_DIR}/#@default_dict.cfg"
-			end
-			@title_sentences_file = "titles.cfg"
+			@sentences_file = first_existing("#{DICT_DIR}/#@dictionary.cfg", "#{DICT_DIR}/#@default_dict.cfg")
+			@title_sentences_file = first_existing("#{DICT_DIR}/#@dictionary.titles.cfg", "#{DICT_DIR}/#@default_dict.titles.cfg", "titles.cfg")
 			@grammar_file = "#{LANG_DIR}/#@language.aff"
 
 			@general_config_file = "poetry.yml"
@@ -34,5 +31,15 @@ module Poeta
 
 		DICT_DIR = 'dictionaries'
 		LANG_DIR = 'languages'
+
+		# returns first of the given paths that exists, or the last one if none exists
+		def first_existing(*paths)
+			last_path = nil
+			paths.each do |path|
+				last_path = path
+				break if @io.exists?(path)
+			end
+			last_path
+		end
 	end
 end

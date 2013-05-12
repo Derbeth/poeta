@@ -36,6 +36,19 @@ class PoemFilesTest < Test::Unit::TestCase
 		assert_equal 'dictionaries/fancy-dict.dic', poem_files.dictionary_file
 	end
 
+	def test_raises_error_when_given_dictionary_cannot_be_found
+		poem_files = Poeta::PoemFiles.new('dsb', 'fancy-dict')
+		poem_files.io = @stub_io
+		having_existing_files('dictionaries/default_dsb.dic', 'dictionaries/default_dsb.cfg')
+
+		begin
+			poem_files.resolve!
+			flunk 'Expected to throw an exception'
+		rescue => e
+			assert_include e.to_s, 'fancy-dict.dic'
+		end
+	end
+
 	def test_uses_sentences_for_given_dictionary
 		poem_files = Poeta::PoemFiles.new('dsb', 'fancy-dict')
 		poem_files.io = @stub_io
@@ -58,7 +71,7 @@ class PoemFilesTest < Test::Unit::TestCase
 		assert_equal 'dictionaries/default_dsb.cfg', poem_files.sentences_file
 	end
 
-	def test_raises_error_when_sentences_cannot_be_found
+	def test_raises_error_when_no_sentences_can_be_found
 		poem_files = Poeta::PoemFiles.new('dsb', 'fancy-dict')
 		poem_files.io = @stub_io
 		having_existing_files('dictionaries/fancy-dict.dic')
@@ -69,6 +82,36 @@ class PoemFilesTest < Test::Unit::TestCase
 		rescue => e
 			assert_include e.to_s, 'default_dsb.cfg'
 		end
+	end
+
+	def test_uses_dictionary_titles
+		poem_files = Poeta::PoemFiles.new('dsb', 'fancy-dict')
+		poem_files.io = @stub_io
+		having_existing_files('dictionaries/default_dsb.cfg', 'dictionaries/fancy-dict.dic', 'dictionaries/fancy-dict.titles.cfg')
+
+		poem_files.resolve!
+
+		assert_equal 'dictionaries/fancy-dict.titles.cfg', poem_files.title_sentences_file
+	end
+
+	def test_uses_language_titles_if_no_dictionary_ones
+		poem_files = Poeta::PoemFiles.new('dsb', 'fancy-dict')
+		poem_files.io = @stub_io
+		having_existing_files('dictionaries/default_dsb.cfg', 'dictionaries/fancy-dict.dic', 'dictionaries/default_dsb.titles.cfg')
+
+		poem_files.resolve!
+
+		assert_equal 'dictionaries/default_dsb.titles.cfg', poem_files.title_sentences_file
+	end
+
+	def test_uses_global_titles_if_no_dictionary_and_no_language_ones
+		poem_files = Poeta::PoemFiles.new('dsb', 'fancy-dict')
+		poem_files.io = @stub_io
+		having_existing_files('dictionaries/default_dsb.cfg', 'dictionaries/fancy-dict.dic')
+
+		poem_files.resolve!
+
+		assert_equal 'titles.cfg', poem_files.title_sentences_file
 	end
 
 	private
