@@ -15,18 +15,23 @@ N a 6,7   ek  ku    ek/2
 N a 6,7   0   u     ./1
 N a 11,17 ć   cie   ć
 N a 11,17 ek  ki    ek/2
+N a 11,17 yk  ki    yk
 N a 12,14 ć   ci    ć
 N a 12,14 e   0     ie
 N a 12,14 ek  ków   ek/2
+N a 12,14 0   ów    yk
 N a 13    ć   ciom  ć
 N a 13    e   om    ie
 N a 13    ek  kom   ek/2
+N a 13    0   om    yk
 N a 15    ć   ciami ć
 N a 15    zie źmi   dzie
 N a 15    ek  kami  ek/2
+N a 15    0   ami   yk
 N a 16    ć   ciach ć
 N a 16    e   ach   ie
-N 1 16    ek  kach  ek/2
+N a 16    ek  kach  ek/2
+N a 16    0   ach   yk
 
 # 139 f, miotła, kołdra, panna, igła, gra, wiara, kobieta
 N b 2        a   y a
