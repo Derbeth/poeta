@@ -210,8 +210,8 @@ class BaseSentence
 		def handle_option(name, params)
 			number_i,gram_case = Integer(name).divmod(10)
 			raise "invalid case: #{gram_case}" unless CASES.include?(gram_case)
-			parsed[:case]=gram_case
-			parsed[:number] = (number_i == 1) ? PLURAL : SINGULAR
+			parsed[:case] = gram_case
+			parsed[:number] = PLURAL if number_i == 1
 		end
 	end
 

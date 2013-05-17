@@ -143,6 +143,24 @@ class SentenceTest < Test::Unit::TestCase
 		assert_equal('kibice pijani ze szczęścia', sentence.write)
 	end
 
+	def test_adjective_defaults_to_noun_number
+		grammar = GenericGrammar.new
+		dictionary = Dictionary.new
+		dictionary.read "N 10 noun/X Pl\nA 10 adj/Y"
+		grammar.read_rules <<-END
+N X   1 0 Nsing1 .
+N X   6 0 Nsing6 .
+N X  11 0 Npl1   .
+N X  16 0 Npl6   .
+A Y 101 0 Asing1 .
+A Y 106 0 Asing6 .
+A Y 111 0 Apl1   .
+A Y 116 0 Apl6   .
+		END
+		sentence = Sentence.new(dictionary,grammar,@conf,'mówię o ${ADJ(6)} ${NOUN(6)}')
+		assert_equal('mówię o adjApl6 nounNpl6', sentence.write)
+	end
+
 	def test_handle_adjective_impossible
 		grammar = GenericGrammar.new
 		dictionary = Dictionary.new
@@ -414,7 +432,7 @@ D 10 schnell
 			sentence = Sentence.new(dictionary,grammar,@conf,'${ADJ} ${NOUN}')
 			assert_equal('good work', sentence.write)
 		end
-		
+
 		# noun -> verb
 		dictionary.read "N 10 bird/a\nV 10 flies ONLY_WITH_W(bird)\n"
 		10.times do
@@ -533,7 +551,7 @@ V 10 join OBJ(2) TAKES_ONLY(GANGSTA) TAKES_NO(THING)
 			assert_equal('idziesz', sentence.write)
 		end
 	end
-	
+
 	def test_force_word_in_sentence_def
 		grammar = GenericGrammar.new
 		dictionary = ControlledDictionary.new
@@ -594,14 +612,39 @@ V 10 join OBJ(2) TAKES_ONLY(GANGSTA) TAKES_NO(THING)
 		assert_equal('uderzam lipę', sentence.write)
 		sentence = Sentence.new(dictionary,grammar,@conf,'trzeba ${VERB(INF)} ${OBJ}')
 		assert_equal('trzeba uderzać lipę', sentence.write)
+	end
 
-		# imperative
+	def test_imperative
+		dictionary = Dictionary.new
+		grammar = GenericGrammar.new
 		dictionary.read "N 100 lipa/b f\nV 100 uderzać/a OBJ(4)"
 		grammar.read_rules "N b 4 a ę a\nV a 1 ć m ć\nV a 102 ać 0 ać\nV a 111 ać my ać"
 		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(2,IMP)} ${OBJ}')
 		assert_equal 'uderz lipę', sentence.write
 		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(IMP,11)} ${OBJ}')
 		assert_equal 'uderzmy lipę', sentence.write
+	end
+
+	def test_imperative_ignores_semantic_for_verb
+		dictionary = Dictionary.new
+		grammar = GenericGrammar.new
+		dictionary.read "V 100 \"get lost\" ONLY_WITH(LOUSY)"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(2,IMP)}')
+		assert_equal 'get lost', sentence.write
+
+		dictionary.read "V 100 fly ONLY_WITH_W(bird)"
+		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(2,IMP)}')
+		assert_equal 'fly', sentence.write
+	end
+
+	def test_imperative_respects_semantic_for_object
+		dictionary = Dictionary.new
+		grammar = GenericGrammar.new
+		dictionary.read "V 10 steal OBJ(2) TAKES_ONLY(THING)\nN 10 sun\nN 10 money SEMANTIC(THING)"
+		5.times do
+			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(2,IMP)} ${OBJ}')
+			assert_equal 'steal money', sentence.write
+		end
 	end
 
 	def test_handle_object
