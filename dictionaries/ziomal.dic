@@ -97,6 +97,7 @@ V 150 jechać/9 OBJ(przez,4) TAKES_ONLY_W(dzielnia,dzielnica,miasto,rewir)
 V  20 kablować/4 NOT_WITH(ZIOM)
 V 100 lecieć/7a
 V  40 liczyć/6 SUFFIX(tylko na siebie) ONLY_WITH(ZIOM)
+V 100 łamać/9 OBJ(4) ONLY_WITH(ZIOM) TAKES_ONLY_W(prawo,zasada)
 V 100 mieć/1 OBJ(4)
 V  70 mieć/1 OBJ(4) SUFFIX(w dupie) TAKES_NO(ZIOM) TAKES_NO_W(buch,dziwka,pięść)
 V  30 mieć/1 SUFFIX(szacunek) OBJ(na,6) TAKES_ONLY(ZIOM) TAKES_ONLY_W(dzielnia,dzielnica,impreza,miasto,miejsce,podwórko,rewir,teren)
