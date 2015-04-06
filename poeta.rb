@@ -79,7 +79,7 @@ File.open(poem_files.title_sentences_file) { |f| title_sentence_mgr.read(f) }
 
 used_config_files = []
 [poem_files.general_config_file, poem_files.dictionary_config_file].each do |file|
-	next unless File.exists?(file)
+	next unless File.exist?(file)
 	File.open(file) { |f| conf.read(f) && used_config_files << file }
 end
 

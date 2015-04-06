@@ -75,7 +75,7 @@ implicit_subject_chance: 0.31
 		assert_equal 4, @conf.lines_in_verse
 
 		rubbish_path = File.expand_path('rubbish', File.dirname(__FILE__))
-		assert File.exists?(rubbish_path)
+		assert File.exist?(rubbish_path)
 		assert_equal false, @conf.read(File.open(rubbish_path))
 		assert_equal 4, @conf.lines_in_verse # should not be changed after read
 	end

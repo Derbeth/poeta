@@ -284,7 +284,7 @@ we
 
 	def test_reading_from_wrong_file
 		input_path = File.expand_path('wrong_preprocessor_commands.c', File.dirname(__FILE__))
-		assert File.exists?(input_path)
+		assert File.exist?(input_path)
 		assert_equal "", as_string(@preprocessor.process(File.open(input_path)))
 	end
 

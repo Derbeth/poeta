@@ -23,7 +23,7 @@ module Poeta
 			@dictionary_config_file = "#{DICT_DIR}/#@dictionary.yml"
 
 			[@dictionary_file, @sentences_file, @title_sentences_file, @grammar_file].each do |file|
-				raise "#{file} does not exist" unless @io.exists?(file)
+				raise "#{file} does not exist" unless @io.exist?(file)
 			end
 		end
 
@@ -37,7 +37,7 @@ module Poeta
 			last_path = nil
 			paths.each do |path|
 				last_path = path
-				break if @io.exists?(path)
+				break if @io.exist?(path)
 			end
 			last_path
 		end
