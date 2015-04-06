@@ -96,6 +96,7 @@ A 100 dziwny/a
 A  50 jego     POSS
 A  30 jej      POSS
 A 100 ludzki/b
+A  30 metafizyczny/a
 A  30 mój/e    POSS
 A  10 naiwny/a
 A  50 niemy/a
@@ -117,6 +118,7 @@ A 100 senny/a
 A 100 stary/a
 A 100 szary/a
 A 100 ślepy/a
+A 100 ulotny/a
 A  50 wygnany/a ATTR(z,2)
 A  30 zamknięty/a
 A 100 zapomniany/a
@@ -150,6 +152,7 @@ D  10 złośliwie
 
 O  50 ależ
 O 100 ale
+O 200 bo
 O 200 choć
 O 300 gdy
 O 100 gdyż

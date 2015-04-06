@@ -11,6 +11,7 @@ N  50 muza/b f                  SEMANTIC(RZECZ)
 N  50 myśl/n f Pl OBJ_FREQ(10)
 N 100 noc/k f                   SEMANTIC(GORĄCY,PORA,RZECZ)
 N 100 publika/r f               SEMANTIC(GORĄCY)
+N 100 świat/e m nan             SEMANTIC(RZECZ)
 N  50 świnka/r f                SEMANTIC(DZIUNIA)
 N 100 wieczór/m1 m nan          SEMANTIC(PORA,RZECZ)
 
@@ -47,7 +48,7 @@ V  40 mieć/1 SUFFIX(czarne oczy)      ONLY_WITH(DZIUNIA)
 V  40 mieć/1 SUFFIX(niebieskie oczy)  ONLY_WITH(DZIUNIA)
 V 100 nadchodzić/6                    ONLY_WITH(PORA)
 V 400 nakręcać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(biba,impreza,publika)
-V 400 należeć/7m OBJ(do,2)            ONLY_WITH_W(biba,impreza,noc,wieczór) TAKES_ONLY(PERSON)
+V 400 należeć/7m OBJ(do,2)            ONLY_WITH_W(biba,impreza,noc,świat,wieczór) TAKES_ONLY(PERSON)
 V 100 patrzeć/7 SUFFIX(mi w oczy)     ONLY_WITH(DZIUNIA)
 V 100 pragnąć/5  INF NOT_AS_OBJ       NOT_WITH(RZECZ)
 V 800 puszczać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(muza)
@@ -70,6 +71,7 @@ V 100 patrzeć/7 SUFFIX(ci w oczy)     ONLY_WITH(DZIUNIA)
 V 100 spełnić/5 SUFFIX(każde twoje marzenie) ONLY_WITH(DZIUNIA)
 #endif
 
+A 600 cały/a              ONLY_WITH_W(biba,impreza,noc,publika,świat)
 A 600 dobry/a             ONLY_WITH_W(biba,didżej,impreza,muza)
 A 100 fajny/a             ONLY_WITH(DZIUNIA)
 A 100 gorący/a            ONLY_WITH(DZIUNIA,GORĄCY)
@@ -92,6 +94,7 @@ D  50 "do białego rana"
 D  50 dzisiaj
 D  50 dziś
 D 100 fajnie
+D  30 jak~nigdy
 D 100 już
 D 100 ostro
 D 100 teraz

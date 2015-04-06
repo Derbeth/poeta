@@ -728,18 +728,33 @@ V 7 111 eć    my     eć
 V 7 112 eć    cie    eć
 
 # koniugacja IX, kłamać, mazać; z->ż, s->sz, r->rz
-V 9  1 ać  ię    [m]ać
-V 9  1 zać żę    zać
-V 9  2 ać  iesz  [m]ać
-V 9  2 zać żesz  zać
-V 9  3 ać  ie    [m]ać
-V 9  3 zać że    zać
-V 9 11 ać  iemy  [m]ać
-V 9 11 zać żemy  zać
-V 9 12 ać  iecie [m]ać
-V 9 12 zać żecie zać
-V 9 13 ać  ią    [m]ać
-V 9 13 zać żą    zać
+V 9   1 ać  ię     [m]ać
+V 9   1 zać żę     zać
+V 9   1 sać szę    sać
+V 9   2 ać  iesz   [m]ać
+V 9   2 zać żesz   zać
+V 9   2 sać szesz  sać
+V 9   3 ać  ie     [m]ać
+V 9   3 zać że     zać
+V 9   3 sać sze    sać
+V 9  11 ać  iemy   [m]ać
+V 9  11 zać żemy   zać
+V 9  11 sać szemy  sać
+V 9  12 ać  iecie  [m]ać
+V 9  12 zać żecie  zać
+V 9  12 sać szecie sać
+V 9  13 ać  ią     [m]ać
+V 9  13 zać żą     zać
+V 9  13 sać szą    sać
+V 9 102 ać  0      [m]ać
+V 9 102 zać ż      zać
+V 9 102 sać sz     sać
+V 9 111 ać  my     [m]ać
+V 9 111 zać żmy    zać
+V 9 111 sać szmy   sać
+V 9 112 ać  cie    [m]ać
+V 9 112 zać żcie   zać
+V 9 112 sać szcie  sać
 #może też
 V 9   1 kać czę    kać
 V 9   2 kać czesz  kać
@@ -760,10 +775,6 @@ V 9  13 echać adą      echać
 V 9 102 chać  dź       echać
 V 9 111 chać  dźmy     echać
 V 9 112 chać  dźcie    echać
-
-V 9 102 ać 0   ać
-V 9 111 ać my  ać
-V 9 112 ać cie ać
 
 # koniugacja Xa -ć bez zmiany tematu, pić, pluć, stawać
 V A  1 wać ję    wać
