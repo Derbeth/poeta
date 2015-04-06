@@ -89,6 +89,13 @@ module Grammar
 			end
 		end
 
+		def get_random_standalone_noun(&freq_counter)
+			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
+			get_random(NOUN) do |frequency, word|
+				counter.call(standalone_noun_frequency(frequency,word),word)
+			end
+		end
+
 		def get_random_verb_as_predicate(&freq_counter)
 			counter = block_given? ? freq_counter : lambda { |freq,word| freq }
 			get_random(VERB) do |frequency, word|
@@ -311,6 +318,10 @@ module Grammar
 				frequency = word.get_property(:obj_freq)
 			end
 			frequency
+		end
+
+		def standalone_noun_frequency(frequency, word)
+			noun_as_subject_frequency(frequency, word)
 		end
 
 		def verb_as_predicate_frequency(frequency, word)

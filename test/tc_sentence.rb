@@ -1229,6 +1229,9 @@ N  10 noun2
 		10.times do
 			assert_equal('noun2', Sentence.new(dictionary,grammar,@conf,'${SUBJ}').write)
 		end
+		10.times do
+			assert_equal('noun2', Sentence.new(dictionary,grammar,@conf,'${NOUN}').write)
+		end
 
 		dictionary_text = <<-END
 N 100 noun1 ONLY_OBJ

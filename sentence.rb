@@ -311,7 +311,7 @@ class Sentence < BaseSentence
 			@dictionary.semantic_chooser(FakeWordWithSemantic.new parsed_opts[:context_props]) :
 			nil
 
-		@dictionary.get_random(Grammar::NOUN) do |frequency, word|
+		@dictionary.get_random_standalone_noun do |frequency, word|
 			if word.text.empty?
 				0
 			elsif semantic_chooser
