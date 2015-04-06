@@ -1,17 +1,12 @@
 #!/usr/bin/ruby -w
 # -*- encoding: utf-8 -*-
 require 'test/unit'
-require 'rspec/mocks'
 
 require './poem_files'
 
 class PoemFilesTest < Test::Unit::TestCase
 	def setup
-		RSpec::Mocks::setup(self)
-
-		@stub_io = double("File")
-		@stub_io.stub(:exists?).and_return(false)
-
+		@stub_io = StubIO.new
 		having_existing_files('titles.cfg', 'languages/dsb.aff')
 	end
 
@@ -45,7 +40,7 @@ class PoemFilesTest < Test::Unit::TestCase
 			poem_files.resolve!
 			flunk 'Expected to throw an exception'
 		rescue => e
-			assert_include e.to_s, 'fancy-dict.dic'
+			assert_includes e.to_s, 'fancy-dict.dic'
 		end
 	end
 
@@ -80,7 +75,7 @@ class PoemFilesTest < Test::Unit::TestCase
 			poem_files.resolve!
 			flunk 'Expected to throw an exception'
 		rescue => e
-			assert_include e.to_s, 'default_dsb.cfg'
+			assert_includes e.to_s, 'default_dsb.cfg'
 		end
 	end
 
@@ -116,7 +111,21 @@ class PoemFilesTest < Test::Unit::TestCase
 
 	private
 
+	class StubIO
+		def initialize
+			@existing_paths = []
+		end
+
+		def exist?(path)
+			@existing_paths.include? path
+		end
+
+		def add_existing_files(paths)
+			@existing_paths.concat(paths)
+		end
+	end
+
 	def having_existing_files(*paths)
-		paths.each { |path| @stub_io.stub(:exists?).with(path).and_return(true) }
+		@stub_io.add_existing_files(paths)
 	end
 end
