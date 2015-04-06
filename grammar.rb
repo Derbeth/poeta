@@ -247,12 +247,12 @@ module Grammar
 	module SimpleReflexiveVerbsHandler
 		def inflect_verb(text,form,reflexive=false,*gram_props)
 			if form[:infinitive] && reflexive
-				return reflexive_word + ' ' + text
+				return reflexive_word + '~' + text
 			end
 
 			inflected = super
 
-			inflected += ' ' + reflexive_word if (reflexive)
+			inflected += '~' + reflexive_word if (reflexive)
 			inflected
 		end
 	end
@@ -272,7 +272,7 @@ module Grammar
 				when prep == 'w' && object =~ /^w#{cons_match}/ then prep = 'we'
 				when prep == 'od' && object == 'mnie' then prep = 'ode'
 			end
-			prep + ' ' + object
+			prep + '~' + object
 		end
 
 		protected

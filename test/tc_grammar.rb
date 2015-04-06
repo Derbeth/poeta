@@ -222,24 +222,24 @@ V a 112 ć jcie ać
 		assert_raise(GrammarError) { grammar.inflect_verb('foo', {:number=>3}) }   # bad number
 
 		assert_equal('latać', grammar.inflect_verb('latać', {:person=>1})) # no inflexion
-		assert_equal('latać się', grammar.inflect_verb('latać', {:person=>1}, true))
+		assert_equal('latać~się', grammar.inflect_verb('latać', {:person=>1}, true))
 		assert_equal('latać', grammar.inflect_verb('latać', {:person=>1}, false, 'A'))
-		assert_equal('latać się', grammar.inflect_verb('latać', {:person=>1}, true, 'A'))
+		assert_equal('latać~się', grammar.inflect_verb('latać', {:person=>1}, true, 'A'))
 
 		assert_equal('latam', grammar.inflect_verb('latać', {:person=>1}, false, 'a'))
 		assert_equal('latam', grammar.inflect_verb('latać', {:person=>1, :number=>1}, false, 'a'))
 		assert_equal('latać', grammar.inflect_verb('latać', {:person=>1, :number=>2}, false, 'a'))
 		assert_equal('latacie', grammar.inflect_verb('latać', {:person=>2, :number=>2}, false, 'a'))
-		assert_equal('latam się', grammar.inflect_verb('latać', {:person=>1}, true, 'a'))
+		assert_equal('latam~się', grammar.inflect_verb('latać', {:person=>1}, true, 'a'))
 
 		assert_equal('zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>true}, false, 'a'))
-		assert_equal('się zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>true}, true, 'a'))
+		assert_equal('się~zaczynać', grammar.inflect_verb('zaczynać', {:infinitive=>true}, true, 'a'))
 		# both infinitive and person
 		assert_raise(GrammarError) { grammar.inflect_verb('zaczynać', {:infinitive=>true, :person=>1}, false, 'a') }
 
 		assert_equal 'zaczynaj', grammar.inflect_verb('zaczynać', {:imperative=>true, :person=>2}, false, 'a')
 		assert_equal 'zaczynajcie', grammar.inflect_verb('zaczynać', {:imperative=>true, :person=>2, :number=>2}, false, 'a')
-		assert_equal 'zaczynaj się', grammar.inflect_verb('zaczynać', {:imperative=>true, :person=>2}, true, 'a')
+		assert_equal 'zaczynaj~się', grammar.inflect_verb('zaczynać', {:imperative=>true, :person=>2}, true, 'a')
 		# no form
 		assert_raise(GrammarError) { grammar.inflect_verb('zaczynać', {:imperative=>true}, false, 'a') }
 	end

@@ -134,7 +134,7 @@ class SentenceTest < Test::Unit::TestCase
 		dictionary.set_indices NOUN, [0, 1]
 		grammar.read_rules("N a 2 e a e")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${ADJ}')
-		assert_equal('kibic pijany ze szczęścia', sentence.write)
+		assert_equal('kibic pijany ze~szczęścia', sentence.write)
 
 		# adjective with a suffix
 		dictionary.read "N 100 kibice m Pl\nA 100 pijany/a SUFFIX(ze szczęścia)"
@@ -273,7 +273,7 @@ A Y 116 0 Apl6   .
 
 		dictionary.read "N 10 pies ONLY_SUBJ\nV 10 należy OBJ(do,2)\nN 10 on/0 ONLY_OBJ"
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies należy do niego', sentence.write)
+		assert_equal('pies należy do~niego', sentence.write)
 	end
 
 	def test_handle_noun_attribute
@@ -585,7 +585,7 @@ V 10 join OBJ(2) TAKES_ONLY(GANGSTA) TAKES_NO(THING)
 
 		dictionary.read("N 100 lipy f Pl\nV 100 rosnąć/a REFLEXIVE")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB}')
-		assert_equal('lipy rosną się', sentence.write)
+		assert_equal('lipy rosną~się', sentence.write)
 
 		dictionary.read("V 100 rosnąć/a")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(13)}')
@@ -676,7 +676,7 @@ V 10 join OBJ(2) TAKES_ONLY(GANGSTA) TAKES_NO(THING)
 		# object preposition
 		dictionary.read("N 100 pies\nN 100 kot/a Pl\nV 100 goni OBJ(za,5)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies goni za kotami', sentence.write)
+		assert_equal('pies goni za~kotami', sentence.write)
 
 		srand 8
 		# handle two objects of a noun
@@ -696,13 +696,13 @@ V 10 join OBJ(2) TAKES_ONLY(GANGSTA) TAKES_NO(THING)
 		dictionary.read "N 10 wąsy ATTR(w,4)\nN 10 kot/a ONLY_OBJ\nA 10 wredny/a"
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
 		@conf.object_adj_chance = 1
-		assert_equal 'wąsy we wrednego kota', sentence.write
+		assert_equal 'wąsy we~wrednego kota', sentence.write
 
 		dictionary.read "N 10 wąsy ATTR(w,4)\nN 10 wrot/a ONLY_OBJ\nA 10 ładny/a"
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ}')
 		@conf.object_adj_chance = 1
 		# without the adjective should be 'wąsy we wrota'
-		assert_equal 'wąsy w ładnego wrota', sentence.write
+		assert_equal 'wąsy w~ładnego wrota', sentence.write
 	end
 
 	def test_handle_noun_object_impossible
@@ -746,55 +746,55 @@ V 10 join OBJ(2) TAKES_ONLY(GANGSTA) TAKES_NO(THING)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 zebrą\nV 100 idzie OBJ(z,5)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies idzie z zebrą', sentence.write)
+		assert_equal('pies idzie z~zebrą', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 zdradą\nV 100 idzie OBJ(z,5)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies idzie ze zdradą', sentence.write)
+		assert_equal('pies idzie ze~zdradą', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 szkołą\nV 100 idzie OBJ(z,5)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies idzie ze szkołą', sentence.write)
+		assert_equal('pies idzie ze~szkołą', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 szansą\nV 100 idzie OBJ(z,5)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies idzie z szansą', sentence.write)
+		assert_equal('pies idzie z~szansą', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 skrętem\nV 100 idzie OBJ(z,5)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies idzie ze skrętem', sentence.write)
+		assert_equal('pies idzie ze~skrętem', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 ślimakiem\nV 100 idzie OBJ(z,5)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies idzie ze ślimakiem', sentence.write)
+		assert_equal('pies idzie ze~ślimakiem', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 mną\nV 100 idzie OBJ(z,5)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies idzie ze mną', sentence.write)
+		assert_equal('pies idzie ze~mną', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 mnie\nV 100 odbiera OBJ(z,2)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies odbiera ze mnie', sentence.write)
+		assert_equal('pies odbiera ze~mnie', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 wstydem\nV 100 idzie OBJ(z,5)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies idzie ze wstydem', sentence.write)
+		assert_equal('pies idzie ze~wstydem', sentence.write)
 		srand 1
 		dictionary.read("N 100 pies\nN 30 walce\nV 100 idzie OBJ(w,6)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies idzie w walce', sentence.write)
+		assert_equal('pies idzie w~walce', sentence.write)
 		dictionary.read("N 100 pies\nN 30 wronie\nV 100 idzie OBJ(w,6)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal('pies idzie we wronie', sentence.write)
+		assert_equal('pies idzie we~wronie', sentence.write)
 
 		srand 1
 		dictionary.read "N 100 pies \nN 30 mnicha \nV 100 idzie OBJ(od,6)"
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal 'pies idzie od mnicha', sentence.write
+		assert_equal 'pies idzie od~mnicha', sentence.write
 		srand 1
 		dictionary.read "N 100 pies \nN 30 mnie \nV 100 idzie OBJ(od,6)"
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
-		assert_equal 'pies idzie ode mnie', sentence.write
+		assert_equal 'pies idzie ode~mnie', sentence.write
 	end
 
 	def test_double_noun_polish
@@ -819,14 +819,14 @@ A y 115 0 ymi .
 			@conf.object_adj_chance = 0
 			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(3)} ${OBJ}')
 			dictionary.set_indices NOUN, [0, 1] # zwierz, las
-			assert_equal 'idzie ze zwierzem lasu', sentence.write
+			assert_equal 'idzie ze~zwierzem lasu', sentence.write
 			dictionary.set_indices NOUN, [] # make random again
 
 			@conf.double_noun_chance = 1
 			@conf.object_adj_chance = 1
 			sentence = Sentence.new(dictionary,grammar,@conf,'${VERB(3)} ${OBJ}')
 			dictionary.set_indices NOUN, [0, 1] # zwierz, las
-			assert_equal 'idzie z czarnym zwierzem lasu', sentence.write
+			assert_equal 'idzie z~czarnym zwierzem lasu', sentence.write
 		end
 
 		# additionally check that verb uses number from the first noun, even
@@ -940,7 +940,7 @@ A y 115 0 ymi .
 		srand 1
 		dictionary.read("N 100 pies\nV 100 chce INF\nV 30 przejść REFL")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${NOUN} ${VERB} ${OBJ}')
-		assert_equal('pies chce się przejść', sentence.write)
+		assert_equal('pies chce się~przejść', sentence.write)
 
 		# infitinive with preposition
 		srand 1
