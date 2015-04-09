@@ -648,18 +648,20 @@ V 5 112 nąć   nijcie  nąć
 V 5 112 ć     jcie    [np]ić
 
 # koniugacja VIa, VIb robić, wierzyć, prosić
-V 6  1 sić szę sić
-V 6  1 yć  ę   yć
-V 6  1 ić  ę   ić/b
-V 6  1 ć   ę   ć
-V 6 13 sić szą sić
-V 6 13 yć  ą   yć
-V 6 13 ić  ą   ić/b
-V 6 13 ć   ą   ć
-V 6  2 ć   sz  ć
-V 6  3 ć   0   ć
-V 6 11 ć   my  ć
-V 6 12 ć   cie ć
+V 6  1 sić   szę   sić
+V 6  1 ścić  szczę ścić
+V 6  1 yć    ę     yć
+V 6  1 ić    ę     ić/b
+V 6  1 ć     ę     ć
+V 6 13 sić   szą   sić
+V 6 13 ścić  szczą ścić
+V 6 13 yć    ą     yć
+V 6 13 ić    ą     ić/b
+V 6 13 ć     ą     ć
+V 6  2 ć     sz    ć
+V 6  3 ć     0     ć
+V 6 11 ć     my    ć
+V 6 12 ć     cie   ć
 V 6 102 obić  ób    obić
 V 6 111 obić  óbmy  obić
 V 6 112 obić  óbcie obić

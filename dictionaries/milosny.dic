@@ -3,6 +3,7 @@ N  50 ciało/p n           SEMANTIC(CIAŁO)
 N  50 ciało/p n Pl        SEMANTIC(CIAŁO)
 N  50 dłoń/u1 f Pl        SEMANTIC(CIAŁO)
 N 100 dotyk/g m nan
+N  50 kochanek/a2 m ONLY_OBJ SEMANTIC(PERSON)
 N  50 kwiat/e m nan
 N 100 miłość/n f          SEMANTIC(PAŁANY)
 N 100 namiętność/n f      SEMANTIC(PAŁANY)
@@ -38,12 +39,12 @@ N 100 żar/e m nan          SEMANTIC(PAŁANY)
 N  45 żądza/l f            SEMANTIC(PAŁANY)
 N   5 żądza/l f Pl
 
-N 200 "" m      PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(PERSON)    # ja
+N 200 "" m      PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(PERSON,MY)    # ja
 N 200 "" m      PERSON(2) NO_ADJ ONLY_SUBJ SEMANTIC(PERSON)    # ty
-N 200 "" m Pl   PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(PERSON)    # my
-N  10 ja/0 m    PERSON(1) OBJ_FREQ(100)    SEMANTIC(PERSON)
-N  10 ty/0 f    PERSON(2) OBJ_FREQ(50)     SEMANTIC(PERSON)
-N  10 my/0 m Pl PERSON(1) OBJ_FREQ(30)     SEMANTIC(PERSON,PLURAL)
+N 200 "" m Pl   PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(PERSON,MY)    # my
+N  10 ja/0 m    PERSON(1) NO_ADJ OBJ_FREQ(100)    SEMANTIC(PERSON,MY)
+N  10 ty/0 f    PERSON(2) NO_ADJ OBJ_FREQ(50)     SEMANTIC(PERSON)
+N  10 my/0 m Pl PERSON(1) NO_ADJ OBJ_FREQ(30)     SEMANTIC(PERSON,PLURAL,MY)
 
 A 100 cielesny/a NOT_WITH_W(ciało)
 A 100 delikatny/a
@@ -64,7 +65,7 @@ A 100 słodki/b
 A  50 spleciony/a
 A  50 szybki/b
 A  50 twój/e     POSS
-A 100 ukryty/a NOT_WITH(PERSON)
+A 100 ukryty/a NOT_WITH(CIAŁO,PERSON)
 A 100 utęskniony/a
 A 100 wstydliwy/a
 
@@ -75,14 +76,15 @@ V 100 dotykać/1 OBJ(4) NOT_WITH_W(dotyk) TAKES_NO_W(dotyk)
 V 100 drżeć/7
 V 100 kochać/1 OBJ(4)
 V 100 leżeć/7m
-V  80 lubić/6 OBJ(4)                            SEMANTIC(NO_IMPERATIVE)
+V  80 lubić/6 OBJ(4)        TAKES_NO(CIAŁO,PERSON)     SEMANTIC(NO_IMPERATIVE)
 V  20 lubić/6 INF NOT_AS_OBJ                    SEMANTIC(NO_IMPERATIVE)
 V  50 pachnąć/5 OBJ(5)      TAKES_NO(CIAŁO)     SEMANTIC(NO_IMPERATIVE)
 V 100 pałać/1 OBJ(5)        TAKES_ONLY(PAŁANY)
 V 100 patrzeć/7 OBJ(na,4)
+V  80 pieścić/6 OBJ(4)      NOT_WITH(MY) NOT_WITH_W(pieszczota) TAKES_ONLY(CIAŁO,PERSON)
 V  70 płonąć/5b
-V  30 płonąć/5b OBJ(z,2) TAKES_NO(PERSON)
-V  80 pragnąć/5 OBJ(2)                          SEMANTIC(NO_IMPERATIVE)
+V  30 płonąć/5b OBJ(z,2)    TAKES_NO(CIAŁO,PERSON)
+V  80 pragnąć/5 OBJ(2)      NOT_WITH(MY)        SEMANTIC(NO_IMPERATIVE)
 V  20 pragnąć/5 INF NOT_AS_OBJ                  SEMANTIC(NO_IMPERATIVE)
 V 100 rozbierać/1 OBJ(4)
 V 100 rozbudzać/1 OBJ(4)
@@ -107,8 +109,10 @@ D 100 ukradkiem
 D 100 wstydliwie
 
 O 100 a
+O 100 ach
 O 100 ale
 O   5 "chciałbym jeszcze zobaczyć, jak"
 O 100 choć
 O 100 i
+O 100 och
 O  75 "i tylko"
