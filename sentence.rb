@@ -54,7 +54,10 @@ class Sentence < BaseSentence
 		noun = get_random_standalone_noun(parsed_opts)
 
 		@indexed_nouns[noun_index] = noun
-		return '' unless noun
+		unless noun
+			@conf.logger.debug "Failed to find standalone noun matching #{parsed_opts}"
+			return ''
+		end
 		gram_case = parsed_opts[:case] || NOMINATIVE
 		form = {:case=>gram_case}
 		_common_handle_noun(noun,form)
@@ -79,7 +82,7 @@ class Sentence < BaseSentence
 		semantic_counter = @dictionary.semantic_chooser(noun)
 		adjective = @dictionary.get_random_adjective(noun, exclude_double, &semantic_counter)
 		unless adjective
-			@conf.logger.debug "Cannot find adjective matching #{noun} (#{noun.get_properties})"
+			@conf.logger.debug "Failed to find adjective matching #{noun} (#{noun.get_properties})"
 			return ''
 		end
 
@@ -142,7 +145,10 @@ class Sentence < BaseSentence
 		end
 
 		verb = get_random_verb_as_predicate(noun, parsed_opts)
-		return '' unless verb
+		unless verb
+			@conf.logger.debug "Failed to find verb matching #{noun} and #{parsed_opts}"
+			return ''
+		end
 		@verbs[norm_index] = verb
 		verb.inflect(@grammar,form)
 	end
@@ -237,7 +243,7 @@ class Sentence < BaseSentence
 			break
 		end
 		unless object_verb
-			@conf.logger.warn "Could not find matching object for #{verb} with #{object_spec}"
+			@conf.logger.warn "Failed to find matching object for #{verb} with #{object_spec}"
 			return ''
 		end
 
