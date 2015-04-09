@@ -73,15 +73,18 @@ N  10 zaułek/g m nan OBJ_FREQ(100) SEMANTIC(RZECZ)
 N  40 ziomek/a2 m SEMANTIC(OK,ZIOM)
 N  10 ziomek/a2 m SUFFIX(na dobre i złe) SEMANTIC(OK,ZIOM)
 N  20 zmiana/b2 f OBJ_FREQ(100)
-N 500 "" m    PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM)    # ja
-N 150 "" m    PERSON(2) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM)    # ty
-N 300 "" m Pl PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM)    # my
+N 500 "" m    PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM,IMPL)    # ja
+N 150 "" m    PERSON(2) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM,IMPL)    # ty
+N 300 "" m Pl PERSON(1) NO_ADJ ONLY_SUBJ SEMANTIC(OK,ZIOM,IMPL)    # my
+N 100 ja/0 m     PERSON(1) NO_ADJ ONLY_OBJ SEMANTIC(OK,ZIOM)
+N 100 my/0 m Pl  PERSON(1) NO_ADJ ONLY_OBJ SEMANTIC(OK,ZIOM)
 
 # TODO rym
 
 V 100 brać/b OBJ(4) NOT_WITH(RZECZ)
 V  50 być/c OBJ(5) NOT_AS_OBJ NOT_WITH(POLICJA) TAKES_NO(POLICJA)
 V  50 być/c OBJ(5) NOT_AS_OBJ NOT_WITH(ZIOM) TAKES_NO(ZIOM)
+V 150 być/c OBJ(z,5) NOT_AS_OBJ NOT_WITH(IMPL) ONLY_WITH(OK,ZIOM) TAKES_ONLY_W(ja,my)
 V  25 być/c ADJ NOT_WITH(POLICJA) TAKES_NO(POLICJA)  # ekipa jest zajebista
 V  25 być/c ADJ NOT_WITH(ZIOM) TAKES_NO(ZIOM)        # komercha jest chujowa
 V  80 chcieć/7c INF NOT_AS_OBJ
@@ -98,11 +101,11 @@ V  20 kablować/4 NOT_WITH(ZIOM)
 V 100 lecieć/7a
 V  40 liczyć/6 SUFFIX(tylko na siebie) ONLY_WITH(ZIOM)
 V 100 łamać/9 OBJ(4) ONLY_WITH(ZIOM) TAKES_ONLY_W(prawo,zasada)
-V 100 mieć/1 OBJ(4)
+V 100 mieć/1 OBJ(4) SEMANTIC(MIEĆ)
 V  70 mieć/1 OBJ(4) SUFFIX(w dupie) TAKES_NO(ZIOM) TAKES_NO_W(buch,dziwka,pięść)
 V  30 mieć/1 SUFFIX(szacunek) OBJ(na,6) TAKES_ONLY(ZIOM) TAKES_ONLY_W(dzielnia,dzielnica,impreza,miasto,miejsce,podwórko,rewir,teren)
 V 100 milczeć/7
-V  80 musieć/7m INF NOT_AS_OBJ
+V  80 musieć/7m INF NOT_AS_OBJ SEMANTIC(NO_IMP)
 V  40 nakręcać/1 OBJ(4)
 V  20 napierdalać/1
 V  60 napierdalać/1 REFL OBJ(z,5) NOT_WITH(RZECZ) TAKES_NO(OK)
@@ -112,7 +115,6 @@ V 100 nienawidzić/6b OBJ(2) NOT_AS_OBJ TAKES_NO(ZIOM)
 V 100 pierdolić/6b OBJ(4) TAKES_NO(ZIOM)
 V 200 płynąć/5b ONLY_WITH(PŁYNIE)
 V 100 popierdalać/1
-V  20 przybijać/1 OBJ(4)
 V 100 rozpierdalać/1 OBJ(4) TAKES_NO(ZIOM)
 V  40 rozkminiać/1 OBJ(4) NOT_WITH(POLICJA)
 V  50 rymować/4 NOT_WITH(POLICJA)
@@ -228,6 +230,7 @@ O 100 ponieważ
 O 100 potem
 O  50 popatrz
 O 100 posłuchaj
+O  25 proste
 O 100 przecież
 O  75 słowo
 O  25 "słowo ziomek"
