@@ -23,6 +23,7 @@ dictionary = nil
 language = 'pl'
 debug = false
 forced_seed = nil
+info = false
 show_stats = false
 stat_opts = {}
 conf = PoetryConfiguration.new
@@ -40,6 +41,9 @@ OptionParser.new do |opts|
 	opts.on("-d", "--debug", "Run in debug mode") do |d|
 		debug = true
 		conf.debug = true
+	end
+	opts.on("-i", "--info", "Print additional information like used rand seed") do |d|
+		info = true
 	end
 	opts.on('-s', '--seed SEED', "Feed the random generator with given rand seed") do |s|
 		forced_seed = s.to_i
@@ -110,12 +114,19 @@ else
 		puts 'Error: ', $!.inspect, $@
 	end
 
+	used_seed = srand
+
+	if info
+		checksum = `cat *.rb #{poem_files.grammar_file} #{poem_files.dictionary_file} #{poem_files.sentences_file} #{poem_files.title_sentences_file} | md5sum -`
+		checksum.gsub!(/ +- *$/, '')
+		puts "# rand_seed=#{used_seed} checksum=#{checksum}"
+	end
 	if debug
 		puts
 		puts "dictionary: #{poem_files.dictionary_file} sentences: #{poem_files.sentences_file} titles: #{poem_files.title_sentences_file}"
 		puts "grammar: #{grammar.class}"
 		puts "config files: #{used_config_files.join(' ')}"
 		puts "configuration: #{conf.summary}"
-		puts "rand seed: #{srand}"
+		puts "rand seed: #{used_seed}"
 	end
 end
