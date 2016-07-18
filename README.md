@@ -1,4 +1,4 @@
-Poeta
+Poeta [![Build Status](https://travis-ci.org/Derbeth/poeta.svg?branch=master)](https://travis-ci.org/Derbeth/poeta)
 =====
 
 A humorous poems generator.
