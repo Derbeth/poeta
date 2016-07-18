@@ -1,6 +1,10 @@
 language: ruby
 sudo: false
 rvm:
+  - ruby-2.1.9
+  - ruby-2.2.5
   - ruby-2.3.1
+  - ruby-head
+  - jruby-9.0.5.0
 env: RUBYOPT="-w $RUBYOPT"
 script: ./test/ts_all.rb && ruby poeta.rb
