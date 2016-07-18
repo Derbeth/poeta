@@ -1,0 +1,5 @@
+language: ruby
+sudo: false
+rvm:
+  - ruby-2.3.1
+script: ./test/ts_all.rb && ruby poeta.rb
