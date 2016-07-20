@@ -70,6 +70,13 @@ OptionParser.new do |opts|
 end.parse!
 
 raise "expects none or one argument" if ARGV.size > 1
+
+if forced_seed
+	srand(forced_seed)
+else
+	srand
+end
+
 poem_files = PoemFiles.new(language, ARGV[0])
 poem_files.resolve!
 
@@ -99,12 +106,6 @@ if show_stats
 	puts "dictionary: #{poem_files.dictionary_file}"
 	DictionaryStatistics.new.print(dictionary, stat_opts)
 else
-	if forced_seed
-		srand(forced_seed)
-	else
-		srand
-	end
-
 	begin
 		poem = Poem.new(sentence_mgr,title_sentence_mgr,conf)
 		puts poem.text
