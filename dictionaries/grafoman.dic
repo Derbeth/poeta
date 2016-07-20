@@ -6,6 +6,7 @@ N 100 czas/e m nan
 N 100 człowiek/a1 m
 N 100 droga/r f
 N 100 egzystencja/h f
+N 100 głos/e m nan
 N  50 grzech/e m nan
 N  50 istnienie/d n
 N 100 jedność/n f
@@ -26,7 +27,7 @@ N  50 pytanie/d n Pl nan
 N 100 raj/c m nan
 N  50 rana/b2 f
 N 100 ruch/e m nan
-N 100 sens/e m ATTR(2) # sens istnienia
+N 100 sens/e m nan ATTR(2) # sens istnienia
 N  50 smak/g m nan
 N 100 smutek/g m nan
 N  10 sumienie/d n nan
@@ -43,14 +44,14 @@ N  20 zamek/g m Pl nan SUFFIX(z piasku)
 N 100 życie/d n
 
 N 200 ""    m      PERSON(1)    NO_ADJ ONLY_SUBJ # ja
-N 200 ja/0  m                   NO_ADJ ONLY_OBJ
+N 200 ja/0  m                   NO_ADJ NO_ATTR ONLY_OBJ
 N 200 ""    m      PERSON(2)    NO_ADJ ONLY_SUBJ # ty
-N  50 ty/0  m                   NO_ADJ ONLY_OBJ
-N  50 ty/0  f                   NO_ADJ ONLY_OBJ
+N  50 ty/0  m                   NO_ADJ NO_ATTR ONLY_OBJ
+N  50 ty/0  f                   NO_ADJ NO_ATTR ONLY_OBJ
 N 200 ""    m Pl   PERSON(1)    NO_ADJ ONLY_SUBJ # my
-N  50 my/0  m Pl                NO_ADJ ONLY_OBJ
+N  50 my/0  m Pl                NO_ADJ NO_ATTR ONLY_OBJ
 N  10 ""    m Pl   PERSON(2)    NO_ADJ ONLY_SUBJ # wy
-N  50 wy/0  m Pl                NO_ADJ ONLY_OBJ
+N  50 wy/0  m Pl                NO_ADJ NO_ATTR ONLY_OBJ
 N  50 oni/0 m Pl   NO_NOUN_NOUN NO_ADJ
 
 V 100 brać/b OBJ(4)
@@ -72,15 +73,20 @@ V 100 płynąć/5b
 V  20 pomagać/1        INF NOT_AS_OBJ # pomaga kłamać
 V  25 pomagać/1 OBJ(3) INF NOT_AS_OBJ # pomaga mi zasnąć
 V 100 próbować/4 INF NOT_AS_OBJ
+V  25 rodzić/6b OBJ(4)
+V  25 rodzić/6b REFL OBJ(z,2) NOT_AS_OBJ
 V 100 rozkwitać/1
 V   1 sprawiać/1  # only for .cfg
 V  50 stawać/A REFL OBJ(5) NOT_AS_OBJ
+V 100 tracić/6b OBJ(4) NOT_AS_OBJ TAKES_ONLY_W(sens)
 V  50 trwać/1 ONLY_OBJ
 V  50 uciekać/1
+V  25 umierać/1
 V 100 uwierzyć/1 OBJ(w,4) ONLY_OBJ
 V  25 wypełniać/1 OBJ(4)
 V  25 zabierać/1 OBJ(4)
 V  10 zagłuszać/1 OBJ(4)
+V  25 zamierać/1
 V 100 zmywać/1 OBJ(z,2) OBJ(4) # zmywa łzy z twarzy
 V  50 zrozumieć/1 OBJ(4) ONLY_OBJ
 
@@ -90,7 +96,8 @@ A 100 brudny/a
 A 100 chłodny/a
 A 100 chory/a
 A  50 cierpiący/a
-A 500 dojrzały/a ONLY_WITH_W(owoc)
+A 600 dojrzały/a ONLY_WITH_W(owoc)
+A 100 donośny/a ONLY_WITH_W(głos)
 A  50 drobny/a
 A 100 dziwny/a
 A  50 jego     POSS
@@ -99,11 +106,14 @@ A 100 ludzki/b
 A  30 metafizyczny/a
 A  30 mój/e    POSS
 A  10 naiwny/a
+A 150 niechciany/a
 A  50 niemy/a
+A  50 nieśmiały/a
 A  50 nieskończony/a
 A  50 niewinny/a
 A  50 nieznajomy/a
 A 100 nieznany/a
+A 100 niezwykły/a
 A  50 nowy/a
 A  50 obcy/a
 A  50 odcięty/a ATTR(od,2)
@@ -119,6 +129,7 @@ A 100 stary/a
 A 100 szary/a
 A 100 ślepy/a
 A 100 ulotny/a
+A 200 wszelki/b
 A  50 wygnany/a ATTR(z,2)
 A  30 zamknięty/a
 A 100 zapomniany/a
@@ -130,6 +141,7 @@ D  20 bezpowrotnie
 D 100 ciężko
 D  10 kusząco
 D 100 leniwie
+D  50 między~nami
 D  25 naiwnie
 D  50 nieśmiało
 D  10 podstępnie
@@ -151,7 +163,7 @@ D  10 z~wahaniem
 D  10 złośliwie
 
 O  50 ależ
-O 100 ale
+O 150 ale
 O 200 bo
 O 200 choć
 O 300 gdy
