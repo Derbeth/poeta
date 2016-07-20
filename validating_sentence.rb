@@ -45,7 +45,6 @@ class ValidatingSentence < BaseSentence
 	end
 
 	def handle_adverb(full_match,noun_index,norm_index,parsed_opts)
-		check_noun_occur(full_match, noun_index)
 		'adverb'
 	end
 

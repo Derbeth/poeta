@@ -100,6 +100,7 @@ class SentenceManagerTest < Test::Unit::TestCase
 	def test_accepts_sentences_not_needing_subject
 		@mgr.read '10 ${VERB(1)}'
 		@mgr.read '10 ${VERB(1)} ${OBJ}'
+		@mgr.read '10 ${ADV}'
 	end
 	
 	def test_validates_options
