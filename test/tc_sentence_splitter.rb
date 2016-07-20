@@ -37,6 +37,7 @@ class SentenceSplitterTest < Test::Unit::TestCase
 		# 4. split on forced sign
 		assert_equal ['aaaaaa bbbb', 'ccc'], @splitter.split('aaaaaa bbbb || ccc')
 		assert_equal ['aaaaaa bbbb', 'ccc'], @splitter.split('aaaaaa | bbbb || ccc')
+		assert_equal ['a', 'b'], @splitter.split('a || b')
 
 		# 5. split on normal split sign
 		assert_equal ['aaaaaa', 'bbbb ccc'], @splitter.split('aaaaaa | bbbb | ccc')

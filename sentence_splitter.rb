@@ -11,7 +11,7 @@ class SentenceSplitter
 		text = remove_unneeded_spaces(text)
 
 		index = nil
-		if text.length > @conf.max_line_length
+		if text.length > @conf.max_line_length || contains_forced_split_marker?(text)
 			index = split_index(text)
 		end
 
@@ -85,5 +85,9 @@ class SentenceSplitter
 		end
 
 		just_before !~ /^ *\w$/
+	end
+
+	def contains_forced_split_marker?(text)
+		text.include? '^'
 	end
 end
