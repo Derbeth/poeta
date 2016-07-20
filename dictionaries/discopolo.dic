@@ -4,16 +4,15 @@
 N  50 biba/b f                  SEMANTIC(RZECZ)
 N  50 człowiek/a1 m
 N 100 didżej/i m
-N 100 dziewczyna/b1 f           SEMANTIC(DZIUNIA,PERSON)
 N  50 dziewczyna/b1 f Pl        SEMANTIC(DZIUNIA,PLURAL,PERSON)
 N  50 impreza/b f OBJ_FREQ(100) SEMANTIC(RZECZ)
 N  50 muza/b f                  SEMANTIC(RZECZ)
 N  50 myśl/n f Pl OBJ_FREQ(10)
 N 100 noc/k f                   SEMANTIC(GORĄCY,PORA,RZECZ)
 N 100 publika/r f               SEMANTIC(GORĄCY)
-N 100 świat/e m nan             SEMANTIC(RZECZ)
-N  50 świnka/r f                SEMANTIC(DZIUNIA)
+N 100 świat/j2 m nan            SEMANTIC(RZECZ)
 N 100 wieczór/m1 m nan          SEMANTIC(PORA,RZECZ)
+N  50 zabawa/b f                SEMANTIC(GORĄCY,RZECZ)
 
 N 200 "" m      PERSON(1) NO_ADJ  ONLY_SUBJ   SEMANTIC(ZIOMAL,PERSON)    # ja
 N 100 ja/0 m    PERSON(1) NO_ADJ  ONLY_OBJ    SEMANTIC(ZIOMAL,PERSON)    # ja (mnie)
@@ -22,6 +21,8 @@ N 300 "" f      PERSON(2) NO_ADJ  ONLY_SUBJ   SEMANTIC(DZIUNIA,PERSON)    # ty
 N 100 "" m Pl   PERSON(1) NO_ADJ  ONLY_SUBJ   SEMANTIC(PLURAL,PERSON)     # my
 N 200 ty/0 f    ONLY_OBJ  NO_ADJ NO_NOUN_NOUN SEMANTIC(DZIUNIA,PERSON)    # ty (ciebie)
 #else
+N 100 dziewczyna/b1 f           SEMANTIC(DZIUNIA,PERSON)
+N  50 świnka/r f                SEMANTIC(DZIUNIA)
 N 300 "" m      PERSON(2) NO_ADJ  ONLY_SUBJ   SEMANTIC(ZIOMAL,PERSON)    # ty
 N  50 ty/0 m    ONLY_OBJ  NO_ADJ NO_NOUN_NOUN SEMANTIC(ZIOMAL,PERSON)    # ty (ciebie)
 #endif
@@ -35,23 +36,24 @@ V 100 bujać/1 REFL SUFFIX(po mieście) ONLY_WITH(ZIOMAL)
 V  80 być/c ADJ
 V  50 być/c ADJ                       ONLY_WITH(DZIUNIA) TAKES_ONLY_W(mój,zajebisty)
 V  10 być/c OBJ(5) # jesteś mą królewną
+V 100 chcieć/7c INF NOT_AS_OBJ        NOT_WITH(RZECZ)
 V  50 kochać/1 OBJ(4)                 ONLY_WITH(ZIOMAL) TAKES_NO(ZIOMAL) # prevent 'ziom kochasz mnie'
 V  50 kochać/1 OBJ(4)                 NOT_WITH(ZIOMAL)                   # no restriction
 V  20 kręcić/6b SUFFIX(pupą)          ONLY_WITH(DZIUNIA)
 V  20 kręcić/6b SUFFIX(pupą) ONLY_OBJ
 V 100 kręcić/6b OBJ(4)                ONLY_WITH(DZIUNIA) TAKES_ONLY(ZIOMAL)
-V 800 krążyć/6 SUFFIX(w głowie)       ONLY_WITH_W(myśl)
+V 900 krążyć/6 SUFFIX(w głowie)       ONLY_WITH_W(myśl)
 V  40 mieć/1 SUFFIX(białe butki)      ONLY_WITH(DZIUNIA)
-V  40 mieć/1 SUFFIX(zgrabne ciało)    ONLY_WITH(DZIUNIA)
 V  40 mieć/1 SUFFIX(modne ciuchy)     ONLY_WITH(DZIUNIA)
 V  40 mieć/1 SUFFIX(czarne oczy)      ONLY_WITH(DZIUNIA)
 V  40 mieć/1 SUFFIX(niebieskie oczy)  ONLY_WITH(DZIUNIA)
+V  40 mieć/1 SUFFIX(zgrabne ciało)    ONLY_WITH(DZIUNIA)
 V 100 nadchodzić/6                    ONLY_WITH(PORA)
-V 400 nakręcać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(biba,impreza,publika)
+V 500 nakręcać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(biba,impreza,publika)
 V 400 należeć/7m OBJ(do,2)            ONLY_WITH_W(biba,impreza,noc,świat,wieczór) TAKES_ONLY(PERSON)
 V 100 patrzeć/7 SUFFIX(mi w oczy)     ONLY_WITH(DZIUNIA)
-V 100 pragnąć/5  INF NOT_AS_OBJ       NOT_WITH(RZECZ)
-V 800 puszczać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(muza)
+V  75 pragnąć/5  INF NOT_AS_OBJ       NOT_WITH(RZECZ)
+V 900 puszczać/1 OBJ(4)               ONLY_WITH_W(didżej) TAKES_ONLY_W(muza)
 V 500 rozkręcać/1 OBJ(4)              ONLY_WITH_W(didżej) TAKES_ONLY_W(biba,impreza,publika)
 V 100 rządzić/6b                      ONLY_WITH_W(biba,impreza,muza)
 V 100 szaleć/A                        NOT_WITH(RZECZ)
@@ -62,8 +64,9 @@ V 100 umieć/2 INF                     ONLY_WITH(DZIUNIA) TAKES_ONLY_W(kręcić)
 V 100 widzieć/7 OBJ(4) NOT_AS_OBJ     ONLY_WITH(PERSON) TAKES_ONLY(PERSON)
 V 100 zaczynać/1 INF NOT_AS_OBJ       NOT_WITH(RZECZ)
 V 100 zaczynać/1 REFL NOT_AS_OBJ      ONLY_WITH(PORA)
-V 400 zapuszczać/1 SUFFIX(mocnego bita) ONLY_WITH_W(didżej)
-V 400 zarzucać/1 SUFFIX(mocny bit)    ONLY_WITH_W(didżej)
+V 500 zapuszczać/1 SUFFIX(mocnego bita) ONLY_WITH_W(didżej)
+V 500 zarzucać/1 SUFFIX(mocny bit)    ONLY_WITH_W(didżej)
+V 100 zerkać/1 OBJ(na,4)             ONLY_WITH(ZIOMAL) TAKES_ONLY(DZIUNIA)
 
 #if TY_DZIUNIA
 #else
@@ -90,6 +93,7 @@ A 100 zarąbisty/a         NOT_WITH(RZECZ)
 
 D  50 "całą noc"
 D  50 "cały wieczór"
+D 100 ciągle
 D  50 "do białego rana"
 D  50 dzisiaj
 D  50 dziś
@@ -97,9 +101,11 @@ D 100 fajnie
 D  30 jak~nigdy
 D 100 już
 D 100 ostro
+D  50 potem
 D 100 teraz
 D 100 tylko
 D 100 znowu
+D 100 wciąż
 
 O 100 a~teraz
 O 400 i

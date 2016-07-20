@@ -207,6 +207,7 @@ N i 16        0 ach .
 
 # 3 m, facet, Hucuł, błazen, sąsiad
 N j 2,4    0  a     .
+N j 3      0  u     ./2
 N j 3      0  owi   .
 N j 5      0  em    .
 N j 6,7    at ecie  at/2 # świat (90)
@@ -449,6 +450,7 @@ N 0 3        on    jemu   on
 N 0 5,6      on    nim    on
 N 0 2,3      ona   niej   ona/p
 N 0 2,3      ona   jej    ona
+N 0 4        ona   nią    ona/p
 N 0 4        ona   ją     ona
 N 0 5        ona   nią    ona
 N 0 6        ona   niej   ona
