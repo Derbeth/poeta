@@ -269,7 +269,9 @@ module Grammar
 					object =~ /^(z#{cons_match}|s[#{(consonants-['z']).join}]|sz#{cons_match}|ws|śl)/u
 					then prep = 'ze'
 				when prep == 'z' && ['mną','mnie'].include?(object) then prep = 'ze'
-				when prep == 'w' && object =~ /^w#{cons_match}/ then prep = 'we'
+				when prep == 'w' &&
+					object =~ /^w#{cons_match}|^mnie\b/
+					then prep = 'we'
 				when prep == 'od' && object == 'mnie' then prep = 'ode'
 			end
 			prep + '~' + object

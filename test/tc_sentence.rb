@@ -786,6 +786,10 @@ V 10 join OBJ(2) TAKES_ONLY(GANGSTA) TAKES_NO(THING)
 		dictionary.read("N 100 pies\nN 30 wronie\nV 100 idzie OBJ(w,6)")
 		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
 		assert_equal('pies idzie we~wronie', sentence.write)
+		srand 1
+		dictionary.read("N 100 pies\nN 30 mnie\nV 100 wierzy OBJ(w,4)")
+		sentence = Sentence.new(dictionary,grammar,@conf,'${SUBJ} ${VERB} ${OBJ}')
+		assert_equal('pies wierzy we~mnie', sentence.write)
 
 		srand 1
 		dictionary.read "N 100 pies \nN 30 mnicha \nV 100 idzie OBJ(od,6)"
