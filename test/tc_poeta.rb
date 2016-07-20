@@ -1,11 +1,11 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/env ruby
 # -*- encoding: utf-8 -*-
 require 'test/unit'
 
 class PoetaIntegratontest < Test::Unit::TestCase
 	def test_runs_default_dictionaries
 		%w{de en pl}.each do |lang|
-			run_and_check "ruby poeta.rb -l #{lang}", :message => "run language #{lang}"
+			run_and_check "./poeta.rb -l #{lang}", :message => "run language #{lang}"
 		end
 	end
 
@@ -24,12 +24,12 @@ class PoetaIntegratontest < Test::Unit::TestCase
 
 		assert ! dicts_to_run.empty?
 		dicts_to_run.each do |dict_file|
-			run_and_check "ruby poeta.rb #{dict_file}", :message => "run dictionary #{dict_file}"
+			run_and_check "./poeta.rb #{dict_file}", :message => "run dictionary #{dict_file}"
 		end
 	end
 
 	def test_fails_on_nonexistent_dictionary
-		run_and_check "ruby poeta.rb a1b2c3", :should_work => false
+		run_and_check "./poeta.rb a1b2c3", :should_work => false
 	end
 
 	private
